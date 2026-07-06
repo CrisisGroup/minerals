@@ -228,7 +228,7 @@
 
       map = new mapboxgl.Map({
         container: mapContainer,
-        style: scrolly.dataset.mapboxStyle || "mapbox://styles/mapbox/dark-v11",
+        style: scrolly.dataset.mapboxStyle || "mapbox://styles/daltonwb/cmqksn2k7001u01s3h9r2agnp",
         ...cameraForStep(steps[0]),
         interactive: false,
         attributionControl: true,

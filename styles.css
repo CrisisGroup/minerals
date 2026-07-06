@@ -867,14 +867,15 @@ button {
 }
 
 .story-mapbox-scrolly {
+  --story-map-step-count: 4;
   position: relative;
   margin: clamp(8rem, 18vw, 15rem) auto 0;
-  min-height: 420vh;
+  min-height: calc((var(--story-map-step-count) + 1) * 100vh);
   background: #000000;
 }
 
 .gold-mapbox-scrolly {
-  min-height: 500vh;
+  --story-map-step-count: 5;
 }
 
 .story-mapbox-scrolly__stage {
@@ -921,11 +922,12 @@ button {
   position: relative;
   z-index: 2;
   display: grid;
+  grid-auto-rows: 100vh;
   justify-items: center;
-  gap: clamp(9rem, 20vw, 18rem);
+  align-items: center;
   width: min(760px, calc(100vw - (2 * var(--gutter))));
   margin: -100vh auto 0;
-  padding: 38vh 0 90vh;
+  padding: 0 0 100vh;
 }
 
 .story-mapbox-scrolly__step {
@@ -1529,18 +1531,12 @@ figcaption {
   }
 
   .story-mapbox-scrolly {
-    min-height: 380vh;
-  }
-
-  .gold-mapbox-scrolly {
-    min-height: 460vh;
+    min-height: calc((var(--story-map-step-count) + 1) * 100vh);
   }
 
   .story-mapbox-scrolly__steps {
     width: calc(100% - 2rem);
-    gap: 42vh;
     margin-inline: 1rem;
-    padding-top: 24vh;
   }
 
   .story-mapbox-scrolly__step {
