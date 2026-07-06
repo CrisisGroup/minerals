@@ -9,6 +9,7 @@
   <link rel="icon" type="image/x-icon" href="../favicon.ico" />
   <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" />
   <link rel="stylesheet" href="https://use.typekit.net/ehg7pjc.css" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
 </head>
 
@@ -42,38 +43,79 @@
       </div>
     </section>
 
-    <aside class="gold-callout">
-      <p>
-        The alluvial-mining operations employ tens of thousands of people, mostly migrants from elsewhere in Myanmar.
-        But the mining has also reshaped the landscape - destroying farmland, carving up riverbanks and in some places
-        even changing the course of waterways.
-      </p>
-    </aside>
-
-    <figure class="gold-visual gold-visual--small">
-      <div class="gold-visual__frame" role="img" aria-label="Placeholder before image of shoreline"></div>
-      <figcaption>Visual: Set 1: Before of the location to highlight the changing shoreline</figcaption>
-    </figure>
-
-    <figure class="gold-visual gold-visual--small">
-      <div class="gold-visual__frame" role="img" aria-label="Placeholder after image of shoreline"></div>
-      <figcaption>Visual: Set 2: After of the location to highlight the changing morphology</figcaption>
-    </figure>
-
-    <aside class="gold-callout">
-      <p>
-        Since the military takeover, miners have pushed south along the Chindwin River into areas where the regime has
-        lost control. In some resistance-dominated areas, local administrations and armed groups signed with the National
-        Unity Government have allowed gold dredging boats to operate, collecting annual licence fees and monthly taxes.
-      </p>
-    </aside>
-
-    <aside class="gold-callout">
-      <p>
-        The money can be used to purchase arms, ammunition and equipment. The same gold rush is also bringing abuses and
-        pressure on communities, often including miners. The waste is dumped back into the river.
-      </p>
-    </aside>
+    <section
+      class="gold-mapbox-scrolly story-mapbox-scrolly"
+      data-story-map
+      data-mapbox-token="pk.eyJ1IjoiZGFsdG9ud2IiLCJhIjoiOWdSSXFQSSJ9.HZyjh4g3TAAOAncwelv9Vw"
+      data-mapbox-style="mapbox://styles/mapbox/dark-v11"
+      data-mapbox-fallback="Mapbox sequence placeholder"
+      aria-label="Mapbox sequence showing gold mining changes to the shoreline"
+    >
+      <div class="story-mapbox-scrolly__stage" aria-hidden="true">
+        <div class="story-mapbox" id="gold-shoreline-mapbox"></div>
+        <div class="story-mapbox__fallback">
+          <span>Mapbox sequence placeholder</span>
+        </div>
+      </div>
+      <div class="story-mapbox-scrolly__steps">
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="95.95,22.4"
+          data-zoom="7.4"
+          data-pitch="0"
+          data-bearing="0"
+        >
+          <p>
+            The alluvial-mining operations employ tens of thousands of people, mostly migrants from elsewhere in Myanmar.
+            But the mining has also reshaped the landscape - destroying farmland, carving up riverbanks and in some places
+            even changing the course of waterways.
+          </p>
+        </article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="95.95,22.4"
+          data-zoom="8.2"
+          data-pitch="0"
+          data-bearing="0"
+        >
+          <p>Visual: Set 1: Before of the location to highlight the changing shoreline</p>
+        </article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="95.95,22.4"
+          data-zoom="10"
+          data-pitch="28"
+          data-bearing="-12"
+        >
+          <p>Visual: Set 2: After of the location to highlight the changing morphology</p>
+        </article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="95.7,22.1"
+          data-zoom="8.7"
+          data-pitch="18"
+          data-bearing="-8"
+        >
+          <p>
+            Since the military takeover, miners have pushed south along the Chindwin River into areas where the regime has
+            lost control. In some resistance-dominated areas, local administrations and armed groups signed with the National
+            Unity Government have allowed gold dredging boats to operate, collecting annual licence fees and monthly taxes.
+          </p>
+        </article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="95.7,22.1"
+          data-zoom="9.3"
+          data-pitch="28"
+          data-bearing="-14"
+        >
+          <p>
+            The money can be used to purchase arms, ammunition and equipment. The same gold rush is also bringing abuses and
+            pressure on communities, often including miners. The waste is dumped back into the river.
+          </p>
+        </article>
+      </div>
+    </section>
 
     <section class="gold-story__block gold-story__block--text">
       <p>
@@ -212,6 +254,7 @@
     </div>
   </footer>
 
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js"></script>
   <script src="../scroll.js"></script>
 </body>
 

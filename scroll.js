@@ -177,12 +177,8 @@
 })();
 
 (function () {
-  const scrolly = document.querySelector("[data-rare-earths-map]");
-  if (!scrolly) return;
-
-  const mapContainer = scrolly.querySelector(".rare-earths-mapbox");
-  const steps = Array.from(scrolly.querySelectorAll(".rare-earths-mapbox-scrolly__step"));
-  if (!mapContainer || !steps.length) return;
+  const scrollys = Array.from(document.querySelectorAll("[data-story-map]"));
+  if (!scrollys.length) return;
 
   function parseCenter(value) {
     const fallback = [96.5, 24.6];
@@ -201,55 +197,66 @@
     };
   }
 
-  let map = null;
+  scrollys.forEach((scrolly) => {
+    const mapContainer = scrolly.querySelector(".story-mapbox");
+    const fallback = scrolly.querySelector(".story-mapbox__fallback span");
+    const steps = Array.from(scrolly.querySelectorAll(".story-mapbox-scrolly__step"));
+    if (!mapContainer || !steps.length) return;
 
-  function setActiveStep(step) {
-    steps.forEach((candidate) => {
-      candidate.classList.toggle("is-active", candidate === step);
+    if (fallback && scrolly.dataset.mapboxFallback) {
+      fallback.textContent = scrolly.dataset.mapboxFallback;
+    }
+
+    let map = null;
+
+    function setActiveStep(step) {
+      steps.forEach((candidate) => {
+        candidate.classList.toggle("is-active", candidate === step);
+      });
+
+      if (!map) return;
+
+      map.easeTo({
+        ...cameraForStep(step),
+        duration: 900,
+        essential: true,
+      });
+    }
+
+    if (window.mapboxgl && scrolly.dataset.mapboxToken) {
+      mapboxgl.accessToken = scrolly.dataset.mapboxToken;
+
+      map = new mapboxgl.Map({
+        container: mapContainer,
+        style: scrolly.dataset.mapboxStyle || "mapbox://styles/mapbox/dark-v11",
+        ...cameraForStep(steps[0]),
+        interactive: false,
+        attributionControl: true,
+      });
+
+      map.on("load", () => {
+        mapContainer.classList.add("is-ready");
+      });
+    }
+
+    if (!("IntersectionObserver" in window)) {
+      setActiveStep(steps[0]);
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+        .slice(0, 1)
+        .forEach((entry) => setActiveStep(entry.target));
+    }, {
+      root: null,
+      rootMargin: "-38% 0px -38% 0px",
+      threshold: [0.2, 0.45, 0.7],
     });
 
-    if (!map) return;
-
-    map.easeTo({
-      ...cameraForStep(step),
-      duration: 900,
-      essential: true,
-    });
-  }
-
-  if (window.mapboxgl && scrolly.dataset.mapboxToken) {
-    mapboxgl.accessToken = scrolly.dataset.mapboxToken;
-
-    map = new mapboxgl.Map({
-      container: mapContainer,
-      style: scrolly.dataset.mapboxStyle || "mapbox://styles/mapbox/dark-v11",
-      ...cameraForStep(steps[0]),
-      interactive: false,
-      attributionControl: true,
-    });
-
-    map.on("load", () => {
-      mapContainer.classList.add("is-ready");
-    });
-  }
-
-  if (!("IntersectionObserver" in window)) {
+    steps.forEach((step) => observer.observe(step));
     setActiveStep(steps[0]);
-    return;
-  }
-
-  const observer = new IntersectionObserver((entries) => {
-    entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-      .slice(0, 1)
-      .forEach((entry) => setActiveStep(entry.target));
-  }, {
-    root: null,
-    rootMargin: "-38% 0px -38% 0px",
-    threshold: [0.2, 0.45, 0.7],
   });
-
-  steps.forEach((step) => observer.observe(step));
-  setActiveStep(steps[0]);
 })();

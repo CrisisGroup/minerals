@@ -866,14 +866,18 @@ button {
   max-width: none;
 }
 
-.rare-earths-mapbox-scrolly {
+.story-mapbox-scrolly {
   position: relative;
   margin: clamp(8rem, 18vw, 15rem) auto 0;
   min-height: 420vh;
   background: #000000;
 }
 
-.rare-earths-mapbox-scrolly__stage {
+.gold-mapbox-scrolly {
+  min-height: 500vh;
+}
+
+.story-mapbox-scrolly__stage {
   position: sticky;
   top: 0;
   height: 100vh;
@@ -881,18 +885,18 @@ button {
   background: #000000;
 }
 
-.rare-earths-mapbox {
+.story-mapbox {
   position: absolute;
   inset: 0;
   opacity: 0;
   transition: opacity 280ms ease;
 }
 
-.rare-earths-mapbox.is-ready {
+.story-mapbox.is-ready {
   opacity: 1;
 }
 
-.rare-earths-mapbox__fallback {
+.story-mapbox__fallback {
   position: absolute;
   inset: 0;
   display: grid;
@@ -909,11 +913,11 @@ button {
   text-transform: uppercase;
 }
 
-.rare-earths-mapbox.is-ready + .rare-earths-mapbox__fallback {
+.story-mapbox.is-ready + .story-mapbox__fallback {
   display: none;
 }
 
-.rare-earths-mapbox-scrolly__steps {
+.story-mapbox-scrolly__steps {
   position: relative;
   z-index: 2;
   display: grid;
@@ -924,7 +928,7 @@ button {
   padding: 38vh 0 90vh;
 }
 
-.rare-earths-mapbox-scrolly__step {
+.story-mapbox-scrolly__step {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
   padding: clamp(1.2rem, 3vw, 1.7rem) clamp(1.35rem, 3.5vw, 2.2rem);
   border: 1px solid rgba(84, 187, 183, 0.4);
@@ -933,18 +937,27 @@ button {
   transition: opacity 220ms ease, transform 220ms ease;
 }
 
-.rare-earths-mapbox-scrolly__step.is-active {
+.gold-mapbox-scrolly .story-mapbox-scrolly__step {
+  border-color: rgba(199, 120, 54, 0.42);
+  background: rgba(65, 35, 18, 0.82);
+}
+
+.story-mapbox-scrolly__step.is-active {
   opacity: 1;
   transform: translateY(-0.25rem);
 }
 
-.rare-earths-mapbox-scrolly__step p {
+.story-mapbox-scrolly__step p {
   margin: 0;
   color: #54bbb7;
   font-family: var(--font-sans);
   font-size: 0.98rem;
   font-weight: 700;
   line-height: 1.45;
+}
+
+.gold-mapbox-scrolly .story-mapbox-scrolly__step p {
+  color: #c77836;
 }
 
 .rare-earths-visual {
@@ -1515,18 +1528,22 @@ figcaption {
     width: 100%;
   }
 
-  .rare-earths-mapbox-scrolly {
+  .story-mapbox-scrolly {
     min-height: 380vh;
   }
 
-  .rare-earths-mapbox-scrolly__steps {
+  .gold-mapbox-scrolly {
+    min-height: 460vh;
+  }
+
+  .story-mapbox-scrolly__steps {
     width: calc(100% - 2rem);
     gap: 42vh;
     margin-inline: 1rem;
     padding-top: 24vh;
   }
 
-  .rare-earths-mapbox-scrolly__step {
+  .story-mapbox-scrolly__step {
     width: 100%;
   }
 
