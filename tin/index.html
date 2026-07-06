@@ -13,19 +13,26 @@
 </head>
 
 <body class="commodity-page">
-  <header class="commodity-hero">
-    <div class="commodity-mosaic" aria-label="Mosaic image header for Tin">
-      <div class="commodity-mosaic__image commodity-mosaic__image--large"></div>
-      <div class="commodity-mosaic__image commodity-mosaic__image--small commodity-mosaic__image--top"></div>
-      <div class="commodity-mosaic__image commodity-mosaic__image--small commodity-mosaic__image--bottom"></div>
-      <div class="commodity-mosaic__image commodity-mosaic__image--wide"></div>
+  <header class="tin-video-hero" aria-label="Motion video header for Tin">
+    <div class="tin-video-hero__media">
+      <video
+        class="tin-video-hero__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster="../media/tin_header_poster.jpg"
+      >
+        <source src="../media/tin_header.mp4" type="video/mp4" />
+      </video>
     </div>
   </header>
 
   <main class="tin-story">
     <section class="commodity-intro tin-story__block">
       <span class="commodity-link commodity-link--tin commodity-tag">Tin</span>
-      <h1>The Tin Mines That Move the Market</h1>
+      <h1>The Mine That Moves the Market</h1>
       <div class="tin-story__copy">
         <p>
           When a single mine in eastern Myanmar suspended operations in 2023, tin prices spiked and smelters in China
@@ -44,7 +51,7 @@
     </section>
 
     <figure class="tin-visual tin-visual--medium">
-      <div class="tin-visual__frame" role="img" aria-label="Placeholder for UWSA fighters and military parades"></div>
+      <img class="tin-visual__image" src="../media/myanmar_military.jpg" alt="UWSA fighters and military parades" />
       <figcaption>Visual: UWSA fighters and military parades</figcaption>
     </figure>
 
@@ -151,7 +158,7 @@
     </section>
 
     <figure class="tin-visual tin-visual--closing">
-      <div class="tin-visual__frame" role="img" aria-label="Placeholder closing visual"></div>
+      <img class="tin-visual__image" src="../media/cargo_cranes.jpg" alt="Cargo cranes at a port" />
       <figcaption>Visual: Closing image?</figcaption>
     </figure>
 
@@ -174,8 +181,8 @@
       </p>
 
       <p class="credits__text credits__spaced">
-        Research and analysis by <strong class="credits__text__author">Richard Horsey</strong> and <strong>Thomas Kean</strong><br />
-        Visualisations by <strong class="credits__text__author">Claire Boccon-Gibod</strong> and <strong>Paul Franz</strong>
+        Research and analysis by <strong class="credits__text__author">Richard Horsey</strong>, <strong>Thomas Kean</strong>, <strong>Carolin Graf</strong> and <strong>David Muchiri Kimotho</strong><br />
+        Visualisations by <strong class="credits__text__author">Claire Boccon-Gibod</strong>, <strong>Paul Franz</strong> and <strong>Yse Angerer</strong>
       </p>
 
       <p class="credits__copyright">

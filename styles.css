@@ -369,6 +369,37 @@ button {
   padding-bottom: clamp(8rem, 18vw, 16rem);
 }
 
+.tin-video-hero {
+  width: 100%;
+  background: var(--paper);
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.tin-video-hero__media {
+  position: relative;
+  width: 100%;
+  max-height: 92vh;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  background: #000000;
+}
+
+.tin-video-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  background: linear-gradient(180deg, rgba(20, 35, 38, 0), var(--paper));
+  pointer-events: none;
+}
+
+.tin-video-hero__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .tin-story__block {
   max-width: var(--copy-width);
   margin: 0 auto;
@@ -402,6 +433,12 @@ button {
     radial-gradient(circle at 66% 58%, rgba(192, 192, 192, 0.18), transparent 0 20%),
     repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 18px),
     linear-gradient(145deg, rgba(192, 192, 192, 0.14), rgba(255, 255, 255, 0.04));
+}
+
+.tin-visual__image {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .tin-visual--small {
