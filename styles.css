@@ -1,5 +1,5 @@
 :root {
-  --paper: #142326;
+  --paper: #0F151B;
   --paper-deep: #c0c0c0;
   --ink: #ffffff;
   --muted: rgba(255, 255, 255, 0.72);
@@ -247,30 +247,29 @@ button {
 }
 
 .commodity-link--tin {
-  color: #5f6865;
+  color: #C0C0C0;
 }
 
 .commodity-link--introduction {
-  color: #2277b4;
-  background: rgba(34, 119, 180, 0.12);
+  color: #708ea9;
 }
 
 .commodity-link--introduction span {
-  color: #2277b4;
+  color: #708ea9;
 }
 
 .commodity-link--gold {
-  color: #c77836;
+  color: #ed924e;
   background: rgba(199, 120, 54, 0.12);
 }
 
 .commodity-link--jade {
-  color: #6aa484;
+  color: #80c5a4;
   background: rgba(106, 164, 132, 0.12);
 }
 
 .commodity-link--rare-earths {
-  color: #54bbb7;
+  color: #6ecfc7;
   background: rgba(84, 187, 183, 0.12);
 }
 
