@@ -197,6 +197,239 @@
     };
   }
 
+  function idSafe(value) {
+    return value.replace(/[^a-zA-Z0-9_-]/g, "-");
+  }
+
+  function tilesetLayerName(tileset) {
+    return tileset.split(".").pop();
+  }
+
+  function tilesetConfigForStep(step, index) {
+    const tileset = step.dataset.tileset;
+    if (!tileset) return null;
+
+    const layerType = step.dataset.tilesetType || "fill";
+    const color = step.dataset.tilesetColor || "#c77836";
+    const sourceId = `story-step-source-${idSafe(tileset)}`;
+    const layerId = `story-step-layer-${index}-${idSafe(tileset)}`;
+
+    return {
+      tileset,
+      sourceId,
+      layerId,
+      sourceLayer: step.dataset.tilesetLayer || tilesetLayerName(tileset),
+      layerType,
+      color,
+    };
+  }
+
+  function placeholderConfigForStep(step, index) {
+    const placeholder = step.dataset.placeholderLayer;
+    if (!placeholder) return null;
+
+    const layerType = step.dataset.placeholderType || "fill";
+    const color = step.dataset.placeholderColor || "#c77836";
+    const sourceId = `story-placeholder-source-${index}-${idSafe(placeholder)}`;
+    const layerId = `story-placeholder-layer-${index}-${idSafe(placeholder)}`;
+
+    return {
+      sourceId,
+      layerId,
+      layerType,
+      color,
+      size: Number.parseFloat(step.dataset.placeholderSize) || 0.04,
+      center: parseCenter(step.dataset.center),
+    };
+  }
+
+  function opacityProperty(layerType) {
+    if (layerType === "raster") return "raster-opacity";
+    if (layerType === "line") return "line-opacity";
+    if (layerType === "circle") return "circle-opacity";
+    return "fill-opacity";
+  }
+
+  function colorProperty(layerType) {
+    if (layerType === "raster") return null;
+    if (layerType === "line") return "line-color";
+    if (layerType === "circle") return "circle-color";
+    return "fill-color";
+  }
+
+  function placeholderData(config) {
+    const [lng, lat] = config.center;
+    const size = config.size;
+
+    if (config.layerType === "line") {
+      return {
+        type: "FeatureCollection",
+        features: [{
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [lng - size * 1.4, lat - size * 0.55],
+              [lng - size * 0.45, lat - size * 0.18],
+              [lng + size * 0.2, lat + size * 0.05],
+              [lng + size * 1.35, lat + size * 0.55],
+            ],
+          },
+        }],
+      };
+    }
+
+    if (config.layerType === "circle") {
+      return {
+        type: "FeatureCollection",
+        features: [-0.8, -0.35, 0.1, 0.55, 0.95].map((offset, pointIndex) => ({
+          type: "Feature",
+          properties: { id: pointIndex },
+          geometry: {
+            type: "Point",
+            coordinates: [lng + size * offset, lat + size * Math.sin(pointIndex + 1) * 0.45],
+          },
+        })),
+      };
+    }
+
+    return {
+      type: "FeatureCollection",
+      features: [{
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [lng - size, lat - size * 0.65],
+            [lng + size * 0.9, lat - size * 0.55],
+            [lng + size, lat + size * 0.68],
+            [lng - size * 0.85, lat + size * 0.58],
+            [lng - size, lat - size * 0.65],
+          ]],
+        },
+      }],
+    };
+  }
+
+  function paintForConfig(config) {
+    const paint = {
+      [opacityProperty(config.layerType)]: 0,
+    };
+    const colorKey = colorProperty(config.layerType);
+
+    if (colorKey) {
+      paint[colorKey] = config.color;
+    }
+
+    if (config.layerType === "line") {
+      paint["line-width"] = 4;
+    }
+
+    if (config.layerType === "circle") {
+      paint["circle-radius"] = 7;
+      paint["circle-stroke-color"] = "#ffffff";
+      paint["circle-stroke-width"] = 1.5;
+      paint["circle-stroke-opacity"] = 0;
+    }
+
+    return paint;
+  }
+
+  function addStepTilesets(map, steps) {
+    steps.forEach((step, index) => {
+      const config = tilesetConfigForStep(step, index);
+      if (!config) return;
+
+      if (!map.getSource(config.sourceId)) {
+        map.addSource(
+          config.sourceId,
+          config.layerType === "raster"
+            ? {
+                type: "raster",
+                url: `mapbox://${config.tileset}`,
+                tileSize: 256,
+              }
+            : {
+                type: "vector",
+                url: `mapbox://${config.tileset}`,
+              },
+        );
+      }
+
+      if (map.getLayer(config.layerId)) return;
+
+      const layer = {
+        id: config.layerId,
+        type: config.layerType,
+        source: config.sourceId,
+        paint: paintForConfig(config),
+      };
+
+      if (config.layerType !== "raster") {
+        layer["source-layer"] = config.sourceLayer;
+      }
+
+      map.addLayer(layer);
+
+      map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
+        duration: 700,
+        delay: 0,
+      });
+    });
+  }
+
+  function addStepPlaceholders(map, steps) {
+    steps.forEach((step, index) => {
+      const config = placeholderConfigForStep(step, index);
+      if (!config) return;
+
+      if (!map.getSource(config.sourceId)) {
+        map.addSource(config.sourceId, {
+          type: "geojson",
+          data: placeholderData(config),
+        });
+      }
+
+      if (map.getLayer(config.layerId)) return;
+
+      map.addLayer({
+        id: config.layerId,
+        type: config.layerType,
+        source: config.sourceId,
+        paint: paintForConfig(config),
+      });
+
+      map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
+        duration: 700,
+        delay: 0,
+      });
+    });
+  }
+
+  function updateStepTilesets(map, steps, activeStep) {
+    steps.forEach((step, index) => {
+      const config = tilesetConfigForStep(step, index) || placeholderConfigForStep(step, index);
+      if (!config || !map.getLayer(config.layerId)) return;
+
+      const activeOpacity = config.layerType === "raster" || config.layerType === "line" ? 0.85 : 0.55;
+      map.setPaintProperty(
+        config.layerId,
+        opacityProperty(config.layerType),
+        step === activeStep ? activeOpacity : 0,
+      );
+
+      if (config.layerType === "circle") {
+        map.setPaintProperty(
+          config.layerId,
+          "circle-stroke-opacity",
+          step === activeStep ? activeOpacity : 0,
+        );
+      }
+    });
+  }
+
   scrollys.forEach((scrolly) => {
     const mapContainer = scrolly.querySelector(".story-mapbox");
     const fallback = scrolly.querySelector(".story-mapbox__fallback span");
@@ -208,8 +441,11 @@
     }
 
     let map = null;
+    let activeStep = steps[0];
 
     function setActiveStep(step) {
+      activeStep = step;
+
       steps.forEach((candidate) => {
         candidate.classList.toggle("is-active", candidate === step);
       });
@@ -221,6 +457,8 @@
         duration: 900,
         essential: true,
       });
+
+      updateStepTilesets(map, steps, step);
     }
 
     if (window.mapboxgl && scrolly.dataset.mapboxToken) {
@@ -236,6 +474,9 @@
 
       map.on("load", () => {
         mapContainer.classList.add("is-ready");
+        addStepTilesets(map, steps);
+        addStepPlaceholders(map, steps);
+        updateStepTilesets(map, steps, activeStep);
       });
     }
 
