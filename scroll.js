@@ -452,9 +452,11 @@
 
       if (!map) return;
 
-      map.easeTo({
+      map.flyTo({
         ...cameraForStep(step),
-        duration: 900,
+        duration: 1800,
+        curve: 1.15,
+        speed: 0.55,
         essential: true,
       });
 
