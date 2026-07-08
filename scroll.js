@@ -205,23 +205,53 @@
     return tileset.split(".").pop();
   }
 
-  function tilesetConfigForStep(step, index) {
-    const tileset = step.dataset.tileset;
-    if (!tileset) return null;
+  function splitDatasetList(value) {
+    return value ? value.split(",").map((item) => item.trim()) : [];
+  }
 
-    const layerType = step.dataset.tilesetType || "fill";
-    const color = step.dataset.tilesetColor || "#c77836";
-    const sourceId = `story-step-source-${idSafe(tileset)}`;
-    const layerId = `story-step-layer-${index}-${idSafe(tileset)}`;
+  function tilesetConfigsForStep(step, index) {
+    const tilesets = splitDatasetList(step.dataset.tilesets || step.dataset.tileset);
+    if (!tilesets.length) return [];
 
-    return {
-      tileset,
-      sourceId,
-      layerId,
-      sourceLayer: step.dataset.tilesetLayer || tilesetLayerName(tileset),
-      layerType,
-      color,
-    };
+    const sourceLayers = splitDatasetList(step.dataset.tilesetLayers || step.dataset.tilesetLayer);
+    const layerTypes = splitDatasetList(step.dataset.tilesetTypes || step.dataset.tilesetType);
+    const colors = splitDatasetList(step.dataset.tilesetColors || step.dataset.tilesetColor);
+    const opacities = splitDatasetList(step.dataset.tilesetOpacities || step.dataset.tilesetOpacity);
+    const rasterColors = splitDatasetList(step.dataset.tilesetRasterColors || step.dataset.tilesetRasterColor);
+    const hueRotates = splitDatasetList(step.dataset.tilesetHueRotates || step.dataset.tilesetHueRotate);
+    const saturations = splitDatasetList(step.dataset.tilesetSaturations || step.dataset.tilesetSaturation);
+    const contrasts = splitDatasetList(step.dataset.tilesetContrasts || step.dataset.tilesetContrast);
+    const brightnessMins = splitDatasetList(step.dataset.tilesetBrightnessMins || step.dataset.tilesetBrightnessMin);
+    const brightnessMaxes = splitDatasetList(step.dataset.tilesetBrightnessMaxes || step.dataset.tilesetBrightnessMax);
+
+    return tilesets.map((tileset, tilesetIndex) => {
+      const layerType = layerTypes[tilesetIndex] || layerTypes[0] || "fill";
+      const color = colors[tilesetIndex] || colors[0] || "#c77836";
+      const opacity = Number.parseFloat(opacities[tilesetIndex] || opacities[0]);
+      const hueRotate = Number.parseFloat(hueRotates[tilesetIndex] || hueRotates[0]);
+      const saturation = Number.parseFloat(saturations[tilesetIndex] || saturations[0]);
+      const contrast = Number.parseFloat(contrasts[tilesetIndex] || contrasts[0]);
+      const brightnessMin = Number.parseFloat(brightnessMins[tilesetIndex] || brightnessMins[0]);
+      const brightnessMax = Number.parseFloat(brightnessMaxes[tilesetIndex] || brightnessMaxes[0]);
+      const sourceId = `story-step-source-${idSafe(tileset)}`;
+      const layerId = `story-step-layer-${index}-${tilesetIndex}-${idSafe(tileset)}`;
+
+      return {
+        tileset,
+        sourceId,
+        layerId,
+        sourceLayer: sourceLayers[tilesetIndex] || tilesetLayerName(tileset),
+        layerType,
+        color,
+        opacity: Number.isFinite(opacity) ? opacity : null,
+        rasterColor: rasterColors[tilesetIndex] || rasterColors[0] || null,
+        hueRotate: Number.isFinite(hueRotate) ? hueRotate : null,
+        saturation: Number.isFinite(saturation) ? saturation : null,
+        contrast: Number.isFinite(contrast) ? contrast : null,
+        brightnessMin: Number.isFinite(brightnessMin) ? brightnessMin : null,
+        brightnessMax: Number.isFinite(brightnessMax) ? brightnessMax : null,
+      };
+    });
   }
 
   function placeholderConfigForStep(step, index) {
@@ -327,6 +357,27 @@
       paint["line-width"] = 4;
     }
 
+    if (config.layerType === "raster") {
+      if (config.rasterColor) {
+        paint["raster-color"] = [
+          "interpolate",
+          ["linear"],
+          ["raster-value"],
+          0,
+          config.rasterColor,
+          1,
+          config.rasterColor,
+        ];
+        paint["raster-color-range"] = [0, 1];
+      }
+
+      if (config.hueRotate !== null) paint["raster-hue-rotate"] = config.hueRotate;
+      if (config.saturation !== null) paint["raster-saturation"] = config.saturation;
+      if (config.contrast !== null) paint["raster-contrast"] = config.contrast;
+      if (config.brightnessMin !== null) paint["raster-brightness-min"] = config.brightnessMin;
+      if (config.brightnessMax !== null) paint["raster-brightness-max"] = config.brightnessMax;
+    }
+
     if (config.layerType === "circle") {
       paint["circle-radius"] = 7;
       paint["circle-stroke-color"] = "#ffffff";
@@ -339,43 +390,42 @@
 
   function addStepTilesets(map, steps) {
     steps.forEach((step, index) => {
-      const config = tilesetConfigForStep(step, index);
-      if (!config) return;
+      tilesetConfigsForStep(step, index).forEach((config) => {
+        if (!map.getSource(config.sourceId)) {
+          map.addSource(
+            config.sourceId,
+            config.layerType === "raster"
+              ? {
+                  type: "raster",
+                  url: `mapbox://${config.tileset}`,
+                  tileSize: 256,
+                }
+              : {
+                  type: "vector",
+                  url: `mapbox://${config.tileset}`,
+                },
+          );
+        }
 
-      if (!map.getSource(config.sourceId)) {
-        map.addSource(
-          config.sourceId,
-          config.layerType === "raster"
-            ? {
-                type: "raster",
-                url: `mapbox://${config.tileset}`,
-                tileSize: 256,
-              }
-            : {
-                type: "vector",
-                url: `mapbox://${config.tileset}`,
-              },
-        );
-      }
+        if (map.getLayer(config.layerId)) return;
 
-      if (map.getLayer(config.layerId)) return;
+        const layer = {
+          id: config.layerId,
+          type: config.layerType,
+          source: config.sourceId,
+          paint: paintForConfig(config),
+        };
 
-      const layer = {
-        id: config.layerId,
-        type: config.layerType,
-        source: config.sourceId,
-        paint: paintForConfig(config),
-      };
+        if (config.layerType !== "raster") {
+          layer["source-layer"] = config.sourceLayer;
+        }
 
-      if (config.layerType !== "raster") {
-        layer["source-layer"] = config.sourceLayer;
-      }
+        map.addLayer(layer);
 
-      map.addLayer(layer);
-
-      map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
-        duration: 700,
-        delay: 0,
+        map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
+          duration: 700,
+          delay: 0,
+        });
       });
     });
   }
@@ -410,23 +460,30 @@
 
   function updateStepTilesets(map, steps, activeStep) {
     steps.forEach((step, index) => {
-      const config = tilesetConfigForStep(step, index) || placeholderConfigForStep(step, index);
-      if (!config || !map.getLayer(config.layerId)) return;
+      const placeholderConfig = placeholderConfigForStep(step, index);
+      const configs = [
+        ...tilesetConfigsForStep(step, index),
+        ...(placeholderConfig ? [placeholderConfig] : []),
+      ];
 
-      const activeOpacity = config.layerType === "raster" || config.layerType === "line" ? 0.85 : 0.55;
-      map.setPaintProperty(
-        config.layerId,
-        opacityProperty(config.layerType),
-        step === activeStep ? activeOpacity : 0,
-      );
+      configs.forEach((config) => {
+        if (!map.getLayer(config.layerId)) return;
 
-      if (config.layerType === "circle") {
+        const activeOpacity = config.opacity ?? (config.layerType === "raster" || config.layerType === "line" ? 0.85 : 0.55);
         map.setPaintProperty(
           config.layerId,
-          "circle-stroke-opacity",
+          opacityProperty(config.layerType),
           step === activeStep ? activeOpacity : 0,
         );
-      }
+
+        if (config.layerType === "circle") {
+          map.setPaintProperty(
+            config.layerId,
+            "circle-stroke-opacity",
+            step === activeStep ? activeOpacity : 0,
+          );
+        }
+      });
     });
   }
 
@@ -468,7 +525,7 @@
 
       map = new mapboxgl.Map({
         container: mapContainer,
-        style: scrolly.dataset.mapboxStyle || "mapbox://styles/daltonwb/cmqksn2k7001u01s3h9r2agnp",
+        style: scrolly.dataset.mapboxStyle || "mapbox://styles/daltonwb/cmrc8idor000h01s24h0vd5sf",
         ...cameraForStep(steps[0]),
         interactive: false,
         attributionControl: true,

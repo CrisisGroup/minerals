@@ -877,6 +877,10 @@ button {
   --story-map-step-count: 5;
 }
 
+.gold-mapbox-scrolly--four {
+  --story-map-step-count: 4;
+}
+
 .story-mapbox-scrolly__stage {
   position: sticky;
   top: 0;
@@ -899,8 +903,9 @@ button {
 .story-mapbox__fallback {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background:
     radial-gradient(circle at 34% 40%, rgba(84, 187, 183, 0.22), transparent 0 16%),
     radial-gradient(circle at 68% 58%, rgba(84, 187, 183, 0.16), transparent 0 20%),
@@ -913,8 +918,30 @@ button {
   text-transform: uppercase;
 }
 
+.story-mapbox__fallback span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.story-mapbox__fallback span::before {
+  content: "";
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: map-loading-spin 900ms linear infinite;
+}
+
 .story-mapbox.is-ready + .story-mapbox__fallback {
   display: none;
+}
+
+@keyframes map-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .story-mapbox-scrolly__steps {

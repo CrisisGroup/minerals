@@ -47,14 +47,14 @@
       class="gold-mapbox-scrolly story-mapbox-scrolly"
       data-story-map
       data-mapbox-token="pk.eyJ1IjoiZGFsdG9ud2IiLCJhIjoiOWdSSXFQSSJ9.HZyjh4g3TAAOAncwelv9Vw"
-      data-mapbox-style="mapbox://styles/daltonwb/cmqksn2k7001u01s3h9r2agnp"
-      data-mapbox-fallback="Mapbox sequence placeholder"
+      data-mapbox-style="mapbox://styles/daltonwb/cmrc8idor000h01s24h0vd5sf"
+      data-mapbox-fallback="Loading map"
       aria-label="Mapbox sequence showing gold mining changes to the shoreline"
     >
       <div class="story-mapbox-scrolly__stage" aria-hidden="true">
         <div class="story-mapbox" id="gold-shoreline-mapbox"></div>
         <div class="story-mapbox__fallback">
-          <span>Mapbox sequence placeholder</span>
+          <span>Loading map</span>
         </div>
       </div>
       <div class="story-mapbox-scrolly__steps">
@@ -181,30 +181,78 @@
       </p>
     </section>
 
-    <figure class="gold-visual gold-visual--large">
-      <div class="gold-visual__frame" role="img" aria-label="Placeholder Mu River and tributaries visualization"></div>
-      <figcaption>Visual: Show the Mu River and tributaries</figcaption>
-    </figure>
-
-    <figure class="gold-visual gold-visual--medium">
-      <div class="gold-visual__frame" role="img" aria-label="Placeholder zoom to Thaphanseik area"></div>
-      <figcaption>Visual: Transition to Thaphanseik area</figcaption>
-    </figure>
-
-    <div class="gold-visual-row" aria-label="Mining footprint comparison placeholders">
-      <figure class="gold-visual gold-visual--tiny">
-        <div class="gold-visual__frame" role="img" aria-label="Placeholder mining pre-coup"></div>
-        <figcaption>This mine image showing pre-coup and being forest.</figcaption>
-      </figure>
-      <figure class="gold-visual gold-visual--tiny">
-        <div class="gold-visual__frame" role="img" aria-label="Placeholder mining period with dry farmland"></div>
-        <figcaption>This mine image showing period of dry farmland.</figcaption>
-      </figure>
-      <figure class="gold-visual gold-visual--tiny">
-        <div class="gold-visual__frame" role="img" aria-label="Placeholder mining period by forest"></div>
-        <figcaption>This mine image showing period by forest.</figcaption>
-      </figure>
-    </div>
+    <section
+      class="gold-mapbox-scrolly gold-mapbox-scrolly--four story-mapbox-scrolly"
+      data-story-map
+      data-mapbox-token="pk.eyJ1IjoiZGFsdG9ud2IiLCJhIjoiOWdSSXFQSSJ9.HZyjh4g3TAAOAncwelv9Vw"
+      data-mapbox-style="mapbox://styles/daltonwb/cmrc8idor000h01s24h0vd5sf"
+      data-mapbox-fallback="Loading map"
+      aria-label="Mapbox sequence showing Mu River and Thaphanseik mining changes"
+    >
+      <div class="story-mapbox-scrolly__stage" aria-hidden="true">
+        <div class="story-mapbox" id="gold-thaphanseik-mapbox"></div>
+        <div class="story-mapbox__fallback">
+          <span>Loading map</span>
+        </div>
+      </div>
+      <div class="story-mapbox-scrolly__steps">
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="96.089651, 24.336211"
+          data-zoom="9.75"
+          data-pitch="0"
+          data-bearing="0"
+          data-tilesets="daltonwb.hlbpfj2k4c5t,daltonwb.x9peb8,daltonwb.uc5e4r"
+          data-tileset-layers="1010c73a2d4def81fca5,,"
+          data-tileset-types="line,raster,raster"
+          data-tileset-colors="#c77836,#c77836,#c77836"
+          data-tileset-opacities="0.85,0.85,0.85"
+        >
+          <p>Meza River and its tributaries</p>
+        </article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="96.089651, 24.336211"
+          data-zoom="9.75"
+          data-pitch="0"
+          data-bearing="0"
+          data-tilesets="daltonwb.hlbpfj2k4c5t,daltonwb.uc5e4r,daltonwb.x9peb8"
+          data-tileset-layers="1010c73a2d4def81fca5,,"
+          data-tileset-types="line,raster,raster"
+          data-tileset-colors="#c77836,#c77836,#c77836"
+          data-tileset-opacities="0.85,0.9,0.9"
+          data-tileset-raster-colors=",#d43f32,#2277b4"
+        >
+          <p>Visual: Transition to Thaphanseik area</p>
+        </article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="95.333305, 23.693467"
+          data-zoom="9.5"
+          data-pitch="0"
+          data-bearing="0"
+          data-tilesets="daltonwb.04paqr,daltonwb.lml81n"
+          data-tileset-types="raster,raster"
+          data-tileset-opacities="0.85,0.9"
+          data-tileset-raster-colors="#d43f32,#d43f32"
+        >
+          <p>This mine image showing pre-coup and being forest.</p>
+        </article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="95.333305, 23.693467"
+          data-zoom="9.5"
+          data-pitch="0"
+          data-bearing="0"
+          data-tilesets="daltonwb.04paqr,daltonwb.lml81n"
+          data-tileset-types="raster,raster"
+          data-tileset-opacities="0.85,0.9"
+          data-tileset-raster-colors="#2277b4,#d43f32"
+        >
+          <p>This mine image showing period of dry farmland and then by forest.</p>
+        </article>
+      </div>
+    </section>
 
     <section class="gold-story__block gold-story__block--text">
       <p>
