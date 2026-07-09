@@ -881,6 +881,10 @@ button {
   --story-map-step-count: 4;
 }
 
+.story-mapbox-scrolly--two {
+  --story-map-step-count: 2;
+}
+
 .story-mapbox-scrolly__stage {
   position: sticky;
   top: 0;
@@ -1006,6 +1010,21 @@ button {
 
 .rare-earths-visual--small {
   width: min(360px, calc(100vw - (2 * var(--gutter))));
+}
+
+.rare-earths-visual--image {
+  width: min(var(--copy-width), calc(100vw - (2 * var(--gutter))));
+}
+
+.rare-earths-visual--image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.rare-earths-story__copy .rare-earths-visual--image {
+  width: 100%;
+  margin: clamp(2.5rem, 7vw, 4.5rem) 0;
 }
 
 .rare-earths-visual figcaption {

@@ -511,9 +511,8 @@
 
       map.flyTo({
         ...cameraForStep(step),
-        duration: 1800,
-        curve: 1.15,
-        speed: 0.55,
+        duration: 6400,
+        curve: 1.5,
         essential: true,
       });
 
@@ -525,7 +524,7 @@
 
       map = new mapboxgl.Map({
         container: mapContainer,
-        style: scrolly.dataset.mapboxStyle || "mapbox://styles/daltonwb/cmrc8idor000h01s24h0vd5sf",
+        style: scrolly.dataset.mapboxStyle || "mapbox://styles/daltonwb/cmrdued7y000l01s7fnbtdf41",
         ...cameraForStep(steps[0]),
         interactive: false,
         attributionControl: true,
