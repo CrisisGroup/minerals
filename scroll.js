@@ -137,6 +137,7 @@
   window.addEventListener("resize", requestUpdate);
 })();
 
+
 (function () {
   const scrolly = document.querySelector("[data-map-scrolly]");
   if (!scrolly) return;
@@ -195,6 +196,40 @@
       pitch: Number.parseFloat(step.dataset.pitch) || 0,
       bearing: Number.parseFloat(step.dataset.bearing) || 0,
     };
+  }
+
+  function stepForViewport(scrolly, steps) {
+    const triggerLine = window.innerHeight * 0.5;
+    const scrollyRect = scrolly.getBoundingClientRect();
+
+    if (scrollyRect.top > triggerLine) return steps[0];
+    if (scrollyRect.bottom < triggerLine) return steps[steps.length - 1];
+
+    const stepRects = steps.map((step) => ({
+      step,
+      rect: step.getBoundingClientRect(),
+    }));
+
+    const active = stepRects.find(({ rect }) => (
+      rect.top <= triggerLine && rect.bottom >= triggerLine
+    ));
+
+    if (active) return active.step;
+    if (stepRects[0].rect.top > triggerLine) return steps[0];
+    if (stepRects[stepRects.length - 1].rect.bottom < triggerLine) {
+      return steps[steps.length - 1];
+    }
+
+    return stepRects.reduce((nearest, candidate) => {
+      const nearestDistance = Math.abs(
+        nearest.rect.top + nearest.rect.height / 2 - triggerLine,
+      );
+      const candidateDistance = Math.abs(
+        candidate.rect.top + candidate.rect.height / 2 - triggerLine,
+      );
+
+      return candidateDistance < nearestDistance ? candidate : nearest;
+    }).step;
   }
 
   function idSafe(value) {
@@ -498,26 +533,55 @@
     }
 
     let map = null;
-    let activeStep = steps[0];
+    let mapReady = false;
+    let ticking = false;
+    let activeStep = null;
 
-    function setActiveStep(step) {
+    function setActiveStep(step, options = {}) {
+      if (!step) return;
+
+      const alreadyActive = activeStep === step;
       activeStep = step;
 
       steps.forEach((candidate) => {
         candidate.classList.toggle("is-active", candidate === step);
       });
 
-      if (!map) return;
+      if (!map || !mapReady) return;
 
-      map.flyTo({
-        ...cameraForStep(step),
-        duration: 6400,
-        curve: 1.5,
-        essential: true,
-      });
+      if (!alreadyActive || options.forceCamera) {
+        const camera = cameraForStep(step);
+
+        if (options.jump) {
+          map.jumpTo(camera);
+        } else {
+          map.flyTo({
+            ...camera,
+            duration: 6400,
+            curve: 1.5,
+            essential: true,
+          });
+        }
+      }
 
       updateStepTilesets(map, steps, step);
     }
+
+    function updateActiveStepFromViewport(options = {}) {
+      setActiveStep(stepForViewport(scrolly, steps), options);
+    }
+
+    function requestViewportUpdate() {
+      if (ticking) return;
+
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        ticking = false;
+        updateActiveStepFromViewport();
+      });
+    }
+
+    updateActiveStepFromViewport();
 
     if (window.mapboxgl && scrolly.dataset.mapboxToken) {
       mapboxgl.accessToken = scrolly.dataset.mapboxToken;
@@ -525,37 +589,268 @@
       map = new mapboxgl.Map({
         container: mapContainer,
         style: scrolly.dataset.mapboxStyle || "mapbox://styles/daltonwb/cmrdued7y000l01s7fnbtdf41",
-        ...cameraForStep(steps[0]),
+        ...cameraForStep(activeStep || steps[0]),
         interactive: false,
         attributionControl: true,
       });
 
       map.on("load", () => {
+        mapReady = true;
         mapContainer.classList.add("is-ready");
         addStepTilesets(map, steps);
         addStepPlaceholders(map, steps);
-        updateStepTilesets(map, steps, activeStep);
+        updateActiveStepFromViewport({ forceCamera: true, jump: true });
       });
     }
 
-    if (!("IntersectionObserver" in window)) {
-      setActiveStep(steps[0]);
+    window.addEventListener("scroll", requestViewportUpdate, { passive: true });
+    window.addEventListener("resize", requestViewportUpdate);
+  });
+})();
+
+// Index hero / scroll mosaic
+(function () {
+  const hero = document.querySelector("[data-index-hero]");
+  if (!hero) return;
+
+  const mosaic = hero.querySelector("[data-index-hero-mosaic]");
+  const leadTile = hero.querySelector("[data-index-hero-lead]");
+  const video = hero.querySelector("[data-index-hero-video]");
+  const videoControl = hero.querySelector("[data-index-hero-video-control]");
+  const videoControlLabel = hero.querySelector("[data-index-hero-video-control-label]");
+  const tiles = Array.from(hero.querySelectorAll("[data-index-hero-tile]"));
+  const revealTiles = tiles.filter((tile) => tile !== leadTile);
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const entranceOffsets = [
+    { x: 42, y: -26 },
+    { x: 34, y: 40 },
+    { x: -44, y: 34 },
+    { x: -28, y: 52 },
+    { x: 46, y: 30 },
+    { x: -38, y: -32 },
+    { x: 30, y: 48 },
+  ];
+
+  let ticking = false;
+  let manuallyPaused = false;
+  let mosaicRect = null;
+  let initialLeadRect = null;
+  let finalLeadRect = null;
+  let videoControlSize = { width: 76, height: 34 };
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function lerp(start, end, progress) {
+    return start + (end - start) * progress;
+  }
+
+  function smoothstep(start, end, progress) {
+    const value = clamp((progress - start) / (end - start), 0, 1);
+    return value * value * (3 - 2 * value);
+  }
+
+  function heroProgress(rect) {
+    const scrollableHeight = Math.max(hero.offsetHeight - window.innerHeight, 1);
+    return clamp(-rect.top / scrollableHeight, 0, 1);
+  }
+
+  function setVideoControlState(isPaused) {
+    if (!videoControl || !videoControlLabel) return;
+
+    videoControlLabel.textContent = isPaused ? "Play" : "Pause";
+    videoControl.setAttribute(
+      "aria-label",
+      isPaused ? "Play opening video" : "Pause opening video",
+    );
+  }
+
+  function pauseVideo(isManual) {
+    if (!video) return;
+    if (isManual) manuallyPaused = true;
+    video.pause();
+    setVideoControlState(true);
+  }
+
+  function playVideo() {
+    if (!video || manuallyPaused || prefersReducedMotion.matches) return;
+
+    const playRequest = video.play();
+    setVideoControlState(false);
+
+    if (playRequest && typeof playRequest.catch === "function") {
+      playRequest.catch(() => setVideoControlState(true));
+    }
+  }
+
+  function updateVideoPlayback(rect) {
+    if (!video) return;
+
+    if (prefersReducedMotion.matches) {
+      video.removeAttribute("autoplay");
+      pauseVideo(false);
       return;
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        .slice(0, 1)
-        .forEach((entry) => setActiveStep(entry.target));
-    }, {
-      root: null,
-      rootMargin: "-38% 0px -38% 0px",
-      threshold: [0.2, 0.45, 0.7],
+    video.setAttribute("autoplay", "");
+
+    const isNearHero = rect.bottom > -window.innerHeight * 0.4
+      && rect.top < window.innerHeight * 1.4;
+
+    if (!isNearHero) {
+      pauseVideo(false);
+      return;
+    }
+
+    if (!manuallyPaused && video.paused) {
+      playVideo();
+    }
+  }
+
+  function setTileRect(tile, rect) {
+    tile.style.left = `${rect.left}px`;
+    tile.style.top = `${rect.top}px`;
+    tile.style.width = `${rect.width}px`;
+    tile.style.height = `${rect.height}px`;
+  }
+
+  function clearMeasuredStyles() {
+    tiles.forEach((tile) => {
+      tile.style.removeProperty("transform");
     });
 
-    steps.forEach((step) => observer.observe(step));
-    setActiveStep(steps[0]);
-  });
+    if (!leadTile) return;
+    leadTile.style.removeProperty("left");
+    leadTile.style.removeProperty("top");
+    leadTile.style.removeProperty("width");
+    leadTile.style.removeProperty("height");
+  }
+
+  function measureGeometry() {
+    if (!mosaic || !leadTile) return;
+
+    clearMeasuredStyles();
+
+    mosaicRect = mosaic.getBoundingClientRect();
+    const leadRect = leadTile.getBoundingClientRect();
+    const videoControlRect = videoControl ? videoControl.getBoundingClientRect() : null;
+
+    initialLeadRect = {
+      left: -mosaicRect.left,
+      top: -mosaicRect.top,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+
+    finalLeadRect = {
+      left: leadRect.left - mosaicRect.left,
+      top: leadRect.top - mosaicRect.top,
+      width: leadRect.width,
+      height: leadRect.height,
+    };
+
+    if (videoControlRect) {
+      videoControlSize = {
+        width: videoControlRect.width || 76,
+        height: videoControlRect.height || 34,
+      };
+    }
+  }
+
+  function render() {
+    ticking = false;
+
+    if (prefersReducedMotion.matches) {
+      clearMeasuredStyles();
+      if (videoControl) videoControl.hidden = true;
+      updateVideoPlayback(hero.getBoundingClientRect());
+      return;
+    }
+
+    if (!initialLeadRect || !finalLeadRect || !mosaicRect) {
+      measureGeometry();
+    }
+
+    const heroRect = hero.getBoundingClientRect();
+    const progress = heroProgress(heroRect);
+    const leadProgress = smoothstep(0.18, 0.78, progress);
+
+    const leadRect = {
+      left: lerp(initialLeadRect.left, finalLeadRect.left, leadProgress),
+      top: lerp(initialLeadRect.top, finalLeadRect.top, leadProgress),
+      width: lerp(initialLeadRect.width, finalLeadRect.width, leadProgress),
+      height: lerp(initialLeadRect.height, finalLeadRect.height, leadProgress),
+    };
+
+    if (leadTile) {
+      setTileRect(leadTile, leadRect);
+      leadTile.style.opacity = "1";
+    }
+
+    revealTiles.forEach((tile, index) => {
+      const start = 0.28 + index * 0.06;
+      const tileProgress = smoothstep(start, Math.min(start + 0.22, 0.82), progress);
+      const offset = entranceOffsets[index] || { x: 36, y: 36 };
+      const scale = lerp(0.94, 1, tileProgress);
+
+      tile.style.opacity = `${tileProgress}`;
+      tile.style.transform = `translate(${lerp(offset.x, 0, tileProgress)}px, ${lerp(offset.y, 0, tileProgress)}px) scale(${scale})`;
+    });
+
+    if (videoControl) {
+      const controlLeft = clamp(
+        mosaicRect.left + leadRect.left + leadRect.width - videoControlSize.width - 14,
+        12,
+        window.innerWidth - videoControlSize.width - 12,
+      );
+      const controlTop = clamp(
+        mosaicRect.top + leadRect.top + leadRect.height - videoControlSize.height - 14,
+        12,
+        window.innerHeight - videoControlSize.height - 12,
+      );
+
+      videoControl.hidden = false;
+      videoControl.style.opacity = `${0.72 + leadProgress * 0.28}`;
+      videoControl.style.transform = `translate(${controlLeft}px, ${controlTop}px)`;
+    }
+
+    updateVideoPlayback(heroRect);
+  }
+
+  function requestRender() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(render);
+  }
+
+  function handleResize() {
+    measureGeometry();
+    requestRender();
+  }
+
+  if (videoControl && video) {
+    videoControl.addEventListener("click", () => {
+      if (video.paused) {
+        manuallyPaused = false;
+        playVideo();
+      } else {
+        pauseVideo(true);
+      }
+    });
+  }
+
+  if (typeof prefersReducedMotion.addEventListener === "function") {
+    prefersReducedMotion.addEventListener("change", handleResize);
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(handleResize).catch(() => {});
+  }
+
+  measureGeometry();
+  render();
+
+  window.addEventListener("scroll", requestRender, { passive: true });
+  window.addEventListener("resize", handleResize);
 })();
