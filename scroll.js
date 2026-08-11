@@ -833,30 +833,81 @@
   });
 })();
 
-// Viewport media reveals
+// Rare earths video overlay
 (function () {
-  const media = Array.from(document.querySelectorAll("[data-media-reveal]"));
-  if (!media.length) return;
+  const hero = document.querySelector("[data-rare-earths-video-hero]");
+  if (!hero) return;
 
+  const overlay = hero.querySelector("[data-rare-earths-video-overlay]");
+  const video = hero.querySelector("[data-rare-earths-header-video]");
+  if (!overlay) return;
+
+  let ticking = false;
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  if (prefersReducedMotion.matches || !("IntersectionObserver" in window)) {
-    media.forEach((item) => item.classList.add("is-visible"));
-    return;
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-visible");
-      observer.unobserve(entry.target);
-    });
-  }, {
-    threshold: 0.18,
-    rootMargin: "0px 0px -8%",
-  });
+  function smoothstep(start, end, value) {
+    const progress = clamp((value - start) / (end - start), 0, 1);
+    return progress * progress * (3 - (2 * progress));
+  }
 
-  media.forEach((item) => observer.observe(item));
+  function updateVideo(rect) {
+    if (!video) return;
+
+    const shouldPlay = !prefersReducedMotion.matches
+      && rect.bottom > 0
+      && rect.top < window.innerHeight;
+
+    if (!shouldPlay) {
+      video.pause();
+      return;
+    }
+
+    if (video.paused) {
+      const playRequest = video.play();
+      if (playRequest && typeof playRequest.catch === "function") {
+        playRequest.catch(() => {});
+      }
+    }
+  }
+
+  function render() {
+    ticking = false;
+
+    if (prefersReducedMotion.matches) {
+      overlay.style.setProperty("--rare-overlay-opacity", "1");
+      overlay.style.setProperty("--rare-overlay-scale", "1");
+      updateVideo(hero.getBoundingClientRect());
+      return;
+    }
+
+    const rect = hero.getBoundingClientRect();
+    const scrollableHeight = Math.max(hero.offsetHeight - window.innerHeight, 1);
+    const progress = clamp(-rect.top / scrollableHeight, 0, 1);
+    const scaleProgress = smoothstep(0.06, 0.88, progress);
+    const opacityProgress = smoothstep(0.04, 0.38, progress);
+
+    overlay.style.setProperty("--rare-overlay-opacity", opacityProgress.toFixed(3));
+    overlay.style.setProperty("--rare-overlay-scale", (0.38 + (0.62 * scaleProgress)).toFixed(3));
+    updateVideo(rect);
+  }
+
+  function requestRender() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(render);
+  }
+
+  if (typeof prefersReducedMotion.addEventListener === "function") {
+    prefersReducedMotion.addEventListener("change", requestRender);
+  }
+
+  window.addEventListener("scroll", requestRender, { passive: true });
+  window.addEventListener("resize", requestRender);
+  requestRender();
 })();
 
 // Index hero / scroll mosaic

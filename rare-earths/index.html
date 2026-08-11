@@ -14,26 +14,35 @@
 </head>
 
 <body class="commodity-page rare-earths-page">
-  <header class="commodity-video-hero rare-earths-video-hero" aria-label="Motion video header for Rare earths">
-    <div class="commodity-video-hero__media rare-earths-video-hero__media">
-      <video
-        class="commodity-video-hero__video"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-      >
-        <source src="../media/re_header.mp4" type="video/mp4" />
-      </video>
-    </div>
-    <div class="rare-earths-video-hero__subheader" data-media-reveal aria-hidden="true">
-      <img
-        src="../media/re_sub_header.jpg"
-        alt=""
-        decoding="async"
-        fetchpriority="high"
-      />
+  <header
+    class="commodity-video-hero rare-earths-video-hero"
+    data-rare-earths-video-hero
+    aria-label="Motion video header for Rare earths"
+  >
+    <div class="rare-earths-video-hero__stage">
+      <div class="commodity-video-hero__media rare-earths-video-hero__media">
+        <video
+          class="commodity-video-hero__video"
+          data-rare-earths-header-video
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+        >
+          <source src="../media/re_header.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="rare-earths-video-hero__overlay" data-rare-earths-video-overlay aria-hidden="true">
+        <img
+          src="../media/re_sub_header.jpg"
+          alt=""
+          width="2016"
+          height="1344"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </div>
     </div>
   </header>
 
