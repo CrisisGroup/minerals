@@ -12,6 +12,9 @@
   --wide-width: 1180px;
   --gutter: clamp(1rem, 4vw, 2rem);
   --section-space: clamp(4rem, 9vw, 8rem);
+  --story-gap: clamp(3.25rem, 8vw, 6rem);
+  --story-gap-large: clamp(4rem, 10vw, 7.5rem);
+  --story-gap-compact: clamp(2rem, 5vw, 3.5rem);
   --font-serif: "PT Serif", Georgia, "Times New Roman", serif;
   --font-sans: "franklin-gothic-urw", Arial, sans-serif;
   --font-sans-cond: "franklin-gothic-urw-cond", "franklin-gothic-urw", Arial, sans-serif;
@@ -32,6 +35,30 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-serif);
+}
+
+.index-page {
+  background-color: #0A0B09;
+  background-image: linear-gradient(180deg, #1A1C16 0%, #101210 52%, #0A0B09 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100% 100svh;
+}
+
+.index-page .index-hero,
+.index-page .index-hero__sequence,
+.index-page .index-hero__sticky,
+.index-page .credits {
+  background: transparent;
+}
+
+.index-page .index-hero__sticky::after {
+  background: linear-gradient(180deg, rgba(26, 28, 22, 0), rgba(16, 18, 16, 0.72) 56%, #0A0B09 100%);
+}
+
+.commodity-page {
+  --paper: #010B09;
+  background: #010B09;
 }
 
 h1,
@@ -72,8 +99,8 @@ h2 {
 h2.graph-hed {
   font-family: var(--font-sans);
   font-weight: 500;
+  text-transform: none !important;
   letter-spacing: 0;
-  text-transform: none;
 }
 
 h3 {
@@ -119,8 +146,8 @@ button {
 
 .index-hero__sequence {
   position: relative;
-  height: 280vh;
-  min-height: 180rem;
+  height: 380vh;
+  min-height: 0;
   background: var(--paper);
 }
 
@@ -236,12 +263,13 @@ button {
 .index-hero__mosaic {
   position: absolute;
   z-index: 1;
-  top: 50%;
+  top: 0;
   left: 50%;
   width: 100vw;
-  height: min(88svh, 820px);
+  height: 190svh;
   pointer-events: none;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, var(--index-mosaic-shift, 0px));
+  will-change: transform;
 }
 
 .index-hero__tile {
@@ -255,60 +283,60 @@ button {
 
 .index-hero__tile--lead {
   top: 2%;
-  left: 3%;
-  width: 34%;
-  height: 28%;
+  left: 2%;
+  width: 26%;
+  height: 24%;
   opacity: 1;
   will-change: top, left, width, height;
 }
 
 .index-hero__tile--factory {
-  top: 7%;
-  left: 41%;
-  width: 20%;
-  height: 26%;
+  top: 8%;
+  left: 36%;
+  width: 24%;
+  height: 23%;
 }
 
 .index-hero__tile--gold-2025 {
   top: 3%;
-  left: 66%;
+  left: 68%;
   width: 29%;
-  height: 18%;
+  height: 23%;
 }
 
 .index-hero__tile--cranes {
-  top: 39%;
-  left: 0;
-  width: 27%;
-  height: 26%;
+  top: 35%;
+  left: 2%;
+  width: 28%;
+  height: 23%;
 }
 
 .index-hero__tile--gold-2018 {
-  top: 35%;
-  left: 31%;
-  width: 18%;
-  height: 42%;
+  top: 39%;
+  left: 36%;
+  width: 24%;
+  height: 23%;
 }
 
 .index-hero__tile--military {
-  top: 28%;
-  left: 53%;
-  width: 24%;
-  height: 24%;
+  top: 34%;
+  left: 68%;
+  width: 29%;
+  height: 23%;
 }
 
 .index-hero__tile--gold-2023 {
-  top: 28%;
-  left: 81%;
-  width: 19%;
-  height: 34%;
+  top: 69%;
+  left: 16%;
+  width: 28%;
+  height: 24%;
 }
 
 .index-hero__tile--tin-still {
-  top: 70%;
-  left: 63%;
+  top: 65%;
+  left: 52%;
   width: 31%;
-  height: 22%;
+  height: 24%;
 }
 
 .index-hero__tile--gold-2018 .index-hero__media,
@@ -500,7 +528,7 @@ button {
 .tin-video-hero {
   width: 100%;
   background: var(--paper);
-  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  margin-bottom: var(--story-gap-compact);
 }
 
 .tin-video-hero__media {
@@ -535,7 +563,7 @@ button {
 }
 
 .tin-story__block--text {
-  margin-top: clamp(6rem, 14vw, 12rem);
+  margin-top: var(--story-gap);
 }
 
 .tin-story__copy {
@@ -548,7 +576,7 @@ button {
 
 .tin-visual {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(7rem, 16vw, 13rem) auto 0;
+  margin: var(--story-gap) auto 0;
   text-align: center;
 }
 
@@ -575,7 +603,7 @@ button {
 
 .tin-visual--large {
   width: min(680px, calc(100vw - (2 * var(--gutter))));
-  margin-top: clamp(7rem, 18vw, 16rem);
+  margin-top: var(--story-gap-large);
 }
 
 .tin-visual--large .tin-visual__frame {
@@ -583,12 +611,12 @@ button {
 }
 
 .tin-visual--closing {
-  margin-top: clamp(8rem, 18vw, 15rem);
+  margin-top: var(--story-gap-large);
 }
 
 .tin-visual figcaption {
   max-width: 22rem;
-  margin: 1rem auto 0;
+  margin: 0.75rem auto 0;
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
@@ -685,7 +713,7 @@ button {
 }
 
 .gold-story__block--text {
-  margin-top: clamp(6rem, 14vw, 12rem);
+  margin-top: var(--story-gap);
 }
 
 .gold-story__copy {
@@ -694,7 +722,7 @@ button {
 
 .gold-callout {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(7rem, 16vw, 13rem) auto 0;
+  margin: var(--story-gap) auto 0;
   padding: clamp(1.2rem, 3vw, 1.6rem) clamp(1.35rem, 3.5vw, 2rem);
   border: 1px solid rgba(199, 120, 54, 0.42);
   background: rgba(65, 35, 18, 0.62);
@@ -711,7 +739,7 @@ button {
 
 .gold-visual {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(7rem, 16vw, 13rem) auto 0;
+  margin: var(--story-gap) auto 0;
   text-align: center;
 }
 
@@ -752,7 +780,7 @@ button {
 
 .gold-visual figcaption {
   max-width: 22rem;
-  margin: 1rem auto 0;
+  margin: 0.75rem auto 0;
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
@@ -765,7 +793,7 @@ button {
   justify-content: center;
   gap: clamp(1.5rem, 5vw, 3.5rem);
   width: min(780px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(7rem, 16vw, 13rem) auto 0;
+  margin: var(--story-gap) auto 0;
 }
 
 .jade-page {
@@ -797,7 +825,7 @@ button {
 
 .jade-story blockquote {
   max-width: 560px;
-  margin: clamp(2rem, 5vw, 3rem) 0 0;
+  margin: var(--story-gap-compact) 0 0;
   padding: 0;
   border: 0;
 }
@@ -812,7 +840,7 @@ button {
 
 .jade-visual {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(7rem, 16vw, 13rem) auto 0;
+  margin: var(--story-gap) auto 0;
   text-align: center;
 }
 
@@ -872,7 +900,7 @@ button {
 
 .jade-visual figcaption {
   max-width: 22rem;
-  margin: 1rem auto 0;
+  margin: 0.75rem auto 0;
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
@@ -883,14 +911,14 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 260px));
   justify-content: center;
-  gap: clamp(2rem, 8vw, 5rem);
+  gap: var(--story-gap-compact);
   width: min(680px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(7rem, 16vw, 13rem) auto 0;
+  margin: var(--story-gap) auto 0;
 }
 
 .commodity-links--story-end {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(6rem, 14vw, 12rem) auto 0;
+  margin: var(--story-gap) auto 0;
 }
 
 .rare-earths-page {
@@ -899,7 +927,7 @@ button {
 
 .rare-earths-hero {
   background: var(--paper);
-  padding-bottom: clamp(3rem, 7vw, 5rem);
+  padding-bottom: var(--story-gap-compact);
 }
 
 .rare-earths-mosaic {
@@ -987,7 +1015,7 @@ button {
 }
 
 .rare-earths-story__block--text {
-  margin-top: clamp(6rem, 14vw, 12rem);
+  margin-top: var(--story-gap);
 }
 
 .rare-earths-story__copy {
@@ -997,7 +1025,7 @@ button {
 .story-mapbox-scrolly {
   --story-map-step-count: 4;
   position: relative;
-  margin: clamp(8rem, 18vw, 15rem) auto 0;
+  margin: var(--story-gap-large) auto 0;
   min-height: calc((var(--story-map-step-count) + 1) * 100vh);
   background: #000000;
 }
@@ -1090,17 +1118,17 @@ button {
 }
 
 .story-mapbox-scrolly__step {
-  width: min(520px, calc(100vw - (2 * var(--gutter))));
+  width: min(var(--copy-width), calc(100vw - (2 * var(--gutter))));
   padding: clamp(1.2rem, 3vw, 1.7rem) clamp(1.35rem, 3.5vw, 2.2rem);
   border: 1px solid rgba(84, 187, 183, 0.4);
-  background: rgba(20, 55, 58, 0.92);
+  background: rgba(20, 55, 58, 0.95);
   opacity: 0.72;
   transition: opacity 220ms ease, transform 220ms ease;
 }
 
 .gold-mapbox-scrolly .story-mapbox-scrolly__step {
   border-color: rgba(199, 120, 54, 0.42);
-  background: rgba(65, 35, 18, 0.82);
+  background: rgba(65, 35, 18, 0.88);
 }
 
 .story-mapbox-scrolly__step.is-active {
@@ -1123,7 +1151,7 @@ button {
 
 .rare-earths-visual {
   width: min(420px, calc(100vw - (2 * var(--gutter))));
-  margin: clamp(7rem, 16vw, 13rem) auto 0;
+  margin: var(--story-gap) auto 0;
   text-align: center;
 }
 
@@ -1153,12 +1181,12 @@ button {
 
 .rare-earths-story__copy .rare-earths-visual--image {
   width: 100%;
-  margin: clamp(2.5rem, 7vw, 4.5rem) 0;
+  margin: var(--story-gap-compact) 0;
 }
 
 .rare-earths-visual figcaption {
   max-width: 22rem;
-  margin: 1rem auto 0;
+  margin: 0.75rem auto 0;
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.35;
@@ -1623,7 +1651,7 @@ figcaption {
 
 @media (max-width: 700px) {
   .index-hero__sequence {
-    height: 220vh;
+    height: 340vh;
     min-height: 0;
   }
 
@@ -1664,65 +1692,65 @@ figcaption {
   }
 
   .index-hero__mosaic {
-    top: 50%;
+    top: 0;
     width: 100vw;
-    height: min(78svh, 640px);
+    height: 200svh;
   }
 
   .index-hero__tile--lead {
-    top: 0;
-    left: -8%;
-    width: 76%;
-    height: 25%;
+    top: 2%;
+    left: 3%;
+    width: 44%;
+    height: 11%;
   }
 
   .index-hero__tile--factory {
     top: 5%;
-    left: 70%;
-    width: 38%;
-    height: 22%;
+    left: 53%;
+    width: 44%;
+    height: 11%;
   }
 
   .index-hero__tile--gold-2025 {
-    top: 29%;
-    left: 8%;
+    top: 28%;
+    left: 9%;
     width: 40%;
-    height: 25%;
+    height: 11%;
   }
 
   .index-hero__tile--cranes {
-    top: 34%;
-    left: 51%;
-    width: 49%;
-    height: 22%;
+    top: 27%;
+    left: 55%;
+    width: 43%;
+    height: 11%;
   }
 
   .index-hero__tile--gold-2018 {
-    top: 59%;
-    left: -5%;
-    width: 36%;
-    height: 26%;
+    top: 54%;
+    left: 1%;
+    width: 43%;
+    height: 11%;
   }
 
   .index-hero__tile--military {
-    top: 57%;
-    left: 34%;
-    width: 35%;
-    height: 19%;
+    top: 53%;
+    left: 49%;
+    width: 45%;
+    height: 11%;
   }
 
   .index-hero__tile--gold-2023 {
-    top: 61%;
-    left: 73%;
-    width: 32%;
-    height: 23%;
+    top: 79%;
+    left: 10%;
+    width: 42%;
+    height: 11%;
   }
 
   .index-hero__tile--tin-still {
-    top: 82%;
-    left: 19%;
-    width: 61%;
-    height: 17%;
+    top: 77%;
+    left: 58%;
+    width: 40%;
+    height: 11%;
   }
 
   .index-hero__video-control {
@@ -1793,7 +1821,7 @@ figcaption {
 
   .gold-visual-row {
     grid-template-columns: 1fr;
-    gap: clamp(4rem, 14vw, 7rem);
+    gap: var(--story-gap-compact);
   }
 
   .gold-visual--tiny {
@@ -1802,7 +1830,7 @@ figcaption {
 
   .jade-visual-grid {
     grid-template-columns: 1fr;
-    gap: clamp(4rem, 14vw, 7rem);
+    gap: var(--story-gap-compact);
   }
 
   .jade-visual--tiny {

@@ -189,6 +189,24 @@
     return center.length === 2 && center.every(Number.isFinite) ? center : fallback;
   }
 
+  function parseAdditionalLabels(value) {
+    if (!value) return [];
+
+    try {
+      const labels = JSON.parse(value);
+      if (!Array.isArray(labels)) return [];
+
+      return labels.filter((label) => (
+        typeof label?.text === "string"
+        && Array.isArray(label.center)
+        && label.center.length === 2
+        && label.center.every(Number.isFinite)
+      ));
+    } catch {
+      return [];
+    }
+  }
+
   function cameraForStep(step) {
     return {
       center: parseCenter(step.dataset.center),
@@ -258,6 +276,9 @@
     const contrasts = splitDatasetList(step.dataset.tilesetContrasts || step.dataset.tilesetContrast);
     const brightnessMins = splitDatasetList(step.dataset.tilesetBrightnessMins || step.dataset.tilesetBrightnessMin);
     const brightnessMaxes = splitDatasetList(step.dataset.tilesetBrightnessMaxes || step.dataset.tilesetBrightnessMax);
+    const lineWidths = splitDatasetList(step.dataset.tilesetLineWidths || step.dataset.tilesetLineWidth);
+    const adminLevels = splitDatasetList(step.dataset.tilesetAdminLevels || step.dataset.tilesetAdminLevel);
+    const adminCountries = splitDatasetList(step.dataset.tilesetAdminCountries || step.dataset.tilesetAdminCountry);
 
     return tilesets.map((tileset, tilesetIndex) => {
       const layerType = layerTypes[tilesetIndex] || layerTypes[0] || "fill";
@@ -268,8 +289,22 @@
       const contrast = Number.parseFloat(contrasts[tilesetIndex] || contrasts[0]);
       const brightnessMin = Number.parseFloat(brightnessMins[tilesetIndex] || brightnessMins[0]);
       const brightnessMax = Number.parseFloat(brightnessMaxes[tilesetIndex] || brightnessMaxes[0]);
+      const lineWidth = Number.parseFloat(lineWidths[tilesetIndex] || lineWidths[0]);
+      const adminLevel = Number.parseFloat(adminLevels[tilesetIndex] || adminLevels[0]);
       const sourceId = `story-step-source-${idSafe(tileset)}`;
       const layerId = `story-step-layer-${index}-${tilesetIndex}-${idSafe(tileset)}`;
+      const hasMapLabel = step.dataset.mapLabel
+        && (!step.dataset.mapLabelTileset || step.dataset.mapLabelTileset === tileset);
+      const labelMode = hasMapLabel ? step.dataset.mapLabelMode || "centroid" : null;
+      const labelCenter = hasMapLabel && step.dataset.mapLabelCenter
+        ? parseCenter(step.dataset.mapLabelCenter)
+        : null;
+      const fixedLabels = labelMode === "fixed"
+        ? [
+            ...(labelCenter ? [{ text: step.dataset.mapLabel, center: labelCenter }] : []),
+            ...parseAdditionalLabels(step.dataset.mapLabelAdditions),
+          ]
+        : [];
 
       return {
         tileset,
@@ -285,6 +320,15 @@
         contrast: Number.isFinite(contrast) ? contrast : null,
         brightnessMin: Number.isFinite(brightnessMin) ? brightnessMin : null,
         brightnessMax: Number.isFinite(brightnessMax) ? brightnessMax : null,
+        lineWidth: Number.isFinite(lineWidth) ? lineWidth : null,
+        adminLevel: Number.isFinite(adminLevel) ? adminLevel : null,
+        adminCountry: adminCountries[tilesetIndex] || adminCountries[0] || null,
+        labelText: hasMapLabel ? step.dataset.mapLabel : null,
+        labelMode,
+        labelCenter,
+        fixedLabels,
+        labelLayerId: `${layerId}-label`,
+        labelSourceId: `${layerId}-label-source`,
       };
     });
   }
@@ -389,7 +433,7 @@
     }
 
     if (config.layerType === "line") {
-      paint["line-width"] = 4;
+      paint["line-width"] = config.lineWidth ?? 4;
     }
 
     if (config.layerType === "raster") {
@@ -455,6 +499,33 @@
           layer["source-layer"] = config.sourceLayer;
         }
 
+        if (config.adminLevel !== null || config.adminCountry) {
+          const filter = [
+            "all",
+          ];
+
+          if (config.adminLevel !== null) {
+            filter.push(["==", ["to-number", ["get", "admin_level"], 0], config.adminLevel]);
+          }
+
+          if (config.adminCountry) {
+            filter.push([
+              "in",
+              config.adminCountry,
+              ["coalesce", ["get", "iso_3166_1"], ""],
+            ]);
+          }
+
+          layer.filter = filter;
+        }
+
+        if (config.layerType === "line") {
+          layer.layout = {
+            "line-cap": "round",
+            "line-join": "round",
+          };
+        }
+
         map.addLayer(layer);
 
         map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
@@ -493,6 +564,146 @@
     });
   }
 
+  function addStepLabels(map, steps) {
+    steps.forEach((step, index) => {
+      tilesetConfigsForStep(step, index).forEach((config) => {
+        if (
+          !config.labelText
+          || (config.layerType === "raster" && config.labelMode !== "fixed")
+          || (config.labelMode === "fixed" && !config.fixedLabels.length)
+          || map.getLayer(config.labelLayerId)
+        ) return;
+
+        if (config.labelMode !== "feature" && !map.getSource(config.labelSourceId)) {
+          map.addSource(config.labelSourceId, {
+            type: "geojson",
+            data: config.labelMode === "fixed"
+              ? {
+                  type: "FeatureCollection",
+                  features: config.fixedLabels.map((label) => ({
+                    type: "Feature",
+                    properties: { label: label.text },
+                    geometry: {
+                      type: "Point",
+                      coordinates: label.center,
+                    },
+                  })),
+                }
+              : {
+                  type: "FeatureCollection",
+                  features: [],
+                },
+          });
+        }
+
+        const labelLayer = {
+          id: config.labelLayerId,
+          type: "symbol",
+          source: config.labelMode === "feature" ? config.sourceId : config.labelSourceId,
+          layout: {
+            "text-field": config.labelMode === "fixed" ? ["get", "label"] : config.labelText,
+            "text-size": config.labelMode === "feature" ? 15 : 18,
+            "text-anchor": config.labelMode === "feature" ? "left" : "center",
+            "text-offset": config.labelMode === "feature" ? [0.8, 0] : [0, 0],
+            "text-allow-overlap": config.labelMode !== "feature",
+            "text-ignore-placement": config.labelMode !== "feature",
+          },
+          paint: {
+            "text-color": "#fff3bf",
+            "text-halo-color": "rgba(1, 11, 9, 0.92)",
+            "text-halo-width": 1.5,
+            "text-halo-blur": 0.5,
+            "text-opacity": 0,
+          },
+        };
+
+        if (config.labelMode === "feature") {
+          labelLayer["source-layer"] = config.sourceLayer;
+        }
+
+        map.addLayer(labelLayer);
+
+        map.setPaintProperty(config.labelLayerId, "text-opacity-transition", {
+          duration: 700,
+          delay: 0,
+        });
+      });
+    });
+  }
+
+  function polygonCentroid(features) {
+    let weightedLng = 0;
+    let weightedLat = 0;
+    let totalWeight = 0;
+
+    function addPolygon(rings) {
+      rings.forEach((ring, ringIndex) => {
+        if (ring.length < 3) return;
+
+        let crossSum = 0;
+        let lngSum = 0;
+        let latSum = 0;
+
+        for (let pointIndex = 0; pointIndex < ring.length; pointIndex += 1) {
+          const current = ring[pointIndex];
+          const next = ring[(pointIndex + 1) % ring.length];
+          const cross = (current[0] * next[1]) - (next[0] * current[1]);
+          crossSum += cross;
+          lngSum += (current[0] + next[0]) * cross;
+          latSum += (current[1] + next[1]) * cross;
+        }
+
+        if (Math.abs(crossSum) < Number.EPSILON) return;
+
+        const area = Math.abs(crossSum / 2);
+        const weight = ringIndex === 0 ? area : -area;
+        weightedLng += (lngSum / (3 * crossSum)) * weight;
+        weightedLat += (latSum / (3 * crossSum)) * weight;
+        totalWeight += weight;
+      });
+    }
+
+    features.forEach((feature) => {
+      if (!feature.geometry) return;
+
+      if (feature.geometry.type === "Polygon") {
+        addPolygon(feature.geometry.coordinates);
+      } else if (feature.geometry.type === "MultiPolygon") {
+        feature.geometry.coordinates.forEach(addPolygon);
+      }
+    });
+
+    if (totalWeight <= 0) return null;
+    return [weightedLng / totalWeight, weightedLat / totalWeight];
+  }
+
+  function positionStepLabels(map, steps, positionedLabels) {
+    steps.forEach((step, index) => {
+      tilesetConfigsForStep(step, index).forEach((config) => {
+        if (config.labelMode !== "centroid" || positionedLabels.has(config.labelSourceId)) return;
+
+        const labelSource = map.getSource(config.labelSourceId);
+        if (!labelSource || !map.getSource(config.sourceId)) return;
+
+        const features = map.querySourceFeatures(config.sourceId, {
+          sourceLayer: config.sourceLayer,
+        });
+        const center = polygonCentroid(features);
+        if (!center) return;
+
+        labelSource.setData({
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "Point",
+            coordinates: center,
+          },
+        });
+        positionedLabels.add(config.labelSourceId);
+      });
+    });
+  }
+
   function updateStepTilesets(map, steps, activeStep) {
     steps.forEach((step, index) => {
       const placeholderConfig = placeholderConfigForStep(step, index);
@@ -518,6 +729,14 @@
             step === activeStep ? activeOpacity : 0,
           );
         }
+
+        if (config.labelText && map.getLayer(config.labelLayerId)) {
+          map.setPaintProperty(
+            config.labelLayerId,
+            "text-opacity",
+            step === activeStep ? 1 : 0,
+          );
+        }
       });
     });
   }
@@ -536,6 +755,7 @@
     let mapReady = false;
     let ticking = false;
     let activeStep = null;
+    const positionedLabels = new Set();
 
     function setActiveStep(step, options = {}) {
       if (!step) return;
@@ -599,7 +819,12 @@
         mapContainer.classList.add("is-ready");
         addStepTilesets(map, steps);
         addStepPlaceholders(map, steps);
+        addStepLabels(map, steps);
         updateActiveStepFromViewport({ forceCamera: true, jump: true });
+      });
+
+      map.on("idle", () => {
+        positionStepLabels(map, steps, positionedLabels);
       });
     }
 
@@ -684,7 +909,7 @@
     }
   }
 
-  function updateVideoPlayback(rect) {
+  function updateVideoPlayback(rect, leadIsVisible = true) {
     if (!video) return;
 
     if (prefersReducedMotion.matches) {
@@ -695,7 +920,8 @@
 
     video.setAttribute("autoplay", "");
 
-    const isNearHero = rect.bottom > -window.innerHeight * 0.4
+    const isNearHero = leadIsVisible
+      && rect.bottom > -window.innerHeight * 0.4
       && rect.top < window.innerHeight * 1.4;
 
     if (!isNearHero) {
@@ -716,6 +942,10 @@
   }
 
   function clearMeasuredStyles() {
+    if (mosaic) {
+      mosaic.style.removeProperty("--index-mosaic-shift");
+    }
+
     tiles.forEach((tile) => {
       tile.style.removeProperty("transform");
     });
@@ -774,7 +1004,11 @@
 
     const heroRect = hero.getBoundingClientRect();
     const progress = heroProgress(heroRect);
-    const leadProgress = smoothstep(0.18, 0.78, progress);
+    const leadProgress = smoothstep(0.1, 0.42, progress);
+    const trackProgress = smoothstep(0.3, 0.98, progress);
+    const mosaicShift = -Math.max(mosaicRect.height - window.innerHeight, 0) * trackProgress;
+
+    mosaic.style.setProperty("--index-mosaic-shift", `${mosaicShift}px`);
 
     const leadRect = {
       left: lerp(initialLeadRect.left, finalLeadRect.left, leadProgress),
@@ -782,6 +1016,10 @@
       width: lerp(initialLeadRect.width, finalLeadRect.width, leadProgress),
       height: lerp(initialLeadRect.height, finalLeadRect.height, leadProgress),
     };
+    const leadViewportLeft = mosaicRect.left + leadRect.left;
+    const leadViewportTop = mosaicRect.top + mosaicShift + leadRect.top;
+    const leadIsVisible = leadViewportTop + leadRect.height > 0
+      && leadViewportTop < window.innerHeight;
 
     if (leadTile) {
       setTileRect(leadTile, leadRect);
@@ -789,8 +1027,8 @@
     }
 
     revealTiles.forEach((tile, index) => {
-      const start = 0.28 + index * 0.06;
-      const tileProgress = smoothstep(start, Math.min(start + 0.22, 0.82), progress);
+      const start = 0.2 + index * 0.09;
+      const tileProgress = smoothstep(start, Math.min(start + 0.2, 0.94), progress);
       const offset = entranceOffsets[index] || { x: 36, y: 36 };
       const scale = lerp(0.94, 1, tileProgress);
 
@@ -799,23 +1037,27 @@
     });
 
     if (videoControl) {
-      const controlLeft = clamp(
-        mosaicRect.left + leadRect.left + leadRect.width - videoControlSize.width - 14,
-        12,
-        window.innerWidth - videoControlSize.width - 12,
-      );
-      const controlTop = clamp(
-        mosaicRect.top + leadRect.top + leadRect.height - videoControlSize.height - 14,
-        12,
-        window.innerHeight - videoControlSize.height - 12,
-      );
+      if (leadIsVisible) {
+        const controlLeft = clamp(
+          leadViewportLeft + leadRect.width - videoControlSize.width - 14,
+          12,
+          window.innerWidth - videoControlSize.width - 12,
+        );
+        const controlTop = clamp(
+          leadViewportTop + leadRect.height - videoControlSize.height - 14,
+          12,
+          window.innerHeight - videoControlSize.height - 12,
+        );
 
-      videoControl.hidden = false;
-      videoControl.style.opacity = `${0.72 + leadProgress * 0.28}`;
-      videoControl.style.transform = `translate(${controlLeft}px, ${controlTop}px)`;
+        videoControl.hidden = false;
+        videoControl.style.opacity = `${0.72 + leadProgress * 0.28}`;
+        videoControl.style.transform = `translate(${controlLeft}px, ${controlTop}px)`;
+      } else {
+        videoControl.hidden = true;
+      }
     }
 
-    updateVideoPlayback(heroRect);
+    updateVideoPlayback(heroRect, leadIsVisible);
   }
 
   function requestRender() {
