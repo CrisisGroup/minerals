@@ -841,8 +841,6 @@
   const mosaic = hero.querySelector("[data-index-hero-mosaic]");
   const leadTile = hero.querySelector("[data-index-hero-lead]");
   const video = hero.querySelector("[data-index-hero-video]");
-  const videoControl = hero.querySelector("[data-index-hero-video-control]");
-  const videoControlLabel = hero.querySelector("[data-index-hero-video-control-label]");
   const tiles = Array.from(hero.querySelectorAll("[data-index-hero-tile]"));
   const revealTiles = tiles.filter((tile) => tile !== leadTile);
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -854,14 +852,16 @@
     { x: 46, y: 30 },
     { x: -38, y: -32 },
     { x: 30, y: 48 },
+    { x: -34, y: 38 },
+    { x: 40, y: -28 },
+    { x: -26, y: 44 },
   ];
 
   let ticking = false;
-  let manuallyPaused = false;
   let mosaicRect = null;
   let initialLeadRect = null;
   let finalLeadRect = null;
-  let videoControlSize = { width: 76, height: 34 };
+  let mosaicTravel = 0;
 
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
@@ -881,31 +881,18 @@
     return clamp(-rect.top / scrollableHeight, 0, 1);
   }
 
-  function setVideoControlState(isPaused) {
-    if (!videoControl || !videoControlLabel) return;
-
-    videoControlLabel.textContent = isPaused ? "Play" : "Pause";
-    videoControl.setAttribute(
-      "aria-label",
-      isPaused ? "Play opening video" : "Pause opening video",
-    );
-  }
-
-  function pauseVideo(isManual) {
+  function pauseVideo() {
     if (!video) return;
-    if (isManual) manuallyPaused = true;
     video.pause();
-    setVideoControlState(true);
   }
 
   function playVideo() {
-    if (!video || manuallyPaused || prefersReducedMotion.matches) return;
+    if (!video || prefersReducedMotion.matches) return;
 
     const playRequest = video.play();
-    setVideoControlState(false);
 
     if (playRequest && typeof playRequest.catch === "function") {
-      playRequest.catch(() => setVideoControlState(true));
+      playRequest.catch(() => {});
     }
   }
 
@@ -914,7 +901,7 @@
 
     if (prefersReducedMotion.matches) {
       video.removeAttribute("autoplay");
-      pauseVideo(false);
+      pauseVideo();
       return;
     }
 
@@ -925,11 +912,11 @@
       && rect.top < window.innerHeight * 1.4;
 
     if (!isNearHero) {
-      pauseVideo(false);
+      pauseVideo();
       return;
     }
 
-    if (!manuallyPaused && video.paused) {
+    if (video.paused) {
       playVideo();
     }
   }
@@ -964,7 +951,6 @@
 
     mosaicRect = mosaic.getBoundingClientRect();
     const leadRect = leadTile.getBoundingClientRect();
-    const videoControlRect = videoControl ? videoControl.getBoundingClientRect() : null;
 
     initialLeadRect = {
       left: -mosaicRect.left,
@@ -980,12 +966,10 @@
       height: leadRect.height,
     };
 
-    if (videoControlRect) {
-      videoControlSize = {
-        width: videoControlRect.width || 76,
-        height: videoControlRect.height || 34,
-      };
-    }
+    const contentBottom = Math.max(...tiles.map((tile) => (
+      tile.getBoundingClientRect().bottom - mosaicRect.top
+    )));
+    mosaicTravel = Math.max(contentBottom - window.innerHeight + (window.innerHeight * 0.08), 0);
   }
 
   function render() {
@@ -993,7 +977,6 @@
 
     if (prefersReducedMotion.matches) {
       clearMeasuredStyles();
-      if (videoControl) videoControl.hidden = true;
       updateVideoPlayback(hero.getBoundingClientRect());
       return;
     }
@@ -1006,7 +989,7 @@
     const progress = heroProgress(heroRect);
     const leadProgress = smoothstep(0.1, 0.42, progress);
     const trackProgress = smoothstep(0.3, 0.98, progress);
-    const mosaicShift = -Math.max(mosaicRect.height - window.innerHeight, 0) * trackProgress;
+    const mosaicShift = -mosaicTravel * trackProgress;
 
     mosaic.style.setProperty("--index-mosaic-shift", `${mosaicShift}px`);
 
@@ -1016,7 +999,6 @@
       width: lerp(initialLeadRect.width, finalLeadRect.width, leadProgress),
       height: lerp(initialLeadRect.height, finalLeadRect.height, leadProgress),
     };
-    const leadViewportLeft = mosaicRect.left + leadRect.left;
     const leadViewportTop = mosaicRect.top + mosaicShift + leadRect.top;
     const leadIsVisible = leadViewportTop + leadRect.height > 0
       && leadViewportTop < window.innerHeight;
@@ -1027,35 +1009,14 @@
     }
 
     revealTiles.forEach((tile, index) => {
-      const start = 0.2 + index * 0.09;
-      const tileProgress = smoothstep(start, Math.min(start + 0.2, 0.94), progress);
+      const start = 0.18 + index * 0.065;
+      const tileProgress = smoothstep(start, Math.min(start + 0.18, 0.92), progress);
       const offset = entranceOffsets[index] || { x: 36, y: 36 };
       const scale = lerp(0.94, 1, tileProgress);
 
       tile.style.opacity = `${tileProgress}`;
       tile.style.transform = `translate(${lerp(offset.x, 0, tileProgress)}px, ${lerp(offset.y, 0, tileProgress)}px) scale(${scale})`;
     });
-
-    if (videoControl) {
-      if (leadIsVisible) {
-        const controlLeft = clamp(
-          leadViewportLeft + leadRect.width - videoControlSize.width - 14,
-          12,
-          window.innerWidth - videoControlSize.width - 12,
-        );
-        const controlTop = clamp(
-          leadViewportTop + leadRect.height - videoControlSize.height - 14,
-          12,
-          window.innerHeight - videoControlSize.height - 12,
-        );
-
-        videoControl.hidden = false;
-        videoControl.style.opacity = `${0.72 + leadProgress * 0.28}`;
-        videoControl.style.transform = `translate(${controlLeft}px, ${controlTop}px)`;
-      } else {
-        videoControl.hidden = true;
-      }
-    }
 
     updateVideoPlayback(heroRect, leadIsVisible);
   }
@@ -1069,17 +1030,6 @@
   function handleResize() {
     measureGeometry();
     requestRender();
-  }
-
-  if (videoControl && video) {
-    videoControl.addEventListener("click", () => {
-      if (video.paused) {
-        manuallyPaused = false;
-        playVideo();
-      } else {
-        pauseVideo(true);
-      }
-    });
   }
 
   if (typeof prefersReducedMotion.addEventListener === "function") {
