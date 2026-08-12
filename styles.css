@@ -401,9 +401,30 @@ button {
 
 .commodity-links {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 0.75rem;
   margin: 2rem 0 0;
+}
+
+.commodity-links .commodity-link--introduction {
+  order: 1;
+}
+
+.commodity-links .commodity-link--tin {
+  order: 2;
+}
+
+.commodity-links .commodity-link--gold {
+  order: 3;
+}
+
+.commodity-links .commodity-link--jade {
+  order: 4;
+}
+
+.commodity-links .commodity-link--rare-earths {
+  order: 5;
 }
 
 .commodity-link {
@@ -453,6 +474,18 @@ button {
 
 .commodity-link[aria-current="page"] span {
   color: var(--paper);
+}
+
+.commodity-link:hover,
+.commodity-link:focus-visible {
+  border-color: #c0c0c0;
+  background: rgba(192, 192, 192, 0.12);
+  color: #c0c0c0;
+}
+
+.commodity-link:hover span,
+.commodity-link:focus-visible span {
+  color: #c0c0c0;
 }
 
 .commodity-page {
@@ -992,8 +1025,9 @@ button {
 }
 
 .commodity-links--story-end {
-  width: min(520px, calc(100vw - (2 * var(--gutter))));
+  width: min(var(--copy-width), 100%);
   margin: var(--story-gap) auto 0;
+  padding: 0 var(--gutter);
 }
 
 .rare-earths-page {
