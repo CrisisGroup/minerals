@@ -15,6 +15,7 @@
   --story-gap: clamp(3.25rem, 8vw, 6rem);
   --story-gap-large: clamp(4rem, 10vw, 7.5rem);
   --story-gap-compact: clamp(2rem, 5vw, 3.5rem);
+  --media-gap: clamp(1.5rem, 4vw, 2.5rem);
   --font-serif: "PT Serif", Georgia, "Times New Roman", serif;
   --font-sans: "franklin-gothic-urw", Arial, sans-serif;
   --font-sans-cond: "franklin-gothic-urw-cond", "franklin-gothic-urw", Arial, sans-serif;
@@ -678,14 +679,50 @@ button {
   max-width: none;
 }
 
+.tin-pullquote {
+  margin: var(--media-gap) 0;
+  padding: 0;
+  border: 0;
+  color: #edbfdc;
+  text-align: center;
+}
+
+.tin-pullquote::before {
+  display: block;
+  height: 3.5rem;
+  margin-bottom: 0.75rem;
+  color: #cf78b4;
+  content: "\201C";
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tin-pullquote p {
+  margin: 0;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: 1.55rem;
+  font-weight: 500;
+  font-variant-caps: all-small-caps;
+  line-height: 1.55;
+  text-align: center;
+  text-wrap: balance;
+}
+
 .tin-story .commodity-intro {
   padding-bottom: 0;
 }
 
 .tin-visual {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: var(--story-gap) auto 0;
+  margin: var(--media-gap) auto 0;
   text-align: center;
+}
+
+.tin-visual + .tin-story__block--text {
+  margin-top: var(--media-gap);
 }
 
 .tin-visual__frame {
@@ -709,17 +746,71 @@ button {
   width: min(360px, calc(100vw - (2 * var(--gutter))));
 }
 
+.tin-visual--comparison {
+  width: min(var(--wide-width), calc(100vw - (2 * var(--gutter))));
+}
+
+.tin-visual__comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.tin-visual__comparison-frame {
+  position: relative;
+  min-width: 0;
+}
+
+.tin-visual__comparison-frame--wide {
+  grid-column: 1 / -1;
+}
+
+.tin-visual__year {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.3rem 0.5rem;
+  background: rgba(1, 11, 9, 0.84);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.tin-visual--comparison .media-caption {
+  width: min(var(--copy-width), 100%);
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0 var(--gutter);
+}
+
+.tin-visual--chart {
+  width: min(var(--copy-width), 100%);
+  padding: 0 var(--gutter);
+}
+
+.tin-visual--chart .graph-hed {
+  margin: 0 0 0.25rem;
+  text-align: left;
+}
+
+.graph-subhed {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.4;
+  text-align: left;
+}
+
 .tin-visual--large {
   width: min(680px, calc(100vw - (2 * var(--gutter))));
-  margin-top: var(--story-gap-large);
 }
 
 .tin-visual--large .tin-visual__frame {
   min-height: clamp(20rem, 62vw, 44rem);
-}
-
-.tin-visual--closing {
-  margin-top: var(--story-gap-large);
 }
 
 .tin-visual figcaption {
@@ -847,8 +938,12 @@ button {
 
 .gold-visual {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: var(--story-gap) auto 0;
+  margin: var(--media-gap) auto 0;
   text-align: center;
+}
+
+.gold-visual + .gold-story__block--text {
+  margin-top: var(--media-gap);
 }
 
 .gold-visual__frame {
@@ -919,7 +1014,11 @@ button {
   justify-content: center;
   gap: clamp(1.5rem, 5vw, 3.5rem);
   width: min(780px, calc(100vw - (2 * var(--gutter))));
-  margin: var(--story-gap) auto 0;
+  margin: var(--media-gap) auto 0;
+}
+
+.gold-visual-row + .gold-story__block--text {
+  margin-top: var(--media-gap);
 }
 
 .jade-page {
@@ -966,8 +1065,12 @@ button {
 
 .jade-visual {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
-  margin: var(--story-gap) auto 0;
+  margin: var(--media-gap) auto 0;
   text-align: center;
+}
+
+.jade-visual + .jade-story__block--text {
+  margin-top: var(--media-gap);
 }
 
 .jade-visual__frame {
@@ -1043,9 +1146,13 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 260px));
   justify-content: center;
-  gap: var(--story-gap-compact);
+  gap: var(--media-gap);
   width: min(680px, calc(100vw - (2 * var(--gutter))));
-  margin: var(--story-gap) auto 0;
+  margin: var(--media-gap) auto 0;
+}
+
+.jade-visual-grid + .jade-story__block--text {
+  margin-top: var(--media-gap);
 }
 
 .commodity-links--story-end {
@@ -1284,8 +1391,12 @@ button {
 
 .rare-earths-visual {
   width: min(420px, calc(100vw - (2 * var(--gutter))));
-  margin: var(--story-gap) auto 0;
+  margin: var(--media-gap) auto 0;
   text-align: center;
+}
+
+.rare-earths-visual + .rare-earths-story__block--text {
+  margin-top: var(--media-gap);
 }
 
 .rare-earths-visual__frame {
@@ -1314,7 +1425,7 @@ button {
 
 .rare-earths-story__copy .rare-earths-visual--image {
   width: 100%;
-  margin: var(--story-gap-compact) 0;
+  margin: var(--media-gap) 0;
 }
 
 .rare-earths-visual figcaption {
@@ -1344,6 +1455,18 @@ figcaption {
   color: var(--muted);
   font-size: 0.98rem;
   line-height: 1.45;
+}
+
+figcaption.media-caption {
+  max-width: none;
+  margin: 0.7rem 0 0;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.4;
+  text-align: left;
+  opacity: 0.75;
 }
 
 .dummy-media {
@@ -1783,6 +1906,10 @@ figcaption {
 }
 
 @media (max-width: 700px) {
+  .tin-visual__comparison {
+    grid-template-columns: 1fr;
+  }
+
   .index-hero__sequence {
     height: 340vh;
     min-height: 0;
