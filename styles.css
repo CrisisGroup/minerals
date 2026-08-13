@@ -400,6 +400,17 @@ button {
   padding: 0 var(--gutter) var(--section-space);
 }
 
+.introduction-inset-map {
+  width: min(300px, 100%);
+  margin: 0 auto var(--media-gap);
+}
+
+.introduction-inset-map img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .commodity-links {
   display: flex;
   flex-direction: row;
