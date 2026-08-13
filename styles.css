@@ -284,7 +284,6 @@ button {
 .index-hero__tile {
   position: absolute;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.04);
   opacity: 0;
   will-change: opacity, transform;
@@ -1346,6 +1345,14 @@ button {
   animation: map-loading-spin 900ms linear infinite;
 }
 
+.gold-mapbox-scrolly .story-mapbox__fallback {
+  color: #e6bb9a;
+}
+
+.rare-earths-mapbox-scrolly .story-mapbox__fallback {
+  color: #85ded7;
+}
+
 .story-mapbox.is-ready + .story-mapbox__fallback {
   display: none;
 }
@@ -1378,8 +1385,13 @@ button {
 }
 
 .gold-mapbox-scrolly .story-mapbox-scrolly__step {
-  border-color: rgba(199, 120, 54, 0.42);
-  background: rgba(65, 35, 18, 0.88);
+  border-color: #ed924e;
+  background: #171717;
+}
+
+.rare-earths-mapbox-scrolly .story-mapbox-scrolly__step {
+  border-color: #6ecfc7;
+  background: #171717;
 }
 
 .story-mapbox-scrolly__step.is-active {
@@ -1397,7 +1409,11 @@ button {
 }
 
 .gold-mapbox-scrolly .story-mapbox-scrolly__step p {
-  color: #c77836;
+  color: #e6bb9a;
+}
+
+.rare-earths-mapbox-scrolly .story-mapbox-scrolly__step p {
+  color: #85ded7;
 }
 
 .rare-earths-visual {
