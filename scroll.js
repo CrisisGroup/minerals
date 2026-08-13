@@ -917,7 +917,7 @@
 
   const mosaic = hero.querySelector("[data-index-hero-mosaic]");
   const leadTile = hero.querySelector("[data-index-hero-lead]");
-  const video = hero.querySelector("[data-index-hero-video]");
+  const videos = Array.from(hero.querySelectorAll("[data-index-hero-video]"));
   const tiles = Array.from(hero.querySelectorAll("[data-index-hero-tile]"));
   const revealTiles = tiles.filter((tile) => tile !== leadTile);
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -958,44 +958,43 @@
     return clamp(-rect.top / scrollableHeight, 0, 1);
   }
 
-  function pauseVideo() {
-    if (!video) return;
-    video.pause();
+  function pauseVideos() {
+    videos.forEach((video) => video.pause());
   }
 
-  function playVideo() {
-    if (!video || prefersReducedMotion.matches) return;
+  function playVideos() {
+    if (prefersReducedMotion.matches) return;
 
-    const playRequest = video.play();
+    videos.filter((video) => video.paused).forEach((video) => {
+      const playRequest = video.play();
 
-    if (playRequest && typeof playRequest.catch === "function") {
-      playRequest.catch(() => {});
-    }
+      if (playRequest && typeof playRequest.catch === "function") {
+        playRequest.catch(() => {});
+      }
+    });
   }
 
-  function updateVideoPlayback(rect, leadIsVisible = true) {
-    if (!video) return;
+  function updateVideoPlayback(rect, mediaIsVisible = true) {
+    if (!videos.length) return;
 
     if (prefersReducedMotion.matches) {
-      video.removeAttribute("autoplay");
-      pauseVideo();
+      videos.forEach((video) => video.removeAttribute("autoplay"));
+      pauseVideos();
       return;
     }
 
-    video.setAttribute("autoplay", "");
+    videos.forEach((video) => video.setAttribute("autoplay", ""));
 
-    const isNearHero = leadIsVisible
+    const isNearHero = mediaIsVisible
       && rect.bottom > -window.innerHeight * 0.4
       && rect.top < window.innerHeight * 1.4;
 
     if (!isNearHero) {
-      pauseVideo();
+      pauseVideos();
       return;
     }
 
-    if (video.paused) {
-      playVideo();
-    }
+    playVideos();
   }
 
   function setTileRect(tile, rect) {
@@ -1076,10 +1075,6 @@
       width: lerp(initialLeadRect.width, finalLeadRect.width, leadProgress),
       height: lerp(initialLeadRect.height, finalLeadRect.height, leadProgress),
     };
-    const leadViewportTop = mosaicRect.top + mosaicShift + leadRect.top;
-    const leadIsVisible = leadViewportTop + leadRect.height > 0
-      && leadViewportTop < window.innerHeight;
-
     if (leadTile) {
       setTileRect(leadTile, leadRect);
       leadTile.style.opacity = "1";
@@ -1095,7 +1090,12 @@
       tile.style.transform = `translate(${lerp(offset.x, 0, tileProgress)}px, ${lerp(offset.y, 0, tileProgress)}px) scale(${scale})`;
     });
 
-    updateVideoPlayback(heroRect, leadIsVisible);
+    const mediaIsVisible = videos.some((video) => {
+      const videoRect = video.getBoundingClientRect();
+      return videoRect.bottom > 0 && videoRect.top < window.innerHeight;
+    });
+
+    updateVideoPlayback(heroRect, mediaIsVisible);
   }
 
   function requestRender() {
