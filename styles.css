@@ -689,34 +689,51 @@ button {
   max-width: none;
 }
 
-.tin-pullquote {
+.story-pullquote {
   margin: var(--media-gap) 0;
   padding: 0;
   border: 0;
-  color: #edbfdc;
   text-align: center;
 }
 
-.tin-pullquote::before {
+.tin-pullquote {
+  color: #edbfdc;
+}
+
+.rare-earths-pullquote {
+  color: #85ded7;
+}
+
+.story-pullquote::before {
   display: block;
   height: 3.5rem;
   margin-bottom: 0.75rem;
-  color: #cf78b4;
+  color: currentColor;
   content: "\201C";
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Walter Turncoat", cursive;
   font-size: 5rem;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
 }
 
-.tin-pullquote p {
+.tin-pullquote::before {
+  color: #cf78b4;
+}
+
+.rare-earths-pullquote::before {
+  color: #6ecfc7;
+}
+
+.story-pullquote p {
   margin: 0;
   color: inherit;
-  font-family: var(--font-sans);
-  font-size: 1.55rem;
-  font-weight: 500;
-  font-variant-caps: all-small-caps;
-  line-height: 1.55;
+  font-family: "Walter Turncoat", cursive;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: 0;
+  line-height: 1;
   text-align: center;
   text-wrap: balance;
 }
@@ -750,6 +767,11 @@ button {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.tin-visual--medium {
+  width: min(var(--copy-width), 100%);
+  padding: 0 var(--gutter);
 }
 
 .tin-visual--small {
@@ -1441,7 +1463,8 @@ button {
 }
 
 .rare-earths-visual--image {
-  width: min(var(--copy-width), calc(100vw - (2 * var(--gutter))));
+  width: min(var(--copy-width), 100%);
+  padding: 0 var(--gutter);
 }
 
 .rare-earths-visual--image img {
@@ -1450,9 +1473,27 @@ button {
   height: auto;
 }
 
-.rare-earths-story__copy .rare-earths-visual--image {
+.rare-earths-visual--charts {
+  width: min(var(--copy-width), 100%);
+  padding: 0 var(--gutter);
+}
+
+.rare-earths-visual--charts .graph-hed {
+  margin: 0 0 0.25rem;
+  text-align: left;
+}
+
+.rare-earths-visual__chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.rare-earths-visual__chart-grid img {
+  display: block;
   width: 100%;
-  margin: var(--media-gap) 0;
+  height: auto;
 }
 
 .rare-earths-visual figcaption {
@@ -1935,6 +1976,10 @@ figcaption.media-caption {
 @media (max-width: 700px) {
   .tin-visual__comparison {
     grid-template-columns: 1fr;
+  }
+
+  .rare-earths-visual__chart-grid {
+    grid-template-columns: minmax(0, 300px);
   }
 
   .index-hero__sequence {
