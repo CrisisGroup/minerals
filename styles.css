@@ -453,7 +453,7 @@ button {
 }
 
 .commodity-link--tin {
-  color: #C0C0C0;
+  color: #ce82b2;
 }
 
 .commodity-link--introduction {
@@ -814,7 +814,8 @@ button {
   grid-column: 1 / -1;
 }
 
-.tin-visual__year {
+.tin-visual__year,
+.media-year {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
@@ -1249,6 +1250,11 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.jade-visual__comparison-frame {
+  position: relative;
+  min-width: 0;
 }
 
 .jade-visual__stack {
