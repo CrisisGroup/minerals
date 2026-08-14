@@ -8,6 +8,9 @@
   <meta name="description" content="Gold section for the Critical Minerals visual explainer." />
   <link rel="icon" type="image/x-icon" href="../favicon.ico" />
   <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Walter+Turncoat&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://use.typekit.net/ehg7pjc.css" />
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.css" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
@@ -166,29 +169,38 @@
       </p>
     </section>
 
-    <figure class="gold-visual gold-visual--photo-pair">
-      <div class="gold-visual__images">
+    <figure class="gold-visual gold-visual--protest-map">
+      <div class="gold-visual__protest-map-grid">
+        <div class="gold-visual__protest-photos">
+          <img
+            class="gold-visual__protest-photo"
+            src="../media/gold/gold-02-protest-march.jpeg"
+            alt="Residents walking beside farmland during a protest against gold-mining operations"
+            width="1280"
+            height="960"
+            loading="lazy"
+          />
+          <img
+            class="gold-visual__protest-photo"
+            src="../media/gold/gold-01-community-protest.jpeg"
+            alt="Residents gathered beneath trees to protest gold-mining operations"
+            width="1280"
+            height="960"
+            loading="lazy"
+          />
+        </div>
         <img
-          class="gold-visual__image"
-          src="../media/gold/gold-01-community-protest.jpeg"
-          alt="Residents gathered beneath trees to protest gold-mining operations"
-          width="1280"
-          height="960"
-          loading="lazy"
-        />
-        <img
-          class="gold-visual__image"
-          src="../media/gold/gold-02-protest-march.jpeg"
-          alt="Residents walking beside farmland during a protest against gold-mining operations"
-          width="1280"
-          height="960"
+          class="gold-visual__airstrike-map"
+          src="../media/gold/location-airstrikes-map.png"
+          alt="Map of Myanmar showing airstrike locations and dates from November 2025 through March 2026"
+          width="1080"
+          height="1398"
           loading="lazy"
         />
       </div>
-      <figcaption>
-        Residents protest gold-mining operations near the Chindwin River. Sources:
-        <a href="https://www.facebook.com/share/1JbUUK7QFX/" target="_blank" rel="noopener noreferrer">Facebook</a> and
-        <a href="https://myaelattathan.com/news/15186/" target="_blank" rel="noopener noreferrer">Myaelattathan</a>.
+      <figcaption class="media-caption">
+        Protests in XX (left) and locations of airstrikes since November 2025, after the military command in Sagaing
+        Region experienced battlefield losses. Source: Add photographer / CRISIS GROUP
       </figcaption>
     </figure>
 
@@ -201,21 +213,42 @@
       </p>
     </section>
 
-    <figure class="gold-visual gold-visual--medium">
-      <div class="gold-visual__frame" role="img" aria-label="Placeholder locations of incidents since November"></div>
-      <figcaption>
-        Visual: Locations of airstrikes since November 2025, labelled by date and place:<br />
-        Laung Pyit, Minkin Township – 21-22 November 2025 (22°54'03.64&quot;N, 94°44'34.62&quot;E);<br />
-        Myauk Chun, Minkin Township – 25 November 2025 (23°04'53.13&quot;N, 94°23'32.06&quot;E);<br />
-        Tone Pin, Banmauk – 7 December 2025 (24°12'59.95&quot;N, 95°54'12.97&quot;E);<br />
-        Thaphanseik Dam, Kyunhla Township – 14 and 25 January 2026 (23°25'27.70&quot;N, 95°22'07.08&quot;E);<br />
-        Pinnokesut – 22 February 2026 (24°47'05.57&quot;N, 94°59'50.45&quot;E);<br />
-        Nammaw – 23 February 2026 (24°48'53.51&quot;N, 95°06'02.90&quot;E);<br />
-        Hsinkan, Bhamo Township – 10 March 2026 (24°08'59.80&quot;N, 97°00'19.00&quot;E);<br />
-        Obokatauk, Homalin Township – 10 March 2026 (24°30'52.49&quot;N, 94°42'52.34&quot;E);<br />
-        Thaphanseik Dam, Kyunhla Township – 15 March 2026 (23°25'27.70&quot;N, 95°22'07.08&quot;E);<br />
-        Winkalay, Bilin Township – 16 March 2026 (17°34'14.05&quot;N, 97°14'57.17&quot;E);<br />
-        Myauk Chun, Minkin Township – 18 March 2026 (23°04'53.13&quot;N, 94°23'32.06&quot;E).
+    <figure class="gold-visual gold-visual--transform-triptych">
+      <div class="gold-visual__transform-grid">
+        <div class="gold-visual__transform-frame">
+          <img
+            src="../media/gold/gold_transform_2018.jpg"
+            alt="Satellite view of alluvial mining along the Meza River in 2018"
+            width="810"
+            height="1440"
+            loading="lazy"
+          />
+          <span class="gold-visual__year">2018</span>
+        </div>
+        <div class="gold-visual__transform-frame">
+          <img
+            src="../media/gold/gold_transform_2023.jpg"
+            alt="Satellite view of expanded alluvial mining along the Meza River in 2023"
+            width="810"
+            height="1440"
+            loading="lazy"
+          />
+          <span class="gold-visual__year">2023</span>
+        </div>
+        <div class="gold-visual__transform-frame">
+          <img
+            src="../media/gold/gold_transform_2025.jpg"
+            alt="Satellite view of extensive alluvial mining along the Meza River in 2025"
+            width="810"
+            height="1440"
+            loading="lazy"
+          />
+          <span class="gold-visual__year">2025</span>
+        </div>
+      </div>
+      <figcaption class="media-caption">
+        Along the Meza River and its tributaries in northern Sagaing, Crisis Group analysis found a three-fold expansion
+        of alluvial mining since the coup. Source: Planet Labs PBC / CRISIS GROUP
       </figcaption>
     </figure>
 
@@ -307,13 +340,15 @@
       </p>
     </section>
 
-    <figure class="gold-visual gold-visual--medium">
-      <div class="gold-visual__frame" role="img" aria-label="Placeholder zoom to mine sites near Banmauk"></div>
-      <figcaption>
-        Visual: Zoom in to show mine locations near 24.21267955053618, 95.90354291750852. Use the
-        <a href="https://ispmyanmar.com/sb-004/" target="_blank" rel="noopener noreferrer">ISP Myanmar map</a> as a
-        reference.
-      </figcaption>
+    <figure class="gold-visual gold-visual--body-width">
+      <img
+        class="gold-visual__static-image"
+        src="../media/gold/3_banmauk.png"
+        alt="Map showing gold mining sites, armed group bases and control around Banmauk"
+        width="1080"
+        height="1080"
+        loading="lazy"
+      />
     </figure>
 
     <section class="gold-story__block gold-story__block--text">
@@ -325,13 +360,13 @@
       </p>
     </section>
 
-    <figure class="gold-visual gold-visual--medium">
-      <div class="gold-visual__frame" role="img" aria-label="Placeholder map showing gold movement and price differential"></div>
-      <figcaption>
-        Visual: Map showing gold movements and the price differential between Myanmar, Bangladesh and India. Indicative
-        prices as of 1 June: Myanmar US$150 per gram; Bangladesh US$166 per gram; India US$165 per gram.
-      </figcaption>
-    </figure>
+    <blockquote class="story-pullquote gold-pullquote">
+      <p>
+        Some unlucky rafts will be hit, equipment will be lost and workers will die. But it doesn&rsquo;t take long for the
+        rafts to restart operations &ndash; they take the hits and go back to work&rdquo;, said one resistance source.
+        &ldquo;And for the military commanders, it&rsquo;s all just for show.&rdquo;
+      </p>
+    </blockquote>
 
     <section class="gold-story__block gold-story__block--text">
       <p>
