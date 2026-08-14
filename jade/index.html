@@ -54,7 +54,10 @@
         width="1800"
         height="1200"
       />
-      <figcaption>A trader examines jade stones at a market. AFP.</figcaption>
+      <figcaption class="media-caption">
+        This photo taken on March 30, 2023 shows a buyer checking gemstones at the Jade and Amber Market in Mandalay.
+        (Photo by Sai Aung MAIN / AFP)
+      </figcaption>
     </figure>
 
     <section class="jade-story__block jade-story__block--text">
@@ -74,10 +77,23 @@
     </section>
 
     <figure class="jade-visual jade-visual--large">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder map and Hpakant satellite time sequence"></div>
-      <figcaption>
-        Visual: Map of Myanmar, zoom into Hpakant, then show a 2000-2021 time sequence of the Hpakant region using Google
-        Earth imagery.
+      <video
+        class="jade-visual__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster="../media/jade/jade-02-hpakant-timelapse-poster.jpg"
+        width="1104"
+        height="1110"
+        aria-label="Satellite timelapse of the Hpakant jade mining area"
+      >
+        <source src="../media/jade/jade-02-hpakant-timelapse.mp4" type="video/mp4" />
+      </video>
+      <figcaption class="media-caption">
+        This sequence of satellite images, spanning 20XX- 20XX, shows the dramatic scale of growth as the mines pulled
+        in hundreds of thousands of migrant workers from across Myanmar. Source: PLANET LABS PBC / CRISIS GROUP
       </figcaption>
     </figure>
 
@@ -95,13 +111,6 @@
       </p>
     </section>
 
-    <figure class="jade-visual jade-visual--small">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder jade export and import data graphic"></div>
-      <figcaption>
-        Visual: Myanmar export data, Chinese import data and estimates from other sources, including Global Witness.
-      </figcaption>
-    </figure>
-
     <section class="jade-story__block jade-story__block--text">
       <p>
         The 2021 coup brought an uptick in conflict in Kachin State. The KIO has not just been one of the military
@@ -114,9 +123,16 @@
       </p>
     </section>
 
-    <figure class="jade-visual jade-visual--small">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder Kachin State map"></div>
-      <figcaption>
+    <figure class="jade-visual jade-visual--map">
+      <img
+        class="jade-visual__image"
+        src="../media/jade/jade-03-kachin-offensive-map.png"
+        alt="Map of Kachin State showing the March 2024 offensive directions around Hpakant"
+        width="1080"
+        height="1080"
+        loading="lazy"
+      />
+      <figcaption class="media-caption">
         Visual: Kachin State map, showing the direction of the March 2024 offensive, and border gates and rare earth
         mines that came under KIO control. Use arrows to indicate directions of the offensive rather than lines showing
         territorial control. End by zooming into Hpakant.
@@ -132,29 +148,37 @@
       </p>
     </section>
 
-    <figure class="jade-visual jade-visual--small">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder ACLED conflict chart"></div>
-      <figcaption>
-        Visual: Use ACLED data through mid-2025 or mid-2026, depending on availability, to show variation in conflict
-        intensity over time. Combine a time series and monthly heatmap, labelling the post-coup escalation, early 2024
-        KIO push, early 2025 military counteroffensive and current contested pattern.
-      </figcaption>
-    </figure>
-
-    <section class="jade-story__block jade-story__block--text">
-      <p>
-        Hpakant is now divided between the KIO and the military, with a contested zone in between. Areas that have come
-        under KIO control since the coup have seen a major influx of Chinese companies, many of them linked to the United
-        Wa State Army, a powerful ethnic armed group close to Beijing. Smaller miners say they have largely been pushed
-        out as a result. “The fighting is still going on but it’s hard to tell who’s winning. There are clashes almost
-        every day and night. Some civilians have been displaced two or three times”, said a volunteer from a local
-        community group.
+    <figure class="jade-visual jade-visual--charts">
+      <h2 class="graph-hed">Hpakant within the Kachin Theatre</h2>
+      <p class="graph-subhed">
+        Violent events by month (top), share in per cent (%) of those happening in Hpakant compared to other regions
+        (bottom)
       </p>
-    </section>
-
-    <figure class="jade-visual jade-visual--small">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder map of control around Hpakant"></div>
-      <figcaption>Visual: Map showing KIO-controlled, contested and military-controlled areas.</figcaption>
+      <div class="jade-visual__stack">
+        <h3 class="jade-graph__series-hed">Post-violence events per month</h3>
+        <img
+          class="jade-visual__image"
+          src="../media/jade/jade-04a-conflict-events.png"
+          alt="Monthly post-coup violent events in Kachin State and Hpakant"
+          width="3542"
+          height="1495"
+          loading="lazy"
+        />
+        <h3 class="jade-graph__series-hed">Hpakant share (%)</h3>
+        <img
+          class="jade-visual__image"
+          src="../media/jade/jade-04b-hpakant-share.png"
+          alt="Hpakant's share of violent events in Kachin State from 2021 to 2025"
+          width="3542"
+          height="987"
+          loading="lazy"
+        />
+      </div>
+      <figcaption class="media-caption">
+        “Battles”, “explosions/remote violence”, “violence against civilians” were selected for admin1 “Kachin State”,
+        February 2021-July 2025. [“Battles”, “explosions/remote violence”, “violence against civilians” were selected for
+        admin1 “Kachin State”, February 2021-July 2025] Source: ACLED
+      </figcaption>
     </figure>
 
     <section class="jade-story__block jade-story__block--text">
@@ -168,11 +192,55 @@
     </section>
 
     <figure class="jade-visual jade-visual--split">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder before and after satellite imagery"></div>
-      <figcaption>
-        Visual: Before-and-after satellite imagery showing expansion at Hpakant from 2021 to the present, with analysis
-        where possible. Annotate features including “filled tailings dam” and “new waste pile”.
+      <div class="jade-visual__pair" role="group" aria-label="Hpakant satellite imagery from 2020 and 2026">
+        <img
+          class="jade-visual__image"
+          src="../media/jade/jade-05a-hpakant-2020.jpg"
+          alt="Satellite view of the Hpakant jade mining area in February 2020"
+          width="1920"
+          height="1080"
+          loading="lazy"
+        />
+        <img
+          class="jade-visual__image"
+          src="../media/jade/jade-05b-hpakant-2026.jpg"
+          alt="Satellite view of the Hpakant jade mining area in 2026"
+          width="1920"
+          height="1080"
+          loading="lazy"
+        />
+      </div>
+      <figcaption class="media-caption">
+        The landscape is still changing, with tailings dams being filled in and massive new piles of mine waste since
+        2021. Source: Google Earth
       </figcaption>
+    </figure>
+
+    <blockquote class="story-pullquote jade-pullquote">
+      <p>No matter how fierce the fighting gets between the armed groups, they seem to avoid hitting the actual jade mining areas as much as possible.</p>
+    </blockquote>
+
+    <section class="jade-story__block jade-story__block--text">
+      <p>
+        Hpakant is now divided between the KIO and the military, with a contested zone in between. Areas that have come
+        under KIO control since the coup have seen a major influx of Chinese companies, many of them linked to the United
+        Wa State Army, a powerful ethnic armed group close to Beijing. Smaller miners say they have largely been pushed
+        out as a result. “The fighting is still going on but it’s hard to tell who’s winning. There are clashes almost
+        every day and night. Some civilians have been displaced two or three times”, said a volunteer from a local
+        community group.
+      </p>
+    </section>
+
+    <figure class="jade-visual jade-visual--photo">
+      <img
+        class="jade-visual__image"
+        src="../media/jade/jade-06-night-miners.jpg"
+        alt="Yemase miners searching a mine-waste pile by torchlight at night"
+        width="1600"
+        height="738"
+        loading="lazy"
+      />
+      <figcaption class="media-caption">Yemase miners search a mine-waste pile at night.</figcaption>
     </figure>
 
     <section class="jade-story__block jade-story__block--text">
@@ -186,14 +254,6 @@
       </p>
     </section>
 
-    <figure class="jade-visual jade-visual--small">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder jade profit allocation graphic"></div>
-      <figcaption>
-        Graphic: Show one-third of profit going to the landowner, one-third to the machinery supplier and one-third to
-        the investor covering operating expenses.
-      </figcaption>
-    </figure>
-
     <section class="jade-story__block jade-story__block--text">
       <p>
         While mining goes on, the conflict has made life much more perilous for independent miners at Hpakant. Night
@@ -204,23 +264,13 @@
       </p>
     </section>
 
-    <div class="jade-visual-grid" aria-label="Night light and yemase visual placeholders">
-      <figure class="jade-visual jade-visual--tiny">
+    <figure class="jade-visual jade-visual--night-lights">
+      <div class="jade-visual__night-light-pair" role="group" aria-label="Night light comparison placeholder">
         <div class="jade-visual__frame" role="img" aria-label="Placeholder night light comparison"></div>
-        <figcaption>Visual: Night light comparison.</figcaption>
-      </figure>
-      <figure class="jade-visual jade-visual--tiny">
-        <img
-          class="jade-visual__image"
-          src="../media/jade/jade-02-night-miners.jpg"
-          alt="Yemase miners searching a mine-waste pile by torchlight at night"
-          width="1600"
-          height="738"
-          loading="lazy"
-        />
-        <figcaption>Yemase miners search a mine-waste pile at night.</figcaption>
-      </figure>
-    </div>
+        <div class="jade-visual__frame" role="img" aria-label="Placeholder night light comparison after the coup"></div>
+      </div>
+      <figcaption class="media-caption">Visual: Night light comparison.</figcaption>
+    </figure>
 
     <section class="jade-story__block jade-story__block--text">
       <p>
@@ -238,25 +288,33 @@
       </p>
     </section>
 
-    <figure class="jade-visual jade-visual--small">
-      <div class="jade-visual__frame" role="img" aria-label="Placeholder jade trade routes map"></div>
-      <figcaption>
+    <figure class="jade-visual jade-visual--map">
+      <img
+        class="jade-visual__image"
+        src="../media/jade/jade-10-trade-routes.png"
+        alt="Map of past and present jade trade routes from Hpakant into China"
+        width="1080"
+        height="1080"
+        loading="lazy"
+      />
+      <figcaption class="media-caption">
         Visual: Map the pre-coup routes from Hpakant through Mandalay and Muse to Yunnan, and from Hpakant through
         Kanpiketee to Yunnan. Transition to the new routes from Hpakant through Hpimaw and Pangwa to Yunnan.
       </figcaption>
     </figure>
+
+    <blockquote class="story-pullquote jade-pullquote">
+      <p>
+        Jade is the lifeblood of this war”, said one Hpakant resident. “Jade brings profits, and the profits buy the
+        guns. And those guns just take everything else away from us.
+      </p>
+    </blockquote>
 
     <section class="jade-story__block jade-story__block--text">
       <p>
         Jade from Hpakant’s mines has been prized for centuries. But in Myanmar, jade is more than a luxury stone. It is
         a source of revenue, patronage and firepower – and it drives the fighting that now surrounds the mines.
       </p>
-      <blockquote>
-        <p>
-          “Jade is the lifeblood of this war”, said one Hpakant resident. “Jade brings profits, and the profits buy the
-          guns. And those guns just take everything else away from us”.
-        </p>
-      </blockquote>
     </section>
 
     <nav class="commodity-links commodity-links--story-end" aria-label="Critical mineral sections">

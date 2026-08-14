@@ -718,8 +718,9 @@ button {
   margin-bottom: 0.75rem;
   color: currentColor;
   content: "\201C";
-  font-family: "Walter Turncoat", cursive;
+  font-family: var(--font-serif);
   font-size: 5rem;
+  font-style: italic;
   font-weight: 400;
   line-height: 1;
 }
@@ -739,13 +740,13 @@ button {
 .story-pullquote p {
   margin: 0;
   color: inherit;
-  font-family: "Walter Turncoat", cursive;
+  font-family: "Spectral", Georgia, "Times New Roman", serif;
   font-size: 24px;
-  font-style: normal;
+  font-style: italic;
   font-weight: 400;
-  font-variant: small-caps;
+  font-variant: normal;
   letter-spacing: 0;
-  line-height: 1;
+  line-height: 1.5;
   text-align: center;
   text-wrap: balance;
 }
@@ -838,7 +839,8 @@ button {
   padding: 0 var(--gutter);
 }
 
-.tin-visual--chart .graph-hed {
+.tin-visual--chart .graph-hed,
+.jade-visual--charts .graph-hed {
   margin: 0 0 0.25rem;
   text-align: left;
 }
@@ -1160,6 +1162,7 @@ button {
 }
 
 .jade-page {
+  --jade-text: #6aa484;
   background: var(--paper);
 }
 
@@ -1172,7 +1175,7 @@ button {
 }
 
 .jade-story .commodity-intro h1 {
-  color: #6aa484;
+  color: var(--jade-text);
   max-width: 16ch;
 }
 
@@ -1186,25 +1189,24 @@ button {
   max-width: none;
 }
 
-.jade-story blockquote {
-  max-width: 560px;
-  margin: var(--story-gap-compact) 0 0;
-  padding: 0;
-  border: 0;
+.jade-pullquote {
+  box-sizing: border-box;
+  width: min(var(--copy-width), 100%);
+  margin: var(--media-gap) auto 0;
+  padding: 0 var(--gutter);
+  color: var(--jade-text);
 }
 
-.jade-story blockquote p {
-  color: #6aa484;
-  font-family: var(--font-serif);
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
-  font-style: italic;
-  line-height: 1.35;
+.jade-pullquote + .jade-story__block--text {
+  margin-top: var(--media-gap);
 }
 
 .jade-visual {
-  width: min(520px, calc(100vw - (2 * var(--gutter))));
+  box-sizing: border-box;
+  width: min(var(--copy-width), 100%);
   margin: var(--media-gap) auto 0;
-  text-align: center;
+  padding: 0 var(--gutter);
+  text-align: left;
 }
 
 .jade-visual + .jade-story__block--text {
@@ -1221,14 +1223,15 @@ button {
     linear-gradient(145deg, rgba(18, 40, 36, 0.95), rgba(255, 255, 255, 0.04));
 }
 
-.jade-visual__image {
+.jade-visual__image,
+.jade-visual__video {
   display: block;
   width: 100%;
   height: auto;
 }
 
 .jade-visual--large {
-  width: min(620px, calc(100vw - (2 * var(--gutter))));
+  width: min(var(--copy-width), 100%);
 }
 
 .jade-visual--large .jade-visual__frame {
@@ -1238,59 +1241,59 @@ button {
     #303030;
 }
 
-.jade-visual--small {
-  width: min(360px, calc(100vw - (2 * var(--gutter))));
-}
-
 .jade-visual--split {
-  width: min(520px, calc(100vw - (2 * var(--gutter))));
+  width: min(940px, 100%);
 }
 
-.jade-visual--split .jade-visual__frame {
-  min-height: 14rem;
-  background:
-    linear-gradient(90deg, rgba(106, 164, 132, 0.2) 0 49%, rgba(255, 255, 255, 0.16) 49% 51%, rgba(106, 164, 132, 0.08) 51%),
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 18px),
-    linear-gradient(145deg, rgba(18, 40, 36, 0.95), rgba(255, 255, 255, 0.04));
-}
-
-.jade-visual--tiny {
-  width: min(260px, calc(100vw - (2 * var(--gutter))));
-  margin-top: 0;
-}
-
-.jade-visual--tiny .jade-visual__frame {
-  min-height: 9rem;
-}
-
-.jade-visual--photo {
-  width: min(420px, calc(100vw - (2 * var(--gutter))));
-}
-
-.jade-visual--photo .jade-visual__frame {
-  min-height: 16rem;
-}
-
-.jade-visual figcaption {
-  max-width: 22rem;
-  margin: 0.75rem auto 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.35;
-  text-align: center;
-}
-
-.jade-visual-grid {
+.jade-visual__pair {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 260px));
-  justify-content: center;
-  gap: var(--media-gap);
-  width: min(680px, calc(100vw - (2 * var(--gutter))));
-  margin: var(--media-gap) auto 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.5vw, 1rem);
 }
 
-.jade-visual-grid + .jade-story__block--text {
-  margin-top: var(--media-gap);
+.jade-visual__stack {
+  display: grid;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.jade-graph__series-hed {
+  margin: 0;
+  color: var(--jade-text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.jade-visual__image + .jade-graph__series-hed {
+  margin-top: clamp(0.25rem, 1vw, 0.75rem);
+}
+
+.jade-visual--photo,
+.jade-visual--map,
+.jade-visual--charts,
+.jade-visual--night-lights {
+  width: min(var(--copy-width), 100%);
+}
+
+.jade-visual__night-light-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  padding: clamp(1rem, 4vw, 2rem);
+}
+
+.jade-visual__night-light-pair .jade-visual__frame {
+  min-height: 0;
+  aspect-ratio: 1.8 / 1;
+  border: 0;
+  background:
+    radial-gradient(ellipse at 42% 48%, rgba(224, 255, 241, 0.9), transparent 0 8%),
+    radial-gradient(ellipse at 58% 55%, rgba(25, 229, 139, 0.85), transparent 0 28%),
+    rgba(0, 78, 52, 0.62);
+  filter: blur(0.8px);
+  transform: rotate(-24deg);
 }
 
 .commodity-links--story-end {
@@ -2297,15 +2300,6 @@ figcaption.media-caption {
   }
 
   .gold-visual--tiny {
-    width: 100%;
-  }
-
-  .jade-visual-grid {
-    grid-template-columns: 1fr;
-    gap: var(--story-gap-compact);
-  }
-
-  .jade-visual--tiny {
     width: 100%;
   }
 
