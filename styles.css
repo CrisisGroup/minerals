@@ -1045,7 +1045,8 @@ button {
 }
 
 .gold-visual--protest-map {
-  width: min(860px, calc(100vw - (2 * var(--gutter))));
+  width: min(var(--copy-width), 100%);
+  padding: 0 var(--gutter);
 }
 
 .gold-visual__protest-map-grid {
@@ -1074,10 +1075,7 @@ button {
 }
 
 .gold-visual--protest-map .media-caption {
-  width: min(var(--copy-width), 100%);
-  margin-right: auto;
-  margin-left: auto;
-  padding: 0 var(--gutter);
+  width: 100%;
 }
 
 .gold-visual--transform-triptych {
