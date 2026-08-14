@@ -183,6 +183,14 @@
   const MAP_LABEL_FONT_STACK = ["Franklin Gothic Medium Regular", "Arial Unicode MS Regular"];
   const MAP_LABEL_BOOK_FONT_STACK = ["Franklin Gothic Book Regular", "Arial Unicode MS Regular"];
   const MAP_LABEL_ITALIC_FONT_STACK = ["Franklin Gothic Medium Italic", "Arial Unicode MS Regular"];
+  const MAP_LABEL_PT_SERIF_ITALIC_FONT_STACK = ["PT Serif Italic", "PT Serif Regular", "Arial Unicode MS Regular"];
+
+  function fontStackForLabel(style) {
+    if (style === "italic") return MAP_LABEL_ITALIC_FONT_STACK;
+    if (style === "book") return MAP_LABEL_BOOK_FONT_STACK;
+    if (style === "pt-serif-italic") return MAP_LABEL_PT_SERIF_ITALIC_FONT_STACK;
+    return MAP_LABEL_FONT_STACK;
+  }
 
   function parseCenter(value) {
     const fallback = [96.5, 24.6];
@@ -298,9 +306,11 @@
     const labelSizes = splitDatasetList(step.dataset.tilesetLabelSizes);
     const labelStyles = splitDatasetList(step.dataset.tilesetLabelStyles);
     const labelColors = splitDatasetList(step.dataset.tilesetLabelColors);
+    const labelHaloColors = splitDatasetList(step.dataset.tilesetLabelHaloColors);
     const labelHaloWidths = splitDatasetList(step.dataset.tilesetLabelHaloWidths);
     const labelLetterSpacings = splitDatasetList(step.dataset.tilesetLabelLetterSpacings);
     const labelTransforms = splitDatasetList(step.dataset.tilesetLabelTransforms);
+    const labelMaxWidths = splitDatasetList(step.dataset.tilesetLabelMaxWidths);
 
     return tilesets.map((tileset, tilesetIndex) => {
       const layerType = layerTypes[tilesetIndex] || layerTypes[0] || "fill";
@@ -316,6 +326,7 @@
       const labelSize = Number.parseFloat(labelSizes[tilesetIndex]);
       const labelHaloWidth = Number.parseFloat(labelHaloWidths[tilesetIndex]);
       const labelLetterSpacing = Number.parseFloat(labelLetterSpacings[tilesetIndex]);
+      const labelMaxWidth = Number.parseFloat(labelMaxWidths[tilesetIndex]);
       const perTilesetLabel = labels[tilesetIndex] || null;
       const hasStepLabel = step.dataset.mapLabel
         && (!step.dataset.mapLabelTileset || step.dataset.mapLabelTileset === tileset);
@@ -362,9 +373,11 @@
         labelSize: Number.isFinite(labelSize) ? labelSize : null,
         labelStyle: labelStyles[tilesetIndex] || "regular",
         labelColor: labelColors[tilesetIndex] || null,
+        labelHaloColor: labelHaloColors[tilesetIndex] || null,
         labelHaloWidth: Number.isFinite(labelHaloWidth) ? labelHaloWidth : null,
         labelLetterSpacing: Number.isFinite(labelLetterSpacing) ? labelLetterSpacing : null,
         labelTransform: labelTransforms[tilesetIndex] || null,
+        labelMaxWidth: Number.isFinite(labelMaxWidth) ? labelMaxWidth : null,
         fixedLabels,
         labelLayerId: `${layerId}-label`,
         labelSourceId: `${layerId}-label-source`,
@@ -455,6 +468,52 @@
         layerId,
         original.property,
         activeConfig ? activeConfig.opacity : original.value,
+      );
+    });
+  }
+
+  function styleLayerSaturationConfigsForStep(step) {
+    const layerIds = splitDatasetList(step.dataset.styleLayers || step.dataset.styleLayer);
+    const saturations = splitDatasetList(step.dataset.styleLayerSaturations || step.dataset.styleLayerSaturation);
+
+    return layerIds.map((layerId, index) => ({
+      layerId,
+      saturation: Number.parseFloat(saturations[index] || saturations[0]),
+    })).filter((config) => config.layerId && Number.isFinite(config.saturation));
+  }
+
+  function captureStyleLayerSaturationDefaults(map, steps) {
+    const defaults = new Map();
+
+    steps.forEach((step) => {
+      styleLayerSaturationConfigsForStep(step).forEach((config) => {
+        if (defaults.has(config.layerId)) return;
+
+        const layer = map.getLayer(config.layerId);
+        if (!layer || layer.type !== "raster") return;
+
+        defaults.set(config.layerId, map.getPaintProperty(config.layerId, "raster-saturation") ?? null);
+        map.setPaintProperty(config.layerId, "raster-saturation-transition", {
+          duration: 700,
+          delay: 0,
+        });
+      });
+    });
+
+    return defaults;
+  }
+
+  function updateStyleLayerSaturations(map, activeStep, defaults) {
+    const activeConfigs = new Map(
+      styleLayerSaturationConfigsForStep(activeStep).map((config) => [config.layerId, config]),
+    );
+
+    defaults.forEach((originalValue, layerId) => {
+      const activeConfig = activeConfigs.get(layerId);
+      map.setPaintProperty(
+        layerId,
+        "raster-saturation",
+        activeConfig ? activeConfig.saturation : originalValue,
       );
     });
   }
@@ -701,6 +760,18 @@
     });
   }
 
+  function labelDefinitionsForConfig(config) {
+    if (config.labelMode !== "fixed") {
+      return [{ id: config.labelLayerId, label: null, index: null }];
+    }
+
+    return config.fixedLabels.map((label, index) => ({
+      id: `${config.labelLayerId}-${index}`,
+      label,
+      index,
+    }));
+  }
+
   function addStepLabels(map, steps) {
     steps.forEach((step, index) => {
       tilesetConfigsForStep(step, index).forEach((config) => {
@@ -708,8 +779,9 @@
           !config.labelText
           || (config.layerType === "raster" && config.labelMode !== "fixed")
           || (config.labelMode === "fixed" && !config.fixedLabels.length)
-          || map.getLayer(config.labelLayerId)
         ) return;
+
+        const definitions = labelDefinitionsForConfig(config);
 
         if (config.labelMode !== "feature" && !map.getSource(config.labelSourceId)) {
           map.addSource(config.labelSourceId, {
@@ -717,9 +789,9 @@
             data: config.labelMode === "fixed"
               ? {
                   type: "FeatureCollection",
-                  features: config.fixedLabels.map((label) => ({
+                  features: config.fixedLabels.map((label, labelIndex) => ({
                     type: "Feature",
-                    properties: { label: label.text },
+                    properties: { label: label.text, labelIndex },
                     geometry: {
                       type: "Point",
                       coordinates: label.center,
@@ -733,43 +805,56 @@
           });
         }
 
-        const labelLayer = {
-          id: config.labelLayerId,
-          type: "symbol",
-          source: config.labelMode === "feature" ? config.sourceId : config.labelSourceId,
-          layout: {
-            "text-field": config.labelMode === "fixed" ? ["get", "label"] : config.labelText,
-            "text-font": config.labelStyle === "italic"
-              ? MAP_LABEL_ITALIC_FONT_STACK
-              : config.labelStyle === "book"
-                ? MAP_LABEL_BOOK_FONT_STACK
-                : MAP_LABEL_FONT_STACK,
-            "text-size": config.labelSize ?? (config.labelMode === "feature" ? 15 : 18),
-            "text-letter-spacing": config.labelLetterSpacing ?? 0,
-            "text-transform": config.labelTransform || "none",
-            "text-anchor": config.labelMode === "feature" ? "left" : "center",
-            "text-offset": config.labelMode === "feature" ? [0.8, 0] : [0, 0],
-            "text-allow-overlap": config.labelMode !== "feature",
-            "text-ignore-placement": config.labelMode !== "feature",
-          },
-          paint: {
-            "text-color": config.labelColor || "#fff3bf",
-            "text-halo-color": "rgba(1, 11, 9, 0.92)",
-            "text-halo-width": config.labelHaloWidth ?? 1.5,
-            "text-halo-blur": config.labelHaloWidth === 0 ? 0 : 0.5,
-            "text-opacity": 0,
-          },
-        };
+        definitions.forEach((definition) => {
+          if (map.getLayer(definition.id)) return;
 
-        if (config.labelMode === "feature") {
-          labelLayer["source-layer"] = config.sourceLayer;
-        }
+          const label = definition.label || {};
+          const labelSize = Number.parseFloat(label.size);
+          const letterSpacing = Number.parseFloat(label.letterSpacing);
+          const maxWidth = Number.parseFloat(label.maxWidth);
+          const haloWidth = Number.parseFloat(label.haloWidth);
+          const resolvedHaloWidth = Number.isFinite(haloWidth) ? haloWidth : config.labelHaloWidth;
+          const labelLayer = {
+            id: definition.id,
+            type: "symbol",
+            source: config.labelMode === "feature" ? config.sourceId : config.labelSourceId,
+            layout: {
+              "text-field": config.labelMode === "fixed" ? ["get", "label"] : config.labelText,
+              "text-font": fontStackForLabel(label.font || config.labelStyle),
+              "text-size": Number.isFinite(labelSize)
+                ? labelSize
+                : config.labelSize ?? (config.labelMode === "feature" ? 15 : 18),
+              "text-letter-spacing": Number.isFinite(letterSpacing)
+                ? letterSpacing
+                : config.labelLetterSpacing ?? 0,
+              "text-transform": label.transform ?? config.labelTransform ?? "none",
+              "text-max-width": Number.isFinite(maxWidth) ? maxWidth : config.labelMaxWidth ?? 10,
+              "text-anchor": config.labelMode === "feature" ? "left" : "center",
+              "text-offset": config.labelMode === "feature" ? [0.8, 0] : [0, 0],
+              "text-allow-overlap": config.labelMode !== "feature",
+              "text-ignore-placement": config.labelMode !== "feature",
+            },
+            paint: {
+              "text-color": label.color || config.labelColor || "#fff3bf",
+              "text-halo-color": label.haloColor || config.labelHaloColor || "rgba(1, 11, 9, 0.92)",
+              "text-halo-width": resolvedHaloWidth ?? 1.5,
+              "text-halo-blur": resolvedHaloWidth === 0 ? 0 : 0.5,
+              "text-opacity": 0,
+            },
+          };
 
-        map.addLayer(labelLayer);
+          if (config.labelMode === "feature") {
+            labelLayer["source-layer"] = config.sourceLayer;
+          } else if (config.labelMode === "fixed") {
+            labelLayer.filter = ["==", ["get", "labelIndex"], definition.index];
+          }
 
-        map.setPaintProperty(config.labelLayerId, "text-opacity-transition", {
-          duration: 700,
-          delay: 0,
+          map.addLayer(labelLayer);
+
+          map.setPaintProperty(definition.id, "text-opacity-transition", {
+            duration: 700,
+            delay: 0,
+          });
         });
       });
     });
@@ -874,12 +959,16 @@
           );
         }
 
-        if (config.labelText && map.getLayer(config.labelLayerId)) {
-          map.setPaintProperty(
-            config.labelLayerId,
-            "text-opacity",
-            step === activeStep ? 1 : 0,
-          );
+        if (config.labelText) {
+          labelDefinitionsForConfig(config).forEach((definition) => {
+            if (!map.getLayer(definition.id)) return;
+
+            map.setPaintProperty(
+              definition.id,
+              "text-opacity",
+              step === activeStep ? 1 : 0,
+            );
+          });
         }
       });
     });
@@ -901,6 +990,7 @@
     let activeStep = null;
     const positionedLabels = new Set();
     let styleLayerOpacityDefaults = new Map();
+    let styleLayerSaturationDefaults = new Map();
 
     function setActiveStep(step, options = {}) {
       if (!step) return;
@@ -931,6 +1021,7 @@
 
       updateStepTilesets(map, steps, step);
       updateStyleLayerOpacities(map, step, styleLayerOpacityDefaults);
+      updateStyleLayerSaturations(map, step, styleLayerSaturationDefaults);
     }
 
     function updateActiveStepFromViewport(options = {}) {
@@ -967,6 +1058,7 @@
         addStepPlaceholders(map, steps);
         addStepLabels(map, steps);
         styleLayerOpacityDefaults = captureStyleLayerOpacityDefaults(map, steps);
+        styleLayerSaturationDefaults = captureStyleLayerSaturationDefaults(map, steps);
         updateActiveStepFromViewport({ forceCamera: true, jump: true });
       });
 
