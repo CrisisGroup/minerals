@@ -181,6 +181,7 @@
   const scrollys = Array.from(document.querySelectorAll("[data-story-map]"));
   if (!scrollys.length) return;
   const MAP_LABEL_FONT_STACK = ["Franklin Gothic Medium Regular", "Arial Unicode MS Regular"];
+  const MAP_LABEL_BOOK_FONT_STACK = ["Franklin Gothic Book Regular", "Arial Unicode MS Regular"];
   const MAP_LABEL_ITALIC_FONT_STACK = ["Franklin Gothic Medium Italic", "Arial Unicode MS Regular"];
 
   function parseCenter(value) {
@@ -299,6 +300,7 @@
     const labelColors = splitDatasetList(step.dataset.tilesetLabelColors);
     const labelHaloWidths = splitDatasetList(step.dataset.tilesetLabelHaloWidths);
     const labelLetterSpacings = splitDatasetList(step.dataset.tilesetLabelLetterSpacings);
+    const labelTransforms = splitDatasetList(step.dataset.tilesetLabelTransforms);
 
     return tilesets.map((tileset, tilesetIndex) => {
       const layerType = layerTypes[tilesetIndex] || layerTypes[0] || "fill";
@@ -362,6 +364,7 @@
         labelColor: labelColors[tilesetIndex] || null,
         labelHaloWidth: Number.isFinite(labelHaloWidth) ? labelHaloWidth : null,
         labelLetterSpacing: Number.isFinite(labelLetterSpacing) ? labelLetterSpacing : null,
+        labelTransform: labelTransforms[tilesetIndex] || null,
         fixedLabels,
         labelLayerId: `${layerId}-label`,
         labelSourceId: `${layerId}-label-source`,
@@ -393,6 +396,67 @@
     if (layerType === "line") return "line-opacity";
     if (layerType === "circle") return "circle-opacity";
     return "fill-opacity";
+  }
+
+  function styleLayerOpacityProperty(layerType) {
+    if (layerType === "raster") return "raster-opacity";
+    if (layerType === "line") return "line-opacity";
+    if (layerType === "circle") return "circle-opacity";
+    if (layerType === "fill") return "fill-opacity";
+    if (layerType === "background") return "background-opacity";
+    return null;
+  }
+
+  function styleLayerOpacityConfigsForStep(step) {
+    const layerIds = splitDatasetList(step.dataset.styleLayers || step.dataset.styleLayer);
+    const opacities = splitDatasetList(step.dataset.styleLayerOpacities || step.dataset.styleLayerOpacity);
+
+    return layerIds.map((layerId, index) => ({
+      layerId,
+      opacity: Number.parseFloat(opacities[index] || opacities[0]),
+    })).filter((config) => config.layerId && Number.isFinite(config.opacity));
+  }
+
+  function captureStyleLayerOpacityDefaults(map, steps) {
+    const defaults = new Map();
+
+    steps.forEach((step) => {
+      styleLayerOpacityConfigsForStep(step).forEach((config) => {
+        if (defaults.has(config.layerId)) return;
+
+        const layer = map.getLayer(config.layerId);
+        if (!layer) return;
+
+        const property = styleLayerOpacityProperty(layer.type);
+        if (!property) return;
+
+        defaults.set(config.layerId, {
+          property,
+          value: map.getPaintProperty(config.layerId, property) ?? null,
+        });
+        map.setPaintProperty(config.layerId, `${property}-transition`, {
+          duration: 700,
+          delay: 0,
+        });
+      });
+    });
+
+    return defaults;
+  }
+
+  function updateStyleLayerOpacities(map, activeStep, defaults) {
+    const activeConfigs = new Map(
+      styleLayerOpacityConfigsForStep(activeStep).map((config) => [config.layerId, config]),
+    );
+
+    defaults.forEach((original, layerId) => {
+      const activeConfig = activeConfigs.get(layerId);
+      map.setPaintProperty(
+        layerId,
+        original.property,
+        activeConfig ? activeConfig.opacity : original.value,
+      );
+    });
   }
 
   function colorProperty(layerType) {
@@ -675,9 +739,14 @@
           source: config.labelMode === "feature" ? config.sourceId : config.labelSourceId,
           layout: {
             "text-field": config.labelMode === "fixed" ? ["get", "label"] : config.labelText,
-            "text-font": config.labelStyle === "italic" ? MAP_LABEL_ITALIC_FONT_STACK : MAP_LABEL_FONT_STACK,
+            "text-font": config.labelStyle === "italic"
+              ? MAP_LABEL_ITALIC_FONT_STACK
+              : config.labelStyle === "book"
+                ? MAP_LABEL_BOOK_FONT_STACK
+                : MAP_LABEL_FONT_STACK,
             "text-size": config.labelSize ?? (config.labelMode === "feature" ? 15 : 18),
             "text-letter-spacing": config.labelLetterSpacing ?? 0,
+            "text-transform": config.labelTransform || "none",
             "text-anchor": config.labelMode === "feature" ? "left" : "center",
             "text-offset": config.labelMode === "feature" ? [0.8, 0] : [0, 0],
             "text-allow-overlap": config.labelMode !== "feature",
@@ -831,6 +900,7 @@
     let ticking = false;
     let activeStep = null;
     const positionedLabels = new Set();
+    let styleLayerOpacityDefaults = new Map();
 
     function setActiveStep(step, options = {}) {
       if (!step) return;
@@ -860,6 +930,7 @@
       }
 
       updateStepTilesets(map, steps, step);
+      updateStyleLayerOpacities(map, step, styleLayerOpacityDefaults);
     }
 
     function updateActiveStepFromViewport(options = {}) {
@@ -895,6 +966,7 @@
         addStepTilesets(map, steps);
         addStepPlaceholders(map, steps);
         addStepLabels(map, steps);
+        styleLayerOpacityDefaults = captureStyleLayerOpacityDefaults(map, steps);
         updateActiveStepFromViewport({ forceCamera: true, jump: true });
       });
 
