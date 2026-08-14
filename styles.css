@@ -457,11 +457,11 @@ button {
 }
 
 .commodity-link--introduction {
-  color: #708ea9;
+  color: #C0C0C0;
 }
 
 .commodity-link--introduction span {
-  color: #708ea9;
+  color: #C0C0C0;
 }
 
 .commodity-link--gold {
@@ -2051,14 +2051,13 @@ figcaption.media-caption {
 
 .credits {
   background: var(--paper);
-  max-width: 720px;
+  width: min(var(--copy-width), 100%);
   margin: 0 auto;
-  padding: 0 1.5rem 3rem;
+  padding: 0 var(--gutter) 3rem;
 }
 
 .credits__inner {
-  max-width: 720px;
-  margin: 0 auto;
+  width: 100%;
   text-align: left;
 }
 
