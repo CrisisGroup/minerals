@@ -180,6 +180,8 @@
 (function () {
   const scrollys = Array.from(document.querySelectorAll("[data-story-map]"));
   if (!scrollys.length) return;
+  const MAP_LABEL_FONT_STACK = ["Franklin Gothic Medium Regular", "Arial Unicode MS Regular"];
+  const MAP_LABEL_ITALIC_FONT_STACK = ["Franklin Gothic Medium Italic", "Arial Unicode MS Regular"];
 
   function parseCenter(value) {
     const fallback = [96.5, 24.6];
@@ -266,9 +268,18 @@
     const tilesets = splitDatasetList(step.dataset.tilesets || step.dataset.tileset);
     if (!tilesets.length) return [];
 
+    let layerFilters = [];
+    try {
+      const parsedFilters = JSON.parse(step.dataset.tilesetFilters || "[]");
+      layerFilters = Array.isArray(parsedFilters) ? parsedFilters : [];
+    } catch {
+      layerFilters = [];
+    }
+
     const sourceLayers = splitDatasetList(step.dataset.tilesetLayers || step.dataset.tilesetLayer);
     const layerTypes = splitDatasetList(step.dataset.tilesetTypes || step.dataset.tilesetType);
     const colors = splitDatasetList(step.dataset.tilesetColors || step.dataset.tilesetColor);
+    const strokeColors = splitDatasetList(step.dataset.tilesetStrokeColors || step.dataset.tilesetStrokeColor);
     const opacities = splitDatasetList(step.dataset.tilesetOpacities || step.dataset.tilesetOpacity);
     const rasterColors = splitDatasetList(step.dataset.tilesetRasterColors || step.dataset.tilesetRasterColor);
     const hueRotates = splitDatasetList(step.dataset.tilesetHueRotates || step.dataset.tilesetHueRotate);
@@ -279,6 +290,15 @@
     const lineWidths = splitDatasetList(step.dataset.tilesetLineWidths || step.dataset.tilesetLineWidth);
     const adminLevels = splitDatasetList(step.dataset.tilesetAdminLevels || step.dataset.tilesetAdminLevel);
     const adminCountries = splitDatasetList(step.dataset.tilesetAdminCountries || step.dataset.tilesetAdminCountry);
+    const adminWorldviews = splitDatasetList(step.dataset.tilesetAdminWorldviews || step.dataset.tilesetAdminWorldview);
+    const adminDisputed = splitDatasetList(step.dataset.tilesetAdminDisputed);
+    const labels = splitDatasetList(step.dataset.tilesetLabels);
+    const labelModes = splitDatasetList(step.dataset.tilesetLabelModes);
+    const labelSizes = splitDatasetList(step.dataset.tilesetLabelSizes);
+    const labelStyles = splitDatasetList(step.dataset.tilesetLabelStyles);
+    const labelColors = splitDatasetList(step.dataset.tilesetLabelColors);
+    const labelHaloWidths = splitDatasetList(step.dataset.tilesetLabelHaloWidths);
+    const labelLetterSpacings = splitDatasetList(step.dataset.tilesetLabelLetterSpacings);
 
     return tilesets.map((tileset, tilesetIndex) => {
       const layerType = layerTypes[tilesetIndex] || layerTypes[0] || "fill";
@@ -291,20 +311,27 @@
       const brightnessMax = Number.parseFloat(brightnessMaxes[tilesetIndex] || brightnessMaxes[0]);
       const lineWidth = Number.parseFloat(lineWidths[tilesetIndex] || lineWidths[0]);
       const adminLevel = Number.parseFloat(adminLevels[tilesetIndex] || adminLevels[0]);
-      const sourceId = `story-step-source-${idSafe(tileset)}`;
-      const layerId = `story-step-layer-${index}-${tilesetIndex}-${idSafe(tileset)}`;
-      const hasMapLabel = step.dataset.mapLabel
+      const labelSize = Number.parseFloat(labelSizes[tilesetIndex]);
+      const labelHaloWidth = Number.parseFloat(labelHaloWidths[tilesetIndex]);
+      const labelLetterSpacing = Number.parseFloat(labelLetterSpacings[tilesetIndex]);
+      const perTilesetLabel = labels[tilesetIndex] || null;
+      const hasStepLabel = step.dataset.mapLabel
         && (!step.dataset.mapLabelTileset || step.dataset.mapLabelTileset === tileset);
-      const labelMode = hasMapLabel ? step.dataset.mapLabelMode || "centroid" : null;
-      const labelCenter = hasMapLabel && step.dataset.mapLabelCenter
+      const labelText = perTilesetLabel || (hasStepLabel ? step.dataset.mapLabel : null);
+      const labelMode = labelText
+        ? labelModes[tilesetIndex] || step.dataset.mapLabelMode || "centroid"
+        : null;
+      const labelCenter = labelText && step.dataset.mapLabelCenter
         ? parseCenter(step.dataset.mapLabelCenter)
         : null;
       const fixedLabels = labelMode === "fixed"
         ? [
-            ...(labelCenter ? [{ text: step.dataset.mapLabel, center: labelCenter }] : []),
+            ...(labelCenter ? [{ text: labelText, center: labelCenter }] : []),
             ...parseAdditionalLabels(step.dataset.mapLabelAdditions),
           ]
         : [];
+      const sourceId = `story-step-source-${idSafe(tileset)}`;
+      const layerId = `story-step-layer-${index}-${tilesetIndex}-${idSafe(tileset)}`;
 
       return {
         tileset,
@@ -313,6 +340,7 @@
         sourceLayer: sourceLayers[tilesetIndex] || tilesetLayerName(tileset),
         layerType,
         color,
+        strokeColor: strokeColors[tilesetIndex] || strokeColors[0] || null,
         opacity: Number.isFinite(opacity) ? opacity : null,
         rasterColor: rasterColors[tilesetIndex] || rasterColors[0] || null,
         hueRotate: Number.isFinite(hueRotate) ? hueRotate : null,
@@ -323,9 +351,17 @@
         lineWidth: Number.isFinite(lineWidth) ? lineWidth : null,
         adminLevel: Number.isFinite(adminLevel) ? adminLevel : null,
         adminCountry: adminCountries[tilesetIndex] || adminCountries[0] || null,
-        labelText: hasMapLabel ? step.dataset.mapLabel : null,
+        adminWorldview: adminWorldviews[tilesetIndex] || adminWorldviews[0] || null,
+        adminDisputed: adminDisputed[tilesetIndex] || adminDisputed[0] || null,
+        filter: Array.isArray(layerFilters[tilesetIndex]) ? layerFilters[tilesetIndex] : null,
+        labelText,
         labelMode,
         labelCenter,
+        labelSize: Number.isFinite(labelSize) ? labelSize : null,
+        labelStyle: labelStyles[tilesetIndex] || "regular",
+        labelColor: labelColors[tilesetIndex] || null,
+        labelHaloWidth: Number.isFinite(labelHaloWidth) ? labelHaloWidth : null,
+        labelLetterSpacing: Number.isFinite(labelLetterSpacing) ? labelLetterSpacing : null,
         fixedLabels,
         labelLayerId: `${layerId}-label`,
         labelSourceId: `${layerId}-label-source`,
@@ -432,6 +468,10 @@
       paint[colorKey] = config.color;
     }
 
+    if (config.layerType === "fill" && config.strokeColor) {
+      paint["fill-outline-color"] = config.strokeColor;
+    }
+
     if (config.layerType === "line") {
       paint["line-width"] = config.lineWidth ?? 4;
     }
@@ -499,7 +539,14 @@
           layer["source-layer"] = config.sourceLayer;
         }
 
-        if (config.adminLevel !== null || config.adminCountry) {
+        if (config.filter) {
+          layer.filter = config.filter;
+        } else if (
+          config.adminLevel !== null
+          || config.adminCountry
+          || config.adminWorldview
+          || config.adminDisputed
+        ) {
           const filter = [
             "all",
           ];
@@ -509,10 +556,36 @@
           }
 
           if (config.adminCountry) {
+            const countryCodes = config.adminCountry.split("|").filter(Boolean);
+
+            filter.push(countryCodes.length > 1
+              ? [
+                  "match",
+                  ["coalesce", ["get", "iso_3166_1"], ""],
+                  countryCodes,
+                  true,
+                  false,
+                ]
+              : [
+                  "in",
+                  countryCodes[0],
+                  ["coalesce", ["get", "iso_3166_1"], ""],
+                ]);
+          }
+
+          if (config.adminWorldview) {
             filter.push([
-              "in",
-              config.adminCountry,
-              ["coalesce", ["get", "iso_3166_1"], ""],
+              "any",
+              ["==", "all", ["coalesce", ["get", "worldview"], "all"]],
+              ["in", config.adminWorldview, ["coalesce", ["get", "worldview"], ""]],
+            ]);
+          }
+
+          if (config.adminDisputed) {
+            filter.push([
+              "==",
+              ["coalesce", ["get", "disputed"], "false"],
+              config.adminDisputed,
             ]);
           }
 
@@ -602,17 +675,19 @@
           source: config.labelMode === "feature" ? config.sourceId : config.labelSourceId,
           layout: {
             "text-field": config.labelMode === "fixed" ? ["get", "label"] : config.labelText,
-            "text-size": config.labelMode === "feature" ? 15 : 18,
+            "text-font": config.labelStyle === "italic" ? MAP_LABEL_ITALIC_FONT_STACK : MAP_LABEL_FONT_STACK,
+            "text-size": config.labelSize ?? (config.labelMode === "feature" ? 15 : 18),
+            "text-letter-spacing": config.labelLetterSpacing ?? 0,
             "text-anchor": config.labelMode === "feature" ? "left" : "center",
             "text-offset": config.labelMode === "feature" ? [0.8, 0] : [0, 0],
             "text-allow-overlap": config.labelMode !== "feature",
             "text-ignore-placement": config.labelMode !== "feature",
           },
           paint: {
-            "text-color": "#fff3bf",
+            "text-color": config.labelColor || "#fff3bf",
             "text-halo-color": "rgba(1, 11, 9, 0.92)",
-            "text-halo-width": 1.5,
-            "text-halo-blur": 0.5,
+            "text-halo-width": config.labelHaloWidth ?? 1.5,
+            "text-halo-blur": config.labelHaloWidth === 0 ? 0 : 0.5,
             "text-opacity": 0,
           },
         };
