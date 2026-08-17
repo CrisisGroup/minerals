@@ -301,6 +301,7 @@
     const adminCountries = splitDatasetList(step.dataset.tilesetAdminCountries || step.dataset.tilesetAdminCountry);
     const adminWorldviews = splitDatasetList(step.dataset.tilesetAdminWorldviews || step.dataset.tilesetAdminWorldview);
     const adminDisputed = splitDatasetList(step.dataset.tilesetAdminDisputed);
+    const adminMaritime = splitDatasetList(step.dataset.tilesetAdminMaritime);
     const labels = splitDatasetList(step.dataset.tilesetLabels);
     const labelModes = splitDatasetList(step.dataset.tilesetLabelModes);
     const labelSizes = splitDatasetList(step.dataset.tilesetLabelSizes);
@@ -366,6 +367,7 @@
         adminCountry: adminCountries[tilesetIndex] || adminCountries[0] || null,
         adminWorldview: adminWorldviews[tilesetIndex] || adminWorldviews[0] || null,
         adminDisputed: adminDisputed[tilesetIndex] || adminDisputed[0] || null,
+        adminMaritime: adminMaritime[tilesetIndex] || adminMaritime[0] || null,
         filter: Array.isArray(layerFilters[tilesetIndex]) ? layerFilters[tilesetIndex] : null,
         labelText,
         labelMode,
@@ -669,6 +671,7 @@
           || config.adminCountry
           || config.adminWorldview
           || config.adminDisputed
+          || config.adminMaritime
         ) {
           const filter = [
             "all",
@@ -709,6 +712,14 @@
               "==",
               ["coalesce", ["get", "disputed"], "false"],
               config.adminDisputed,
+            ]);
+          }
+
+          if (config.adminMaritime) {
+            filter.push([
+              "==",
+              ["to-string", ["coalesce", ["get", "maritime"], false]],
+              config.adminMaritime,
             ]);
           }
 
