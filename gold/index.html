@@ -17,19 +17,32 @@
 </head>
 
 <body class="commodity-page gold-page">
-  <header class="commodity-video-hero" aria-label="Motion video header for Gold">
-    <div class="commodity-video-hero__media">
-      <video
-        class="commodity-video-hero__video"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-        poster="../media/gold_header_poster.jpg"
-      >
-        <source src="../media/gold_header.mp4" type="video/mp4" />
-      </video>
+  <header class="commodity-video-hero commodity-scroll-video-hero" data-commodity-video-hero aria-label="Motion video header for Gold">
+    <div class="commodity-scroll-video-hero__stage">
+      <div class="commodity-video-hero__media commodity-scroll-video-hero__media">
+        <video
+          class="commodity-video-hero__video"
+          data-commodity-header-video
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="../media/gold_header_poster.jpg"
+        >
+          <source src="../media/gold_header.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="commodity-scroll-video-hero__overlay" data-commodity-video-overlay aria-hidden="true">
+        <img
+          src="../media/gold_sub_header.jpg"
+          alt=""
+          width="1030"
+          height="687"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </div>
     </div>
   </header>
 
@@ -81,7 +94,7 @@
           data-tileset-admin-maritime=",false"
           data-map-label="Sagaing Region"
           data-map-label-tileset="daltonwb.umcgq6muzug5"
-          data-tileset-label-sizes="20,"
+          data-tileset-label-sizes="16,"
           data-tileset-label-styles="italic,"
           data-tileset-label-colors="#F9E3D3,"
           data-tileset-label-halo-widths="0,"
@@ -111,7 +124,7 @@
         </article>
         <article
           class="story-mapbox-scrolly__step"
-          data-center="94.914311, 24.883981"
+          data-center="95.20293190165471,24.82602209749467"
           data-zoom="13"
           data-pitch="0"
           data-bearing="0"

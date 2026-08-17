@@ -13,19 +13,32 @@
 </head>
 
 <body class="commodity-page jade-page">
-  <header class="commodity-video-hero" aria-label="Motion video header for Jade">
-    <div class="commodity-video-hero__media">
-      <video
-        class="commodity-video-hero__video"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-        poster="../media/jade_header_poster.jpg"
-      >
-        <source src="../media/jade_header.mp4" type="video/mp4" />
-      </video>
+  <header class="commodity-video-hero commodity-scroll-video-hero" data-commodity-video-hero aria-label="Motion video header for Jade">
+    <div class="commodity-scroll-video-hero__stage">
+      <div class="commodity-video-hero__media commodity-scroll-video-hero__media">
+        <video
+          class="commodity-video-hero__video"
+          data-commodity-header-video
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="../media/jade_header_poster.jpg"
+        >
+          <source src="../media/jade_header.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="commodity-scroll-video-hero__overlay" data-commodity-video-overlay aria-hidden="true">
+        <img
+          src="../media/jade_sub_header.png"
+          alt=""
+          width="2274"
+          height="1282"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </div>
     </div>
   </header>
 
@@ -149,13 +162,12 @@
     </section>
 
     <figure class="jade-visual jade-visual--charts">
-      <h2 class="graph-hed">Hpakant within the Kachin Theatre</h2>
+      <h2 class="graph-hed">Hpakant’s centrality to the Kachin conflict</h2>
       <p class="graph-subhed">
-        Violent events by month (top), share in per cent (%) of those happening in Hpakant compared to other regions
-        (bottom)
+        Since the 2021 coup, the jade-mining hub has recorded more violent events than any other township in Kachin State
       </p>
       <div class="jade-visual__stack">
-        <h3 class="jade-graph__series-hed">Post-violence events per month</h3>
+        <h3 class="jade-graph__series-hed">Monthly violent events in Hpakant (green) and rest of Kachin State (grey), February 2021-July 2025</h3>
         <img
           class="jade-visual__image"
           src="../media/jade/jade-04a-conflict-events.png"
@@ -164,7 +176,8 @@
           height="1495"
           loading="lazy"
         />
-        <h3 class="jade-graph__series-hed">Hpakant share (%)</h3>
+        <h3 class="jade-graph__series-hed">Hpakant’s share of all violent events in Kachin State, three-month rolling average, February 2021–July 2025
+</h3>
         <img
           class="jade-visual__image"
           src="../media/jade/jade-04b-hpakant-share.png"
@@ -175,9 +188,7 @@
         />
       </div>
       <figcaption class="media-caption">
-        “Battles”, “explosions/remote violence”, “violence against civilians” were selected for admin1 “Kachin State”,
-        February 2021-July 2025. [“Battles”, “explosions/remote violence”, “violence against civilians” were selected for
-        admin1 “Kachin State”, February 2021-July 2025] Source: ACLED
+        Includes ACLED events coded as “battles”, “explosions/remote violence” and “violence against civilians”. Source: ACLED
       </figcaption>
     </figure>
 
@@ -200,7 +211,7 @@
             height="1080"
             loading="lazy"
           />
-          <span class="media-year">2020</span>
+          <span class="media-year">2021</span>
         </div>
         <div class="jade-visual__comparison-frame">
           <img

@@ -16,19 +16,32 @@
 </head>
 
 <body class="commodity-page">
-  <header class="tin-video-hero" aria-label="Motion video header for Tin">
-    <div class="tin-video-hero__media">
-      <video
-        class="tin-video-hero__video"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-        poster="../media/tin_header_poster.jpg"
-      >
-        <source src="../media/tin_header.mp4" type="video/mp4" />
-      </video>
+  <header class="commodity-video-hero commodity-scroll-video-hero" data-commodity-video-hero aria-label="Motion video header for Tin">
+    <div class="commodity-scroll-video-hero__stage">
+      <div class="commodity-video-hero__media commodity-scroll-video-hero__media">
+        <video
+          class="commodity-video-hero__video"
+          data-commodity-header-video
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="../media/tin_header_poster.jpg"
+        >
+          <source src="../media/tin_header.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="commodity-scroll-video-hero__overlay" data-commodity-video-overlay aria-hidden="true">
+        <img
+          src="../media/tin_sub_header.png"
+          alt=""
+          width="800"
+          height="533"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </div>
     </div>
   </header>
 

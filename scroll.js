@@ -1101,16 +1101,11 @@
   });
 })();
 
-// Rare earths video overlay
+// Commodity video overlays
 (function () {
-  const hero = document.querySelector("[data-rare-earths-video-hero]");
-  if (!hero) return;
+  const heroes = Array.from(document.querySelectorAll("[data-commodity-video-hero]"));
+  if (!heroes.length) return;
 
-  const overlay = hero.querySelector("[data-rare-earths-video-overlay]");
-  const video = hero.querySelector("[data-rare-earths-header-video]");
-  if (!overlay) return;
-
-  let ticking = false;
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function clamp(value, min, max) {
@@ -1122,7 +1117,7 @@
     return progress * progress * (3 - (2 * progress));
   }
 
-  function updateVideo(rect) {
+  function updateVideo(video, rect) {
     if (!video) return;
 
     const shouldPlay = !prefersReducedMotion.matches
@@ -1142,40 +1137,48 @@
     }
   }
 
-  function render() {
-    ticking = false;
+  heroes.forEach((hero) => {
+    const overlay = hero.querySelector("[data-commodity-video-overlay]");
+    const video = hero.querySelector("[data-commodity-header-video]");
+    if (!overlay) return;
 
-    if (prefersReducedMotion.matches) {
-      overlay.style.setProperty("--rare-overlay-opacity", "1");
-      overlay.style.setProperty("--rare-overlay-scale", "1");
-      updateVideo(hero.getBoundingClientRect());
-      return;
+    let ticking = false;
+
+    function render() {
+      ticking = false;
+
+      if (prefersReducedMotion.matches) {
+        overlay.style.setProperty("--commodity-overlay-opacity", "1");
+        overlay.style.setProperty("--commodity-overlay-scale", "1");
+        updateVideo(video, hero.getBoundingClientRect());
+        return;
+      }
+
+      const rect = hero.getBoundingClientRect();
+      const scrollableHeight = Math.max(hero.offsetHeight - window.innerHeight, 1);
+      const progress = clamp(-rect.top / scrollableHeight, 0, 1);
+      const scaleProgress = smoothstep(0.06, 0.88, progress);
+      const opacityProgress = smoothstep(0.04, 0.38, progress);
+
+      overlay.style.setProperty("--commodity-overlay-opacity", opacityProgress.toFixed(3));
+      overlay.style.setProperty("--commodity-overlay-scale", (0.38 + (0.62 * scaleProgress)).toFixed(3));
+      updateVideo(video, rect);
     }
 
-    const rect = hero.getBoundingClientRect();
-    const scrollableHeight = Math.max(hero.offsetHeight - window.innerHeight, 1);
-    const progress = clamp(-rect.top / scrollableHeight, 0, 1);
-    const scaleProgress = smoothstep(0.06, 0.88, progress);
-    const opacityProgress = smoothstep(0.04, 0.38, progress);
+    function requestRender() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(render);
+    }
 
-    overlay.style.setProperty("--rare-overlay-opacity", opacityProgress.toFixed(3));
-    overlay.style.setProperty("--rare-overlay-scale", (0.38 + (0.62 * scaleProgress)).toFixed(3));
-    updateVideo(rect);
-  }
+    if (typeof prefersReducedMotion.addEventListener === "function") {
+      prefersReducedMotion.addEventListener("change", requestRender);
+    }
 
-  function requestRender() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(render);
-  }
-
-  if (typeof prefersReducedMotion.addEventListener === "function") {
-    prefersReducedMotion.addEventListener("change", requestRender);
-  }
-
-  window.addEventListener("scroll", requestRender, { passive: true });
-  window.addEventListener("resize", requestRender);
-  requestRender();
+    window.addEventListener("scroll", requestRender, { passive: true });
+    window.addEventListener("resize", requestRender);
+    requestRender();
+  });
 })();
 
 // Index hero / scroll mosaic

@@ -586,14 +586,12 @@ button {
   padding-bottom: clamp(8rem, 18vw, 16rem);
 }
 
-.tin-video-hero,
 .commodity-video-hero {
   width: 100%;
   background: var(--paper);
   margin-bottom: var(--story-gap-compact);
 }
 
-.tin-video-hero__media,
 .commodity-video-hero__media {
   position: relative;
   width: 100%;
@@ -603,7 +601,6 @@ button {
   background: #000000;
 }
 
-.tin-video-hero__media::after,
 .commodity-video-hero__media::after {
   content: "";
   position: absolute;
@@ -613,7 +610,6 @@ button {
   pointer-events: none;
 }
 
-.tin-video-hero__video,
 .commodity-video-hero__video {
   display: block;
   width: 100%;
@@ -621,12 +617,12 @@ button {
   object-fit: cover;
 }
 
-.rare-earths-video-hero {
+.commodity-scroll-video-hero {
   position: relative;
   height: 220svh;
 }
 
-.rare-earths-video-hero__stage {
+.commodity-scroll-video-hero__stage {
   position: sticky;
   top: 0;
   height: 100svh;
@@ -635,7 +631,7 @@ button {
   isolation: isolate;
 }
 
-.rare-earths-video-hero__media {
+.commodity-scroll-video-hero__media {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -643,34 +639,34 @@ button {
   aspect-ratio: auto;
 }
 
-.rare-earths-video-hero__media::after {
+.commodity-scroll-video-hero__media::after {
   z-index: 1;
 }
 
-.rare-earths-video-hero__overlay {
+.commodity-scroll-video-hero__overlay {
   position: absolute;
   z-index: 2;
   top: 50%;
   left: 50%;
   width: min(76vw, 72rem);
-  opacity: var(--rare-overlay-opacity, 0);
-  transform: translate(-50%, -50%) scale(var(--rare-overlay-scale, 0.38));
+  opacity: var(--commodity-overlay-opacity, 0);
+  transform: translate(-50%, -50%) scale(var(--commodity-overlay-scale, 0.38));
   transform-origin: center;
   will-change: opacity, transform;
 }
 
-.rare-earths-video-hero__overlay img {
+.commodity-scroll-video-hero__overlay img {
   display: block;
   width: 100%;
   height: auto;
 }
 
 @media (max-width: 700px) {
-  .rare-earths-video-hero {
+  .commodity-scroll-video-hero {
     height: 190svh;
   }
 
-  .rare-earths-video-hero__overlay {
+  .commodity-scroll-video-hero__overlay {
     width: 90vw;
   }
 }
@@ -2335,17 +2331,17 @@ figcaption.media-caption {
     scroll-behavior: auto;
   }
 
-  .rare-earths-video-hero {
+  .commodity-scroll-video-hero {
     height: auto;
   }
 
-  .rare-earths-video-hero__stage {
+  .commodity-scroll-video-hero__stage {
     position: relative;
     height: auto;
     aspect-ratio: 64 / 27;
   }
 
-  .rare-earths-video-hero__overlay {
+  .commodity-scroll-video-hero__overlay {
     width: min(76vw, 72rem);
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
