@@ -312,6 +312,8 @@
     const labelLetterSpacings = splitDatasetList(step.dataset.tilesetLabelLetterSpacings);
     const labelTransforms = splitDatasetList(step.dataset.tilesetLabelTransforms);
     const labelMaxWidths = splitDatasetList(step.dataset.tilesetLabelMaxWidths);
+    const labelAllowOverlaps = splitDatasetList(step.dataset.tilesetLabelAllowOverlaps);
+    const labelLatDeltas = splitDatasetList(step.dataset.tilesetLabelLatDeltas);
 
     return tilesets.map((tileset, tilesetIndex) => {
       const layerType = layerTypes[tilesetIndex] || layerTypes[0] || "fill";
@@ -328,6 +330,12 @@
       const labelHaloWidth = Number.parseFloat(labelHaloWidths[tilesetIndex]);
       const labelLetterSpacing = Number.parseFloat(labelLetterSpacings[tilesetIndex]);
       const labelMaxWidth = Number.parseFloat(labelMaxWidths[tilesetIndex]);
+      const labelLatDelta = Number.parseFloat(labelLatDeltas[tilesetIndex]);
+      const labelAllowOverlap = labelAllowOverlaps[tilesetIndex] === "true"
+        ? true
+        : labelAllowOverlaps[tilesetIndex] === "false"
+          ? false
+          : null;
       const perTilesetLabel = labels[tilesetIndex] || null;
       const hasStepLabel = step.dataset.mapLabel
         && (!step.dataset.mapLabelTileset || step.dataset.mapLabelTileset === tileset);
@@ -380,6 +388,8 @@
         labelLetterSpacing: Number.isFinite(labelLetterSpacing) ? labelLetterSpacing : null,
         labelTransform: labelTransforms[tilesetIndex] || null,
         labelMaxWidth: Number.isFinite(labelMaxWidth) ? labelMaxWidth : null,
+        labelAllowOverlap,
+        labelLatDelta: Number.isFinite(labelLatDelta) ? labelLatDelta : null,
         fixedLabels,
         labelLayerId: `${layerId}-label`,
         labelSourceId: `${layerId}-label-source`,
@@ -843,7 +853,8 @@
               "text-max-width": Number.isFinite(maxWidth) ? maxWidth : config.labelMaxWidth ?? 10,
               "text-anchor": config.labelMode === "feature" ? "left" : "center",
               "text-offset": config.labelMode === "feature" ? [0.8, 0] : [0, 0],
-              "text-allow-overlap": config.labelMode !== "feature" && config.labelMode !== "line",
+              "text-allow-overlap": config.labelAllowOverlap
+                ?? (config.labelMode !== "feature" && config.labelMode !== "line"),
               "text-ignore-placement": config.labelMode !== "feature" && config.labelMode !== "line",
             },
             paint: {
@@ -943,7 +954,7 @@
           properties: {},
           geometry: {
             type: "Point",
-            coordinates: center,
+            coordinates: [center[0], center[1] + (config.labelLatDelta ?? 0)],
           },
         });
         positionedLabels.add(config.labelSourceId);
