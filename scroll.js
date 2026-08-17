@@ -793,8 +793,9 @@
         ) return;
 
         const definitions = labelDefinitionsForConfig(config);
+        const usesTilesetSource = config.labelMode === "feature" || config.labelMode === "line";
 
-        if (config.labelMode !== "feature" && !map.getSource(config.labelSourceId)) {
+        if (!usesTilesetSource && !map.getSource(config.labelSourceId)) {
           map.addSource(config.labelSourceId, {
             type: "geojson",
             data: config.labelMode === "fixed"
@@ -828,7 +829,7 @@
           const labelLayer = {
             id: definition.id,
             type: "symbol",
-            source: config.labelMode === "feature" ? config.sourceId : config.labelSourceId,
+            source: usesTilesetSource ? config.sourceId : config.labelSourceId,
             layout: {
               "text-field": config.labelMode === "fixed" ? ["get", "label"] : config.labelText,
               "text-font": fontStackForLabel(label.font || config.labelStyle),
@@ -842,8 +843,8 @@
               "text-max-width": Number.isFinite(maxWidth) ? maxWidth : config.labelMaxWidth ?? 10,
               "text-anchor": config.labelMode === "feature" ? "left" : "center",
               "text-offset": config.labelMode === "feature" ? [0.8, 0] : [0, 0],
-              "text-allow-overlap": config.labelMode !== "feature",
-              "text-ignore-placement": config.labelMode !== "feature",
+              "text-allow-overlap": config.labelMode !== "feature" && config.labelMode !== "line",
+              "text-ignore-placement": config.labelMode !== "feature" && config.labelMode !== "line",
             },
             paint: {
               "text-color": label.color || config.labelColor || "#fff3bf",
@@ -854,10 +855,16 @@
             },
           };
 
-          if (config.labelMode === "feature") {
+          if (usesTilesetSource) {
             labelLayer["source-layer"] = config.sourceLayer;
           } else if (config.labelMode === "fixed") {
             labelLayer.filter = ["==", ["get", "labelIndex"], definition.index];
+          }
+
+          if (config.labelMode === "line") {
+            labelLayer.layout["symbol-placement"] = "line";
+            labelLayer.layout["text-rotation-alignment"] = "map";
+            labelLayer.layout["text-keep-upright"] = true;
           }
 
           map.addLayer(labelLayer);
