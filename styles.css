@@ -1257,13 +1257,32 @@ button {
   margin: var(--media-gap) auto 0;
 }
 
+.media-scroll-swap__stage {
+  position: sticky;
+  z-index: 1;
+  top: clamp(0.75rem, 2vh, 1.5rem);
+  background: var(--paper);
+}
+
 .media-scroll-swap__figure {
+  width: min(1024px, 100%);
   margin: 0 auto;
+}
+
+.media-scroll-swap__figure .media-caption {
+  width: min(var(--copy-width), 100%);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.media-scroll-swap__track {
+  height: clamp(10rem, 28svh, 18rem);
+  pointer-events: none;
 }
 
 .media-scroll-swap__frames {
   display: grid;
-  width: 100%;
+  width: min(100%, calc(100svh - 6.5rem));
   aspect-ratio: 1;
   margin: 0 auto;
 }
@@ -1283,6 +1302,26 @@ button {
 
 .media-scroll-swap__frame--second {
   opacity: var(--media-swap-progress, 0);
+}
+
+.media-scroll-swap__following {
+  opacity: var(--media-swap-following-opacity, 0);
+  transition: opacity 220ms ease-out;
+}
+
+@media (max-width: 700px) {
+  .media-scroll-swap__stage {
+    position: relative;
+    top: auto;
+  }
+
+  .media-scroll-swap__track {
+    display: none;
+  }
+
+  .media-scroll-swap__following {
+    opacity: 1;
+  }
 }
 
 .jade-visual__night-light-pair {
@@ -2387,6 +2426,19 @@ figcaption.media-caption {
 
   .media-scroll-swap__frame--second {
     opacity: 1;
+  }
+
+  .media-scroll-swap__following {
+    opacity: 1;
+  }
+
+  .media-scroll-swap__stage {
+    position: relative;
+    top: auto;
+  }
+
+  .media-scroll-swap__track {
+    display: none;
   }
 
   .index-hero__sequence {

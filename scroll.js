@@ -158,13 +158,43 @@
     ticking = false;
 
     swaps.forEach((swap) => {
+      const following = swap.nextElementSibling?.classList.contains("media-scroll-swap__following")
+        ? swap.nextElementSibling
+        : null;
+
       if (prefersReducedMotion.matches) {
         swap.style.setProperty("--media-swap-progress", "1");
+        following?.style.setProperty("--media-swap-following-opacity", "1");
         return;
       }
 
+      const stage = swap.querySelector(".media-scroll-swap__stage");
       const frames = swap.querySelector(".media-scroll-swap__frames");
-      if (!frames) return;
+      const track = swap.querySelector(".media-scroll-swap__track");
+      if (!stage || !frames) return;
+
+      if (window.getComputedStyle(stage).position === "sticky" && track) {
+        const rect = swap.getBoundingClientRect();
+        const stickyTop = Number.parseFloat(window.getComputedStyle(stage).top) || 0;
+        const scrollDistance = Math.max(track.offsetHeight, 1);
+        const progress = clamp((stickyTop - rect.top) / scrollDistance, 0, 1);
+        const transition = smootherstep(0.06, 0.94, progress);
+        swap.style.setProperty("--media-swap-progress", transition.toFixed(3));
+
+        if (following) {
+          const revealDistance = clamp(window.innerHeight * 0.14, 90, 140);
+          const distancePastLock = stickyTop - rect.top - scrollDistance;
+          const followingOpacity = smootherstep(
+            revealDistance * 0.25,
+            revealDistance,
+            distancePastLock,
+          );
+          following.style.setProperty("--media-swap-following-opacity", followingOpacity.toFixed(3));
+        }
+        return;
+      }
+
+      following?.style.setProperty("--media-swap-following-opacity", "1");
 
       const rect = frames.getBoundingClientRect();
       const visualCenter = rect.top + (rect.height / 2);
