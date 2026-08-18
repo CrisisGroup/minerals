@@ -1164,7 +1164,7 @@ button {
   width: min(var(--copy-width), 100%);
   margin: var(--media-gap) auto 0;
   padding: 0 var(--gutter);
-  color: var(--jade-text);
+  color: #aaeacc;
 }
 
 .jade-pullquote + .jade-story__block--text {
