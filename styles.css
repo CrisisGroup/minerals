@@ -686,10 +686,14 @@ button {
 }
 
 .story-pullquote {
+  position: relative;
+  left: 50%;
+  width: min(calc(var(--copy-width) + 5rem), calc(100vw - (2 * var(--gutter))));
   margin: calc(var(--media-gap) + 0.5rem) 0 calc(var(--media-gap) + 1.5rem);
   padding: 0;
   border: 0;
   text-align: center;
+  transform: translateX(-50%);
 }
 
 .tin-pullquote {
@@ -701,10 +705,6 @@ button {
 }
 
 .gold-pullquote {
-  width: min(var(--copy-width), 100%);
-  margin-right: auto;
-  margin-left: auto;
-  padding: 0 var(--gutter);
   color: #e6bb9a;
 }
 
@@ -737,7 +737,7 @@ button {
   margin: 0;
   color: inherit;
   font-family: "Spectral", Georgia, "Times New Roman", serif;
-  font-size: 24px;
+  font-size: 2.1rem;
   font-style: italic;
   font-weight: 400;
   font-variant: normal;
@@ -1160,10 +1160,8 @@ button {
 }
 
 .jade-pullquote {
-  box-sizing: border-box;
-  width: min(var(--copy-width), 100%);
-  margin: calc(var(--media-gap) + 0.5rem) auto 1.5rem;
-  padding: 0 var(--gutter);
+  margin-top: calc(var(--media-gap) + 0.5rem);
+  margin-bottom: 1.5rem;
   color: #aaeacc;
 }
 
