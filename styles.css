@@ -105,6 +105,7 @@ h2 {
 }
 
 h2.graph-hed {
+  color: #d6d6d6;
   font-family: var(--font-sans);
   font-weight: 500;
   text-transform: none !important;
@@ -688,7 +689,7 @@ button {
 .story-pullquote {
   position: relative;
   left: 50%;
-  width: min(calc(var(--copy-width) + 5rem), calc(100vw - (2 * var(--gutter))));
+  width: min(calc(var(--copy-width) + 11rem), calc(100vw - (2 * var(--gutter))));
   margin: calc(var(--media-gap) + 0.5rem) 0 calc(var(--media-gap) + 1.5rem);
   padding: 0;
   border: 0;
@@ -1014,6 +1015,11 @@ button {
 .gold-visual--body-width {
   width: min(var(--copy-width), 100%);
   padding: 0 var(--gutter);
+}
+
+.gold-visual--chart .graph-hed {
+  margin: 0 0 0.25rem;
+  text-align: left;
 }
 
 .gold-visual--photo-pair {
@@ -1637,7 +1643,6 @@ button {
 
 .rare-earths-visual--charts .graph-hed {
   margin: 0 0 0.25rem;
-  color: #CCC;
   text-align: left;
 }
 
