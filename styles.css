@@ -453,7 +453,7 @@ button {
 }
 
 .commodity-link--tin {
-  color: #ce82b2;
+  color: #C562A1;
 }
 
 .commodity-link--introduction {
@@ -686,7 +686,7 @@ button {
 }
 
 .story-pullquote {
-  margin: var(--media-gap) 0;
+  margin: calc(var(--media-gap) + 0.5rem) 0 calc(var(--media-gap) + 1.5rem);
   padding: 0;
   border: 0;
   text-align: center;
@@ -1162,7 +1162,7 @@ button {
 .jade-pullquote {
   box-sizing: border-box;
   width: min(var(--copy-width), 100%);
-  margin: var(--media-gap) auto 0;
+  margin: calc(var(--media-gap) + 0.5rem) auto 1.5rem;
   padding: 0 var(--gutter);
   color: #aaeacc;
 }
