@@ -1252,6 +1252,39 @@ button {
   width: min(var(--copy-width), 100%);
 }
 
+.media-scroll-swap {
+  position: relative;
+  margin: var(--media-gap) auto 0;
+}
+
+.media-scroll-swap__figure {
+  margin: 0 auto;
+}
+
+.media-scroll-swap__frames {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.media-scroll-swap__frame {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateZ(0);
+  transition: opacity 100ms linear;
+  backface-visibility: hidden;
+  will-change: opacity;
+}
+
+.media-scroll-swap__frame--first {
+  opacity: 1;
+}
+
+.media-scroll-swap__frame--second {
+  opacity: var(--media-swap-progress, 0);
+}
+
 .jade-visual__night-light-pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2346,6 +2379,14 @@ figcaption.media-caption {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
     will-change: auto;
+  }
+
+  .media-scroll-swap__frame--first {
+    opacity: 0;
+  }
+
+  .media-scroll-swap__frame--second {
+    opacity: 1;
   }
 
   .index-hero__sequence {

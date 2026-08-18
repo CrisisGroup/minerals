@@ -139,6 +139,80 @@
 
 
 (function () {
+  const swaps = Array.from(document.querySelectorAll("[data-media-scroll-swap]"));
+  if (!swaps.length) return;
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let ticking = false;
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function smootherstep(start, end, value) {
+    const progress = clamp((value - start) / (end - start), 0, 1);
+    return progress * progress * progress * (progress * ((progress * 6) - 15) + 10);
+  }
+
+  function updateSwaps() {
+    ticking = false;
+
+    swaps.forEach((swap) => {
+      if (prefersReducedMotion.matches) {
+        swap.style.setProperty("--media-swap-progress", "1");
+        return;
+      }
+
+      const frames = swap.querySelector(".media-scroll-swap__frames");
+      if (!frames) return;
+
+      const rect = frames.getBoundingClientRect();
+      const visualCenter = rect.top + (rect.height / 2);
+      const transitionStart = window.innerHeight * 0.78;
+      const transitionEnd = window.innerHeight * 0.46;
+      const progress = clamp(
+        (transitionStart - visualCenter) / (transitionStart - transitionEnd),
+        0,
+        1,
+      );
+      const transition = smootherstep(0, 1, progress);
+      swap.style.setProperty("--media-swap-progress", transition.toFixed(3));
+    });
+  }
+
+  function requestUpdate() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(updateSwaps);
+  }
+
+  if (typeof prefersReducedMotion.addEventListener === "function") {
+    prefersReducedMotion.addEventListener("change", requestUpdate);
+  }
+
+  if ("IntersectionObserver" in window) {
+    const preloadObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        entry.target.querySelectorAll("img").forEach((image) => {
+          image.loading = "eager";
+          if (typeof image.decode === "function") image.decode().catch(() => {});
+        });
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: "100% 0px" });
+
+    swaps.forEach((swap) => preloadObserver.observe(swap));
+  }
+
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+  requestUpdate();
+})();
+
+
+(function () {
   const scrolly = document.querySelector("[data-map-scrolly]");
   if (!scrolly) return;
 
