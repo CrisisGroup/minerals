@@ -120,21 +120,27 @@
           data-zoom="5.75"
           data-pitch="0"
           data-bearing="0"
-          data-tilesets="mapbox.mapbox-streets-v8,daltonwb.27mdetlkcqcd,daltonwb.55dgfklwmu0k,daltonwb.27mdetlkcqcd,daltonwb.55dgfklwmu0k"
-          data-tileset-layers="admin,f1d3ce1c672ab1a98f21,7bcdaa0f04522531bba8,f1d3ce1c672ab1a98f21,7bcdaa0f04522531bba8"
-          data-tileset-types="line,fill,fill,line,line"
-          data-tileset-opacities="1,0.55,0.55,1,1"
-          data-tileset-colors="#E3E686,#85DED7,#85DED7,#171717,#171717"
-          data-tileset-stroke-colors=",#171717,#171717,,"
-          data-tileset-line-widths="4,,,1.5,1.5"
-          data-tileset-filters='[["all",["==",["get","admin_level"],0],["match",["get","iso_3166_1"],["CN-MM","IN-MM","MM-TH","LA-MM","BD-MM"],true,false]],null,null]'
-          data-tileset-labels=",Shan State,Kachin State"
-          data-tileset-label-modes=",centroid,centroid"
-          data-tileset-label-sizes=",20,20"
-          data-tileset-label-styles=",italic,italic"
-          data-tileset-label-colors=",#000000,#000000"
-          data-tileset-label-halo-widths=",0,0"
-          data-tileset-label-letter-spacings=",0.02,0.02"
+          data-tilesets="daltonwb.27mdetlkcqcd,daltonwb.55dgfklwmu0k,daltonwb.27mdetlkcqcd,daltonwb.55dgfklwmu0k,mapbox.mapbox-streets-v8"
+          data-tileset-layers="f1d3ce1c672ab1a98f21,7bcdaa0f04522531bba8,f1d3ce1c672ab1a98f21,7bcdaa0f04522531bba8,admin"
+          data-tileset-types="fill,fill,line,line,line"
+          data-tileset-opacities="0.55,0.55,1,1,1"
+          data-tileset-colors="#85DED7,#85DED7,#171717,#171717,#E3E686"
+          data-tileset-stroke-colors="#171717,#171717,,,"
+          data-tileset-line-widths=",,1.5,1.5,4"
+          data-tileset-filters='[null,null,null,null,["all",["==",["get","admin_level"],0],["match",["get","iso_3166_1"],["CN-MM","IN-MM","MM-TH","LA-MM","BD-MM"],true,false]]]'
+          data-map-label="Myanmar"
+          data-map-label-tileset="mapbox.mapbox-streets-v8"
+          data-map-label-mode="fixed"
+          data-map-label-center="95.2,22.2"
+          data-map-label-additions='[{"text":"China","center":[102.8,25.2]}]'
+          data-tileset-labels="Shan State,Kachin State"
+          data-tileset-label-modes="centroid,centroid"
+          data-tileset-label-sizes="20,20,,,20"
+          data-tileset-label-styles="italic,italic,,,book"
+          data-tileset-label-colors="#000000,#000000,,,#E3E686"
+          data-tileset-label-halo-widths="0,0"
+          data-tileset-label-letter-spacings="0.02,0.02,,,1"
+          data-tileset-label-transforms=",,,,uppercase"
         >
           <p>
             Rare earth mining in Myanmar is concentrated in two distinct zones, both heavily affected by conflict.
@@ -142,9 +148,9 @@
         </article>
         <article
           class="story-mapbox-scrolly__step"
-          data-center="98.33299,25.69800"
+          data-center="98.3339417,25.690512"
           data-zoom="17"
-          data-pitch="65"
+          data-pitch="55"
           data-bearing="-33"
         >
           <p>
@@ -234,7 +240,7 @@
       <p>Control of these deposits has shifted with the expansion of Myanmar's civil war after the 2021 coup. Previously, the area was under the sway of Border Guard Forces aligned with the Myanmar military. But the coup and the upsurge in conflict that followed upended the balance of power. In late 2024, the Kachin Independence Organisation (KIO), one of the country's oldest and strongest ethnic armed groups, overran the area and assumed de facto control over the main mining belt. This redirected revenue flows away from Naypyitaw and its proxies toward the armed resistance group.</p>
     </section>
 
-        <figure class="rare-earths-visual rare-earths-visual--image">
+    <figure class="rare-earths-visual rare-earths-visual--image rare-earths-visual--wide">
       <img
         src="../media/rare_earth/2.png"
         alt="Map showing rare earth reserves, KIO control and border closures around Chipwi and Pangwa"

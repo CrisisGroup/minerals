@@ -1640,6 +1640,10 @@ button {
   padding: 0 var(--gutter);
 }
 
+.rare-earths-visual--wide {
+  width: min(var(--wide-width), 100%);
+}
+
 .rare-earths-visual--image img {
   display: block;
   width: 100%;
