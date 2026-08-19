@@ -401,6 +401,9 @@
     const brightnessMins = splitDatasetList(step.dataset.tilesetBrightnessMins || step.dataset.tilesetBrightnessMin);
     const brightnessMaxes = splitDatasetList(step.dataset.tilesetBrightnessMaxes || step.dataset.tilesetBrightnessMax);
     const lineWidths = splitDatasetList(step.dataset.tilesetLineWidths || step.dataset.tilesetLineWidth);
+    const symbolFields = splitDatasetList(step.dataset.tilesetSymbolFields || step.dataset.tilesetSymbolField);
+    const symbolZElevates = splitDatasetList(step.dataset.tilesetSymbolZElevates || step.dataset.tilesetSymbolZElevate);
+    const symbolZOffsets = splitDatasetList(step.dataset.tilesetSymbolZOffsets || step.dataset.tilesetSymbolZOffset);
     const adminLevels = splitDatasetList(step.dataset.tilesetAdminLevels || step.dataset.tilesetAdminLevel);
     const adminCountries = splitDatasetList(step.dataset.tilesetAdminCountries || step.dataset.tilesetAdminCountry);
     const adminWorldviews = splitDatasetList(step.dataset.tilesetAdminWorldviews || step.dataset.tilesetAdminWorldview);
@@ -413,6 +416,7 @@
     const labelColors = splitDatasetList(step.dataset.tilesetLabelColors);
     const labelHaloColors = splitDatasetList(step.dataset.tilesetLabelHaloColors);
     const labelHaloWidths = splitDatasetList(step.dataset.tilesetLabelHaloWidths);
+    const labelOcclusionOpacities = splitDatasetList(step.dataset.tilesetLabelOcclusionOpacities);
     const labelLetterSpacings = splitDatasetList(step.dataset.tilesetLabelLetterSpacings);
     const labelTransforms = splitDatasetList(step.dataset.tilesetLabelTransforms);
     const labelMaxWidths = splitDatasetList(step.dataset.tilesetLabelMaxWidths);
@@ -429,9 +433,17 @@
       const brightnessMin = Number.parseFloat(brightnessMins[tilesetIndex] || brightnessMins[0]);
       const brightnessMax = Number.parseFloat(brightnessMaxes[tilesetIndex] || brightnessMaxes[0]);
       const lineWidth = Number.parseFloat(lineWidths[tilesetIndex] || lineWidths[0]);
+      const symbolZElevateValue = symbolZElevates[tilesetIndex] || symbolZElevates[0];
+      const symbolZElevate = symbolZElevateValue === "true"
+        ? true
+        : symbolZElevateValue === "false"
+          ? false
+          : null;
+      const symbolZOffset = Number.parseFloat(symbolZOffsets[tilesetIndex] || symbolZOffsets[0]);
       const adminLevel = Number.parseFloat(adminLevels[tilesetIndex] || adminLevels[0]);
       const labelSize = Number.parseFloat(labelSizes[tilesetIndex]);
       const labelHaloWidth = Number.parseFloat(labelHaloWidths[tilesetIndex]);
+      const labelOcclusionOpacity = Number.parseFloat(labelOcclusionOpacities[tilesetIndex]);
       const labelLetterSpacing = Number.parseFloat(labelLetterSpacings[tilesetIndex]);
       const labelMaxWidth = Number.parseFloat(labelMaxWidths[tilesetIndex]);
       const labelLatDelta = Number.parseFloat(labelLatDeltas[tilesetIndex]);
@@ -475,6 +487,9 @@
         brightnessMin: Number.isFinite(brightnessMin) ? brightnessMin : null,
         brightnessMax: Number.isFinite(brightnessMax) ? brightnessMax : null,
         lineWidth: Number.isFinite(lineWidth) ? lineWidth : null,
+        symbolField: symbolFields[tilesetIndex] || symbolFields[0] || "name",
+        symbolZElevate,
+        symbolZOffset: Number.isFinite(symbolZOffset) ? symbolZOffset : null,
         adminLevel: Number.isFinite(adminLevel) ? adminLevel : null,
         adminCountry: adminCountries[tilesetIndex] || adminCountries[0] || null,
         adminWorldview: adminWorldviews[tilesetIndex] || adminWorldviews[0] || null,
@@ -489,6 +504,7 @@
         labelColor: labelColors[tilesetIndex] || null,
         labelHaloColor: labelHaloColors[tilesetIndex] || null,
         labelHaloWidth: Number.isFinite(labelHaloWidth) ? labelHaloWidth : null,
+        labelOcclusionOpacity: Number.isFinite(labelOcclusionOpacity) ? labelOcclusionOpacity : null,
         labelLetterSpacing: Number.isFinite(labelLetterSpacing) ? labelLetterSpacing : null,
         labelTransform: labelTransforms[tilesetIndex] || null,
         labelMaxWidth: Number.isFinite(labelMaxWidth) ? labelMaxWidth : null,
@@ -524,6 +540,7 @@
     if (layerType === "raster") return "raster-opacity";
     if (layerType === "line") return "line-opacity";
     if (layerType === "circle") return "circle-opacity";
+    if (layerType === "symbol") return "text-opacity";
     return "fill-opacity";
   }
 
@@ -638,6 +655,7 @@
     if (layerType === "raster") return null;
     if (layerType === "line") return "line-color";
     if (layerType === "circle") return "circle-color";
+    if (layerType === "symbol") return "text-color";
     return "fill-color";
   }
 
@@ -713,6 +731,18 @@
 
     if (config.layerType === "line") {
       paint["line-width"] = config.lineWidth ?? 4;
+    }
+
+    if (config.layerType === "symbol") {
+      paint["text-halo-color"] = config.labelHaloColor || "rgba(1, 11, 9, 0.92)";
+      paint["text-halo-width"] = config.labelHaloWidth ?? 1.5;
+      paint["text-halo-blur"] = config.labelHaloWidth === 0 ? 0 : 0.5;
+      if (config.labelOcclusionOpacity !== null) {
+        paint["text-occlusion-opacity"] = config.labelOcclusionOpacity;
+      }
+      if (config.symbolZOffset !== null) {
+        paint["symbol-z-offset"] = config.symbolZOffset;
+      }
     }
 
     if (config.layerType === "raster") {
@@ -847,6 +877,27 @@
           };
         }
 
+        if (config.layerType === "symbol") {
+          layer.layout = {
+            "symbol-placement": "point",
+            "symbol-z-order": "auto",
+            "text-field": ["get", config.symbolField],
+            "text-font": fontStackForLabel(config.labelStyle),
+            "text-size": config.labelSize ?? 15,
+            "text-pitch-alignment": "viewport",
+            "text-rotation-alignment": "viewport",
+            "text-letter-spacing": config.labelLetterSpacing ?? 0,
+            "text-transform": config.labelTransform ?? "none",
+            "text-max-width": config.labelMaxWidth ?? 10,
+            "text-allow-overlap": config.labelAllowOverlap ?? false,
+            "text-ignore-placement": config.labelAllowOverlap ?? false,
+          };
+
+          if (config.symbolZElevate !== null) {
+            layer.layout["symbol-z-elevate"] = config.symbolZElevate;
+          }
+        }
+
         map.addLayer(layer);
 
         map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
@@ -969,6 +1020,25 @@
               "text-opacity": 0,
             },
           };
+
+          if (config.labelOcclusionOpacity !== null) {
+            labelLayer.paint["text-occlusion-opacity"] = config.labelOcclusionOpacity;
+          }
+
+          if (config.symbolZOffset !== null) {
+            labelLayer.paint["symbol-z-offset"] = config.symbolZOffset;
+          }
+
+          if (config.labelMode === "fixed") {
+            labelLayer.layout["symbol-placement"] = "point";
+            labelLayer.layout["symbol-z-order"] = "auto";
+            labelLayer.layout["text-pitch-alignment"] = "viewport";
+            labelLayer.layout["text-rotation-alignment"] = "viewport";
+          }
+
+          if (config.symbolZElevate !== null) {
+            labelLayer.layout["symbol-z-elevate"] = config.symbolZElevate;
+          }
 
           if (usesTilesetSource) {
             labelLayer["source-layer"] = config.sourceLayer;
