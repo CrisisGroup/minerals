@@ -825,6 +825,14 @@ button {
   line-height: 1;
 }
 
+.caption-link  {
+  color: var(--heading);
+}
+
+.caption-link:hover {
+  color: var(--ink);
+}
+
 .tin-visual--comparison .media-caption {
   width: min(var(--copy-width), 100%);
   margin-right: auto;
@@ -1257,9 +1265,12 @@ button {
 
 .jade-visual--photo,
 .jade-visual--map,
-.jade-visual--charts,
-.jade-visual--night-lights {
+.jade-visual--charts {
   width: min(var(--copy-width), 100%);
+}
+
+.jade-visual--night-lights {
+  width: min(var(--wide-width), 100%);
 }
 
 .media-scroll-swap {
@@ -1343,6 +1354,12 @@ button {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(0.75rem, 3vw, 1.5rem);
   padding: clamp(1rem, 4vw, 2rem);
+}
+
+.jade-visual__night-light-pair .jade-visual__image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
 }
 
 .jade-visual__night-light-pair .jade-visual__frame {
@@ -1564,6 +1581,7 @@ button {
 }
 
 .story-mapbox-scrolly__step {
+  position: relative;
   width: min(var(--copy-width), calc(100vw - (2 * var(--gutter))));
   padding: clamp(1.2rem, 3vw, 1.7rem) clamp(1.35rem, 3.5vw, 2.2rem);
   border: 1px solid rgba(84, 187, 183, 0.4);
@@ -1575,6 +1593,23 @@ button {
 .gold-mapbox-scrolly .story-mapbox-scrolly__step {
   border-color: #ed924e;
   background: #171717;
+}
+
+.story-mapbox-scrolly__year {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: calc(100% + 0.75rem);
+  min-width: 4rem;
+  padding: 1rem 2rem;
+  color: #FFB984;
+  text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  transform: translateY(-50%);
 }
 
 .rare-earths-mapbox-scrolly .story-mapbox-scrolly__step {
@@ -2382,6 +2417,14 @@ figcaption.media-caption {
 
   .story-mapbox-scrolly__step {
     width: 100%;
+  }
+
+  .story-mapbox-scrolly__year {
+    top: auto;
+    right: auto;
+    bottom: 100%;
+    left: -1px;
+    transform: none;
   }
 
   .scroll-swap__stage {

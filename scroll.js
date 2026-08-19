@@ -377,6 +377,61 @@
     return value ? value.split(",").map((item) => item.trim()) : [];
   }
 
+  function customLayerConfigsForStep(step, index) {
+    let layers = [];
+
+    try {
+      const parsedLayers = JSON.parse(step.dataset.mapboxLayers || "[]");
+      layers = Array.isArray(parsedLayers) ? parsedLayers : [];
+    } catch {
+      return [];
+    }
+
+    return layers.flatMap((layer, layerIndex) => {
+      if (!layer || typeof layer !== "object" || typeof layer.type !== "string") return [];
+
+      const sourceUrl = typeof layer.source === "string" ? layer.source : null;
+      const isMapboxSource = sourceUrl?.startsWith("mapbox://");
+      const sourceId = isMapboxSource
+        ? `story-step-source-${idSafe(sourceUrl.slice("mapbox://".length))}`
+        : sourceUrl;
+      const declaredLayerId = layer.id || String(layerIndex);
+      const layerId = `story-custom-layer-${index}-${idSafe(declaredLayerId)}`;
+      const paint = { ...(layer.paint || {}) };
+      const opacityProperties = [];
+
+      if (layer.type === "symbol") {
+        if (layer.layout?.["text-field"] !== undefined) opacityProperties.push("text-opacity");
+        if (layer.layout?.["icon-image"] !== undefined) opacityProperties.push("icon-opacity");
+      } else {
+        opacityProperties.push(opacityProperty(layer.type));
+      }
+
+      const targetOpacities = new Map(opacityProperties.map((property) => [
+        property,
+        Number.isFinite(paint[property]) ? paint[property] : 1,
+      ]));
+
+      opacityProperties.forEach((property) => {
+        paint[property] = 0;
+      });
+
+      return [{
+        layer: {
+          ...layer,
+          id: layerId,
+          source: sourceId,
+          paint,
+        },
+        layerId,
+        sourceId,
+        sourceUrl,
+        opacityProperties,
+        targetOpacities,
+      }];
+    });
+  }
+
   function tilesetConfigsForStep(step, index) {
     const tilesets = splitDatasetList(step.dataset.tilesets || step.dataset.tileset);
     if (!tilesets.length) return [];
@@ -908,6 +963,33 @@
     });
   }
 
+  function addStepCustomLayers(map, steps) {
+    steps.forEach((step, index) => {
+      customLayerConfigsForStep(step, index).forEach((config) => {
+        if (
+          config.sourceId
+          && config.sourceUrl?.startsWith("mapbox://")
+          && !map.getSource(config.sourceId)
+        ) {
+          map.addSource(config.sourceId, {
+            type: "vector",
+            url: config.sourceUrl,
+          });
+        }
+
+        if (!config.sourceId || map.getLayer(config.layerId)) return;
+
+        map.addLayer(config.layer);
+        config.opacityProperties.forEach((property) => {
+          map.setPaintProperty(config.layerId, `${property}-transition`, {
+            duration: 700,
+            delay: 0,
+          });
+        });
+      });
+    });
+  }
+
   function addStepPlaceholders(map, steps) {
     steps.forEach((step, index) => {
       const config = placeholderConfigForStep(step, index);
@@ -1177,6 +1259,22 @@
     });
   }
 
+  function updateStepCustomLayers(map, steps, activeStep) {
+    steps.forEach((step, index) => {
+      customLayerConfigsForStep(step, index).forEach((config) => {
+        if (!map.getLayer(config.layerId)) return;
+
+        config.opacityProperties.forEach((property) => {
+          map.setPaintProperty(
+            config.layerId,
+            property,
+            step === activeStep ? config.targetOpacities.get(property) : 0,
+          );
+        });
+      });
+    });
+  }
+
   scrollys.forEach((scrolly) => {
     const mapContainer = scrolly.querySelector(".story-mapbox");
     const fallback = scrolly.querySelector(".story-mapbox__fallback span");
@@ -1223,6 +1321,7 @@
       }
 
       updateStepTilesets(map, steps, step);
+      updateStepCustomLayers(map, steps, step);
       updateStyleLayerOpacities(map, step, styleLayerOpacityDefaults);
       updateStyleLayerSaturations(map, step, styleLayerSaturationDefaults);
     }
@@ -1260,6 +1359,7 @@
         addStepTilesets(map, steps);
         addStepPlaceholders(map, steps);
         addStepLabels(map, steps);
+        addStepCustomLayers(map, steps);
         styleLayerOpacityDefaults = captureStyleLayerOpacityDefaults(map, steps);
         styleLayerSaturationDefaults = captureStyleLayerSaturationDefaults(map, steps);
         updateActiveStepFromViewport({ forceCamera: true, jump: true });
