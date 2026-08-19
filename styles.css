@@ -1216,7 +1216,13 @@ button {
 }
 
 .jade-visual--split {
-  width: min(940px, 100%);
+  width: min(var(--wide-width), 100%);
+}
+
+.jade-visual--split .media-caption {
+  width: min(calc(var(--copy-width) - (2 * var(--gutter))), 100%);
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .jade-visual__pair {
@@ -1311,6 +1317,10 @@ button {
 .media-scroll-swap__following {
   opacity: var(--media-swap-following-opacity, 0);
   transition: opacity 220ms ease-out;
+}
+
+.media-scroll-swap + .media-scroll-swap__following {
+  margin-top: var(--media-gap);
 }
 
 @media (max-width: 700px) {
