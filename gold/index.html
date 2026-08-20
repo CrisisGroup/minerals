@@ -185,7 +185,7 @@
         alt="Map of Myanmar showing airstrike locations and dates from November 2025 through March 2026" width="1080"
         height="1398" loading="lazy" />
       <figcaption class="media-caption">
-        Locations of reported airstrikes targeting gold mining sites since November 2025. Source: CRISIS GROUP
+        Locations of reported airstrikes on gold mining sites since November 2025. Source: CRISIS GROUP 
       </figcaption>
     </figure>
 
@@ -279,12 +279,7 @@
         </div>
       </div>
       <figcaption class="media-caption">
-        Along the Meza River and its tributaries in northern Sagaing, Crisis Group analysis found a three-fold expansion
-        of alluvial mining since the coup, spreading into areas of farmland and eventually replacing them. Source:
-        Planet Labs PBC / CRISIS GROUP | Methodology: Mining scars were detected by applying deep convolutional neural
-        networks to open-source Sentinel-2 multispectral imagery, following the methodology described in Gallwey et al.
-        (2020), “A Sentinel-2-based multispectral convolutional neural network for detecting artisanal small-scale
-        mining in Ghana: Applying deep learning to shallow mining”, Remote Sensing of Environment, 248, 111970.
+        Satellite imagery of a gold mining site near the Meza River in northern Sagaing Region shows alluvial mining encroaching on adjacent farmland and forest. Source: Google Earth, Crisis Group analysis of open-source Sentinel-2 multispectral imagery (see full methodology below)  / CRISIS GROUP 
       </figcaption>
     </figure>
 
@@ -298,14 +293,13 @@
     </section>
 
     <figure class="gold-visual gold-visual--body-width gold-visual--chart">
-      <h2 class="graph-hed">Price Advantages for Cross-border Gold trade</h2>
-      <p class="graph-subhed">Premiums in per cent (%), by country</p>
+      <h2 class="graph-hed">The price gap that incentivises smuggling</h2>
+      <p class="graph-subhed">Gold is consistently worth more in neighbouring India and Bangladesh than in Myanmar</p>
       <img class="gold-visual__static-image" src="../media/gold/gold_05_price_chart.png"
         alt="Line chart comparing gold price premiums in Bangladesh, India and Myanmar" width="1080" height="1080"
         loading="lazy" />
       <figcaption class="media-caption">
-        Premium at which gold trades in Bangladesh and India relative to Myanmar, to underline the incentives for
-        smuggling.
+        The distance between the lines represents the potential margin from moving gold out of Myanmar, before transport costs, risk and informal payments. It does not show how much gold is actually being smuggled. / CRISIS GROUP 
       </figcaption>
     </figure>
 
@@ -344,12 +338,26 @@
           Franz</strong> and <strong>Ysé Angerer</strong>
       </p>
 
+      <p class="credits__methodology">
+        <a href="#gold-methodology" data-methodology-open aria-haspopup="dialog" aria-controls="gold-methodology">Methodology Notes</a>
+      </p>
+
       <p class="credits__copyright">
         All rights <a href="https://www.crisisgroup.org/legal/privacy-policy" target="_blank"
           rel="noopener noreferrer">International Crisis Group</a>.
       </p>
     </div>
   </footer>
+
+  <dialog class="methodology-modal" id="gold-methodology" data-methodology-dialog aria-labelledby="gold-methodology-title">
+    <div class="methodology-modal__content">
+      <button class="methodology-modal__close" type="button" data-methodology-close aria-label="Close methodology notes" title="Close">&times;</button>
+      <h2 class="methodology-modal__title" id="gold-methodology-title">Gold Methodology Notes</h2>
+      <div class="methodology-modal__body">
+        <p>Supporting citations and methodology notes for the Gold chapter will be added here.</p>
+      </div>
+    </div>
+  </dialog>
 
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.js"></script>
   <script src="../scroll.js"></script>

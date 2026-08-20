@@ -2183,6 +2183,21 @@ figcaption.media-caption {
   margin-top: 1.5rem;
 }
 
+.credits__methodology {
+  margin: 1.5rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+}
+
+.credits__methodology a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.credits__methodology a:hover {
+  opacity: 0.72;
+}
+
 .credits__copyright {
   margin-top: 1.5rem;
   opacity: 0.85;
@@ -2192,6 +2207,95 @@ figcaption.media-caption {
 
 .credits a {
   color: inherit;
+}
+
+.methodology-modal {
+  width: min(calc(100% - (2 * var(--gutter))), 46rem);
+  max-height: calc(100svh - 2rem);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.55);
+}
+
+.methodology-modal::backdrop {
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(2px);
+}
+
+.methodology-modal__content {
+  position: relative;
+  max-height: calc(100svh - 2rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
+  overflow-y: auto;
+}
+
+.methodology-modal__title {
+  margin: 0;
+  padding-right: 3rem;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.15;
+  text-transform: none;
+}
+
+.methodology-modal__body {
+  margin-top: 1.5rem;
+}
+
+.methodology-modal__body p,
+.methodology-modal__body li {
+  font-size: 1.1rem;
+  line-height: 1.65;
+}
+
+.methodology-modal__body p:last-child,
+.methodology-modal__body ol:last-child,
+.methodology-modal__body ul:last-child {
+  margin-bottom: 0;
+}
+
+.methodology-modal__body a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+.methodology-modal__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: none;
+}
+
+.methodology-modal__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.methodology-modal__close:focus-visible,
+.credits__methodology a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 
 @media (max-width: 700px) {

@@ -1668,3 +1668,52 @@
   window.addEventListener("scroll", requestRender, { passive: true });
   window.addEventListener("resize", handleResize);
 })();
+
+(function () {
+  const openers = Array.from(document.querySelectorAll("[data-methodology-open]"));
+  const dialogs = Array.from(document.querySelectorAll("[data-methodology-dialog]"));
+
+  if (!openers.length || !dialogs.length || typeof HTMLDialogElement === "undefined") return;
+
+  function getDialog(opener) {
+    const targetId = opener.getAttribute("aria-controls");
+    return targetId ? document.getElementById(targetId) : null;
+  }
+
+  function closeDialog(dialog) {
+    if (dialog.open) dialog.close();
+  }
+
+  openers.forEach((opener) => {
+    opener.addEventListener("click", (event) => {
+      const dialog = getDialog(opener);
+      if (!(dialog instanceof HTMLDialogElement) || typeof dialog.showModal !== "function") return;
+
+      event.preventDefault();
+      dialog.returnFocusTarget = opener;
+
+      if (!dialog.open) dialog.showModal();
+    });
+  });
+
+  dialogs.forEach((dialog) => {
+    const closeButton = dialog.querySelector("[data-methodology-close]");
+
+    closeButton?.addEventListener("click", () => closeDialog(dialog));
+
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) closeDialog(dialog);
+    });
+
+    dialog.addEventListener("close", () => {
+      if (dialog.returnFocusTarget?.isConnected) dialog.returnFocusTarget.focus();
+      dialog.returnFocusTarget = null;
+    });
+  });
+
+  const hashId = window.location.hash.slice(1);
+  const hashDialog = hashId ? document.getElementById(decodeURIComponent(hashId)) : null;
+  if (hashDialog instanceof HTMLDialogElement && hashDialog.matches("[data-methodology-dialog]")) {
+    hashDialog.showModal();
+  }
+})();
