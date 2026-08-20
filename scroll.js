@@ -1317,6 +1317,7 @@
       if (temporalLabel && temporalYear) {
         const year = step.dataset.mapYear?.trim() || "";
         const yearBackground = step.dataset.mapYearBackground?.trim() || "";
+        const yearBorder = step.dataset.mapYearBorder?.trim() || "";
         const yearColor = step.dataset.mapYearColor?.trim() || "";
         const yearDetailColor = step.dataset.mapYearDetailColor?.trim() || "";
         temporalYear.textContent = year;
@@ -1327,6 +1328,11 @@
           temporalLabel.style.setProperty("--temporal-year-background", yearBackground);
         } else {
           temporalLabel.style.removeProperty("--temporal-year-background");
+        }
+        if (yearBorder) {
+          temporalLabel.style.setProperty("--temporal-year-border", yearBorder);
+        } else {
+          temporalLabel.style.removeProperty("--temporal-year-border");
         }
         if (yearColor) {
           temporalLabel.style.setProperty("--temporal-year-color", yearColor);

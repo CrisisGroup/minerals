@@ -975,6 +975,18 @@ button {
   max-width: none;
 }
 
+.gold-story__list {
+  margin: 8px 0 1em;
+  padding-left: 1.35em;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  line-height: 1.7;
+}
+
+.gold-story__list li + li {
+  margin-top: 0.65rem;
+}
+
 .gold-callout {
   width: min(520px, calc(100vw - (2 * var(--gutter))));
   margin: var(--story-gap) auto 0;
@@ -1551,6 +1563,10 @@ button {
   --story-map-step-count: 2;
 }
 
+.story-mapbox-scrolly--three {
+  --story-map-step-count: 3;
+}
+
 .story-mapbox-scrolly__stage {
   position: sticky;
   top: 0;
@@ -1676,7 +1692,7 @@ button {
 .story-mapbox-scrolly__temporal-year {
   min-width: 4rem;
   padding: 0.6rem 0.8rem;
-  border: 2px solid #C56742;
+  border: 2px solid var(--temporal-year-border, #C56742);
   background: var(--temporal-year-background, rgba(0, 0, 0, 0.5));
   color: var(--temporal-year-color, #FFB984);
   font-size: 2rem;
@@ -1685,8 +1701,13 @@ button {
   text-align: center;
 }
 
+.rare-earths-mapbox-scrolly .story-mapbox-scrolly__temporal-label {
+  --temporal-year-border: #6ECFC7;
+  --temporal-year-color: #85DED7;
+}
+
 .story-mapbox-scrolly__temporal-place {
-  margin-top: 0.65rem;
+  margin-top: 1rem;
   color: var(--temporal-detail-color, #F8CDAE);
   font-size: 1.6rem;
   font-weight: 700;

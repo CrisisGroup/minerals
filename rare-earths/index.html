@@ -141,6 +141,10 @@
         <div class="story-mapbox__fallback">
           <span>Loading map</span>
         </div>
+        <div class="story-mapbox-scrolly__temporal-label" data-mapbox-temporal-label>
+          <span class="story-mapbox-scrolly__temporal-year" data-mapbox-temporal-year></span>
+          <span class="story-mapbox-scrolly__temporal-place" data-mapbox-temporal-detail></span>
+        </div>
       </div>
       <div class="story-mapbox-scrolly__steps">
         <article
@@ -189,7 +193,7 @@
           data-tileset-symbol-fields=",name"
           data-tileset-symbol-z-elevates=",true"
           data-tileset-symbol-z-offsets=",50"
-          data-map-label="Leeching pools"
+          data-map-label="Leaching pools"
           data-map-label-tileset="daltonwb.e55yd8gpnewv"
           data-map-label-mode="fixed"
           data-map-label-center="98.33363,25.69096"
@@ -213,12 +217,12 @@
           data-zoom="10.5"
           data-pitch="0"
           data-bearing="0"
-          data-tilesets="mapbox.mapbox-streets-v8,daltonwb.mttjzo,daltonwb.1pmfjj"
+          data-tilesets="mapbox.mapbox-streets-v8,daltonwb.1pmfjj"
           data-tileset-layers="admin,,"
           data-tileset-types="line,raster,raster"
           data-tileset-opacities="1,1,1"
           data-tileset-colors="#E3E686,,"
-          data-tileset-raster-colors=",#85DED7,#85DED7"
+          data-tileset-raster-colors=",#0A9F93"
           data-tileset-line-widths="4,,"
           data-tileset-filters='[["all",["==",["get","admin_level"],0],["match",["get","iso_3166_1"],["CN-MM","IN-MM","MM-TH","LA-MM","BD-MM"],true,false]],null,null]'
           data-map-label="Myanmar"
@@ -233,6 +237,12 @@
           data-tileset-label-transforms="uppercase,,"
           data-style-layer="mapbox-satellite"
           data-style-layer-opacity="0.5"
+          data-map-year="2018"
+          data-map-year-detail="Pre-coup mining footprint"
+          data-map-year-background="#0A9F93"
+          data-map-year-border="#6ECFC7"
+          data-map-year-color="#171717"
+          data-map-year-detail-color="#0A9F93"
         >
           <p>
             Satellite analysis in 2022 documented more than 2,700 leaching pools across nearly 300 separate sites in the Chipwi/Pangwa Belt area, often referred to as Kachin Special Region 1.
@@ -249,7 +259,7 @@
           data-tileset-types="line,raster,raster"
           data-tileset-opacities="1,0.85,0.9"
           data-tileset-colors="#E3E686,,"
-          data-tileset-raster-colors=",#a7e2dd,#376864"
+          data-tileset-raster-colors=",#0A9F93,#85DED7"
           data-tileset-line-widths="4,,"
           data-tileset-filters='[["all",["==",["get","admin_level"],0],["match",["get","iso_3166_1"],["CN-MM","IN-MM","MM-TH","LA-MM","BD-MM"],true,false]],null,null]'
           data-map-label="Myanmar"
@@ -264,6 +274,12 @@
           data-tileset-label-transforms="uppercase,,"
           data-style-layer="mapbox-satellite"
           data-style-layer-opacity="0.5"
+          data-map-year="2025"
+          data-map-year-detail="Expansion since the coup"
+          data-map-year-background="#6ECFC7"
+          data-map-year-border="#276F73"
+          data-map-year-color="#171717"
+          data-map-year-detail-color="#6ECFC7"
         >
           <p>
             Crisis Group remote sensing analysis shows a stark increase in mining area from 1,622 hectares in 2018 to 3,565 hectares in 2025, with most sites concentrated in the Pangwa area and some of the others scattered across the rest of Chipwi township.
@@ -277,8 +293,6 @@
       <p>
         For a time after the KIO took control, China closed the border for rare earth imports, as well as for exports of materials needed for mining. The importance of these rare earth supplies to Beijing meant that it soon relented, however, allowing a reduced flow of the minerals over much of 2025 and full reopening of the trade by late October. China has also applied much less pressure on the KIO to stop fighting the Myanmar military, compared with other armed groups along the border, such as the Myanmar National Democratic Alliance Army and the Ta’ang National Liberation Army, both of which were forced into ceasefires with Naypyitaw. The differential treatment is at least in part due to the leverage the KIO has as a supplier of a strategic resource.
       </p>
-      <p>Control of these deposits has shifted with the expansion of Myanmar’s civil war after the 2021 coup. Previously, the area was under the sway of Border Guard Forces aligned with the Myanmar military. But the coup and the upsurge in conflict that followed upended the balance of power. In late 2024, the Kachin Independence Organisation (KIO), one of the country’s oldest and strongest ethnic armed groups, overran the area and assumed de facto control of the main mining belt. The revenue now flows to this group rather than Naypyitaw and its proxies.
-</p>
     </section>
 
     <figure class="rare-earths-visual rare-earths-visual--image rare-earths-visual--wide">
@@ -292,13 +306,15 @@
     </figure>
 
       <section class="rare-earths-story__block rare-earths-story__block--text">
+           <p>Control of these deposits has shifted with the expansion of Myanmar’s civil war after the 2021 coup. Previously, the area was under the sway of Border Guard Forces aligned with the Myanmar military. But the coup and the upsurge in conflict that followed upended the balance of power. In late 2024, the Kachin Independence Organisation (KIO), one of the country’s oldest and strongest ethnic armed groups, overran the area and assumed de facto control of the main mining belt. The revenue now flows to this group rather than Naypyitaw and its proxies.
+</p>
         <p>
         But rare earth deposits are a double-edged sword for the armed outfit. Beijing remains highly sensitive to disruptions in rare earth supply, and it is unlikely to tolerate prolonged interruptions or behaviour it views as threatening the reliability of exports. The same deposits that provide the KIO with revenue and leverage therefore also constitute a geopolitical vulnerability for the group.
       </p>
     </section>
 
     <section
-      class="rare-earths-mapbox-scrolly story-mapbox-scrolly story-mapbox-scrolly--two"
+      class="rare-earths-mapbox-scrolly story-mapbox-scrolly story-mapbox-scrolly--three"
       data-story-map
       data-mapbox-token="pk.eyJ1IjoiZGFsdG9ud2IiLCJhIjoiOWdSSXFQSSJ9.HZyjh4g3TAAOAncwelv9Vw"
       data-mapbox-style="mapbox://styles/daltonwb/cmrdued7y000l01s7fnbtdf41"
@@ -310,35 +326,76 @@
         <div class="story-mapbox__fallback">
           <span>Loading map</span>
         </div>
+        <div class="story-mapbox-scrolly__temporal-label" data-mapbox-temporal-label>
+          <span class="story-mapbox-scrolly__temporal-year" data-mapbox-temporal-year></span>
+          <span class="story-mapbox-scrolly__temporal-place" data-mapbox-temporal-detail></span>
+        </div>
       </div>
       <div class="story-mapbox-scrolly__steps">
         <article
-          class="story-mapbox-scrolly__step"
-          data-center="99.349777, 20.387395"
-          data-zoom="12"
+          class="story-mapbox-scrolly__step story-mapbox-scrolly__step--map-only"
+          data-center="98.657227,21.717534"
+          data-zoom="6"
           data-pitch="0"
           data-bearing="0"
-          data-tilesets="daltonwb.z9cj8x,daltonwb.lydz8q"
+          data-tilesets="daltonwb.27mdetlkcqcd,daltonwb.27mdetlkcqcd,mapbox.mapbox-streets-v8"
+          data-tileset-layers="f1d3ce1c672ab1a98f21,f1d3ce1c672ab1a98f21,admin"
+          data-tileset-types="fill,line,line"
+          data-tileset-opacities="0.55,1,1"
+          data-tileset-colors="#85DED7,#171717,#E3E686"
+          data-tileset-stroke-colors="#171717,,"
+          data-tileset-line-widths=",1,4"
+          data-tileset-admin-levels=",,0"
+          data-tileset-admin-countries=",,MM"
+          data-tileset-admin-maritime=",,false"
+          data-tileset-labels="Shan State,,"
+          data-tileset-label-modes="centroid,,"
+          data-tileset-label-sizes="20,,"
+          data-tileset-label-styles="italic,,"
+          data-tileset-label-colors="#000000,,"
+          data-tileset-label-halo-widths="0,,"
+          data-tileset-label-letter-spacings="0.02,,"
+          aria-hidden="true"
+        ></article>
+        <article
+          class="story-mapbox-scrolly__step"
+          data-center="99.349777, 20.387395"
+          data-zoom="11.7"
+          data-pitch="0"
+          data-bearing="0"
+          data-tilesets="daltonwb.lydz8q"
           data-tileset-types="raster,raster"
           data-tileset-opacities="0.85,0.9"
-          data-tileset-raster-colors="#85DED7,#85DED7"
+          data-tileset-raster-colors="#0A9F93"
           data-style-layer="mapbox-satellite"
           data-style-layer-opacity="0.5"
+          data-map-year="2024"
+          data-map-year-detail="Mining footprint in 2024"
+          data-map-year-background="#0A9F93"
+          data-map-year-border="#6ECFC7"
+          data-map-year-color="#171717"
+          data-map-year-detail-color="#0A9F93"
         >
           <p>More recently, smaller-scale mines have appeared further south in Shan State, in territories controlled by the United Wa State Army, one of the country’s largest ethnic armed groups, and its ally, the National Democratic Alliance Army (Mongla group).</p>
         </article>
         <article
           class="story-mapbox-scrolly__step"
           data-center="99.349777, 20.387395"
-          data-zoom="12"
+          data-zoom="11.7"
           data-pitch="0"
           data-bearing="0"
           data-tilesets="daltonwb.z9cj8x,daltonwb.lydz8q"
           data-tileset-types="raster,raster"
           data-tileset-opacities="0.85,0.9"
-          data-tileset-raster-colors="#376864,#54bbb7"
+          data-tileset-raster-colors="#85DED7,#54bbb7"
           data-style-layer="mapbox-satellite"
           data-style-layer-opacity="0.5"
+          data-map-year="2025"
+          data-map-year-detail="Expansion in 2025"
+          data-map-year-background="#6ECFC7"
+          data-map-year-border="#276F73"
+          data-map-year-color="#171717"
+          data-map-year-detail-color="#6ECFC7"
         >
           <p>While reportedly lower-grade than the Kachin deposits, these sites are expanding rapidly – with the area affected by mining tripling from 2024 to 2025, according to Crisis Group analysis of high-resolution imagery.</p>
         </article>
@@ -346,7 +403,7 @@
     </section>
 
     <figure class="rare-earths-visual rare-earths-visual--charts">
-      <h2 class="graph-hed">The Rapid Expansion of Mining Areas for Rare Earths</h2>
+      <h2 class="graph-hed">The Rapid Expansion of Rare Earth Mining</h2>
       <p class="graph-subhed">Mining area by year (in hectares)</p>
       <div class="rare-earths-visual__chart-grid">
         <div class="rare-earths-visual__chart">
@@ -371,7 +428,7 @@
         </div>
       </div>
       <figcaption class="media-caption">
-        Since 2018, Crisis Group has noted a significant expansion of dredging pool areas. In Shan State, the spike is notable in the last two years. Source: Crisis Group analysis of open-source Sentinel-2 multispectral imagery (see full methodology below) / CRISIS GROUP.
+        Since 2018, Crisis Group has noted a significant expansion of leaching pool areas. In Shan State, the spike is notable in the last two years. <br /> Source: Crisis Group analysis of open-source Sentinel-2 multispectral imagery (see full methodology below) / CRISIS GROUP
       </figcaption>
     </figure>
 
@@ -402,7 +459,7 @@
       <blockquote class="story-pullquote rare-earths-pullquote">
         <p>
           Supply of critical inputs for clean energy now depends on territories governed by armed actors in
-          Myanmar&rsquo;s borderlands, and the environmental harm created by their extraction.
+          Myanmar&rsquo;s borderlands and causes great environmental harm.
         </p>
       </blockquote>
       <p>
@@ -448,7 +505,44 @@
       <button class="methodology-modal__close" type="button" data-methodology-close aria-label="Close methodology notes" title="Close">&times;</button>
       <h2 class="methodology-modal__title" id="rare-earths-methodology-title">Rare Earths Methodology Notes</h2>
       <div class="methodology-modal__body">
-        <p>Supporting citations and methodology notes for the Rare Earths chapter will be added here.</p>
+        <ul>
+  <li>Crisis Group interviews, Myanmar analysts and civil society organisations, 2025-2026.</li>
+  <li>
+    Global Witness, <em>Myanmar’s poisoned mountains: The toxic rare earth mining industry at the heart of the global green energy transition</em>, 9 August 2022.
+    <a href="https://www.globalwitness.org/en/campaigns/natural-resource-governance/myanmars-poisoned-mountains">https://www.globalwitness.org/en/campaigns/natural-resource-governance/myanmars-poisoned-mountains</a>
+  </li>
+  <li>
+    Emmanuel Chinkaka, Julie Michelle Klinger, Kyle Frankel Davis and Federica Bianco, “Unexpected Expansion of Rare-Earth Element Mining Activities in the Myanmar–China Border Region”, <em>Remote Sensing</em> 15(18):4597, 19 September 2023.
+    <a href="https://doi.org/10.3390/rs15184597">https://doi.org/10.3390/rs15184597</a>
+  </li>
+  <li>
+    Global Witness, <em>Fuelling the future, poisoning the present: Myanmar’s rare earth boom</em>, 23 May 2024.
+    <a href="https://www.globalwitness.org/en/campaigns/natural-resource-governance/fuelling-the-future-poisoning-the-present-myanmars-rare-earth-boom">https://www.globalwitness.org/en/campaigns/natural-resource-governance/fuelling-the-future-poisoning-the-present-myanmars-rare-earth-boom</a>
+  </li>
+  <li>
+    Shanan Foundation, <em>Governance of Rare Earth Mining by the Kachin Independence Organization/Army (KIO/KIA)</em>, Research Report 1, February 2025, by Ta-Wei Chu, Seng Li, Mary, Peter and Joyce; published with the Heinrich Böll Stiftung.
+    <a href="https://www.boell.de/sites/default/files/2025-04/shanan-foundation-governance-of-rare-earth-mining-by-the-kachinindependence-organization.pdf">https://www.boell.de/sites/default/files/2025-04/shanan-foundation-governance-of-rare-earth-mining-by-the-kachinindependence-organization.pdf</a>
+  </li>
+  <li>
+    Institute for Strategy and Policy Myanmar, <em>Unearthing the Cost: Rare Earth Mining in Myanmar’s War-Torn Regions</em>, June 2025.
+  </li>
+  <li>
+    Klairung Phromsupa, “Crossing Over, Flowing Back: Toxins, Minerals, and Rivers in Thailand’s Hands”, <em>Lanner</em>, 23 May 2026.
+    <a href="https://lannernews.com/23052569-01">https://lannernews.com/23052569-01</a>
+  </li>
+  <li>
+    “Rare-Earth Mining in Shan State Linked to Forced Labor, Abuse, and Environmental Damage: SHRF”, <em>Shan Herald Agency for News</em>, 27 May 2026.
+    <a href="https://english.shannews.org/archives/29764">https://english.shannews.org/archives/29764</a>
+  </li>
+  <li>
+    “Residents oppose push to expand rare-earth mining near Chipwi Town”, <em>Burma News International</em> (Kachin News Group), 25 June 2026.
+    <a href="https://www.bnionline.net/en/news/residents-oppose-push-expand-rare-earth-mining-near-chipwi-town">https://www.bnionline.net/en/news/residents-oppose-push-expand-rare-earth-mining-near-chipwi-town</a>
+  </li>
+  <li>
+    Stimson Center, <em>Mining in Mainland Southeast Asia – River Basins Dashboard</em>.
+    <a href="https://gis.stimson.org/portal/apps/dashboards/6f9faed324854a119390df7e3b38057c">https://gis.stimson.org/portal/apps/dashboards/6f9faed324854a119390df7e3b38057c</a>
+  </li>
+</ul>
       </div>
     </div>
   </dialog>
