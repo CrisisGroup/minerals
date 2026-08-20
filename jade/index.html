@@ -118,20 +118,26 @@
     </section>
 
     <figure class="jade-visual jade-visual--large">
-      <video
-        class="jade-visual__video"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="metadata"
-        poster="../media/jade/jade_02_hpakant_timelapse_poster.jpg"
-        width="1104"
-        height="1110"
-        aria-label="Satellite timelapse of the Hpakant jade mining area"
-      >
-        <source src="../media/jade/jade_02_hpakant_timelapse.mp4" type="video/mp4" />
-      </video>
+      <div class="autoplay-video-frame" data-autoplay-fallback>
+        <video
+          class="jade-visual__video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="../media/jade/jade_02_hpakant_timelapse_poster.jpg"
+          width="1104"
+          height="1110"
+          aria-label="Satellite timelapse of the Hpakant jade mining area"
+        >
+          <source src="../media/jade/jade_02_hpakant_timelapse.mp4" type="video/mp4" />
+        </video>
+        <button class="autoplay-video-fallback" type="button" data-autoplay-play hidden>
+          <span class="autoplay-video-fallback__icon" aria-hidden="true">&#9654;</span>
+          <span data-autoplay-play-label>Play animation</span>
+        </button>
+      </div>
       <figcaption class="media-caption">
         This sequence of satellite images, spanning the period 1990-2026, shows the dramatic expansion of the jade mining area at Hpakant, the world’s main source of high-quality jadeite. Source: Planet Labs PBC / CRISIS GROUP 
       </figcaption>
@@ -384,7 +390,7 @@
       <p class="credits__text">
         <span class="credits__label"><strong>MAPS</strong></span> Crisis Group research; OpenStreetMap; Natural Earth; Mapbox<br />
         <span class="credits__label"><strong>GRAPHS</strong></span> Crisis Group analysis; London Metal Exchange; China customs data<br />
-        <span class="credits__label"><strong>SATELLITE IMAGERY</strong></span> Google Earth; Planet Labs; Copernicus Sentinel.
+        <span class="credits__label"><strong>SATELLITE IMAGERY</strong></span> Google Earth; Planet Labs PBC; Copernicus Sentinel.
       </p>
 
       <p class="credits__text">
@@ -416,6 +422,7 @@
     </div>
   </dialog>
 
+  <script src="../video_playback.js"></script>
   <script src="../scroll.js"></script>
 </body>
 

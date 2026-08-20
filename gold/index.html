@@ -106,9 +106,13 @@
         <div class="story-mapbox__fallback">
           <span>Loading map</span>
         </div>
+        <div class="story-mapbox-scrolly__temporal-label" data-mapbox-temporal-label>
+          <span class="story-mapbox-scrolly__temporal-year" data-mapbox-temporal-year></span>
+          <span class="story-mapbox-scrolly__temporal-place">Homalin Township<br />Uru River</span>
+        </div>
       </div>
       <div class="story-mapbox-scrolly__steps">
-        <article class="story-mapbox-scrolly__step story-mapbox-scrolly__step--map-only" data-center="96.2,19.35"
+        <article class="story-mapbox-scrolly__step" data-center="96.2,19.35"
           data-zoom="4.85" data-pitch="0" data-bearing="0"
           data-tilesets="daltonwb.umcgq6muzug5,mapbox.mapbox-streets-v8"
           data-tileset-layers="34fb7fc2e7178e6d37b5,admin" data-tileset-types="fill,line"
@@ -117,25 +121,61 @@
           data-tileset-admin-maritime=",false" data-map-label="Sagaing Region"
           data-map-label-tileset="daltonwb.umcgq6muzug5" data-tileset-label-sizes="16,"
           data-tileset-label-styles="italic," data-tileset-label-colors="#F9E3D3," data-tileset-label-halo-widths="0,"
-          data-tileset-label-letter-spacings="0.02," data-tileset-label-max-widths="5," aria-hidden="true"></article>
+          data-tileset-label-letter-spacings="0.02," data-tileset-label-max-widths="5,"
+          data-mapbox-layers='[
+            {
+              "id":"overview-country-labels",
+              "type":"symbol",
+              "source":{"type":"geojson","data":{"type":"FeatureCollection","features":[
+                {"type":"Feature","properties":{"name":"MYANMAR"},"geometry":{"type":"Point","coordinates":[95.956,21.9162]}},
+                {"type":"Feature","properties":{"name":"INDIA"},"geometry":{"type":"Point","coordinates":[89.5,24]}},
+                {"type":"Feature","properties":{"name":"CHINA"},"geometry":{"type":"Point","coordinates":[100.3,25]}}
+              ]}},
+              "layout":{"symbol-placement":"point","symbol-z-order":"auto","text-field":["get","name"],"text-font":["Franklin Gothic Book Regular","Arial Unicode MS Regular"],"text-size":20,"text-letter-spacing":1,"text-transform":"uppercase","text-allow-overlap":true,"text-ignore-placement":true,"text-pitch-alignment":"viewport","text-rotation-alignment":"viewport"},
+              "paint":{"text-color":"#F8CDAE","text-halo-width":0}
+            },
+            {
+              "id":"nay-pyi-taw-marker",
+              "type":"symbol",
+              "source":{"type":"geojson","data":{"type":"FeatureCollection","features":[
+                {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[96.1,19.75]}}
+              ]}},
+              "layout":{"symbol-placement":"point","symbol-z-order":"auto","text-field":"\u25a0","text-font":["Arial Unicode MS Regular"],"text-size":16,"text-allow-overlap":true,"text-ignore-placement":true,"text-pitch-alignment":"viewport","text-rotation-alignment":"viewport"},
+              "paint":{"text-color":"#000000","text-halo-color":"#ffffff","text-halo-width":1,"text-halo-blur":0}
+            },
+            {
+              "id":"nay-pyi-taw-label",
+              "type":"symbol",
+              "source":{"type":"geojson","data":{"type":"FeatureCollection","features":[
+                {"type":"Feature","properties":{"name":"Nay Pyi Taw"},"geometry":{"type":"Point","coordinates":[96.1,19.75]}}
+              ]}},
+              "layout":{"symbol-placement":"point","symbol-z-order":"auto","text-field":["get","name"],"text-font":["Franklin Gothic Book Regular","Arial Unicode MS Regular"],"text-size":16,"text-anchor":"left","text-justify":"left","text-offset":[0.9,0],"text-allow-overlap":true,"text-ignore-placement":true,"text-pitch-alignment":"viewport","text-rotation-alignment":"viewport"},
+              "paint":{"text-color":"#ffffff","text-halo-color":"#0f151b","text-halo-width":1,"text-halo-blur":0}
+            }
+          ]'>
+          <p>Satellite imagery shows that the boom extends well beyond the Chindwin basin, to areas such as the Meza River and its tributaries in northern Sagaing.</p>
+        </article>
         <article class="story-mapbox-scrolly__step" data-center="95.20293190165471,24.82602209749467" data-zoom="13.5"
-          data-pitch="0" data-bearing="0" data-tileset="daltonwb.gh8xxd" data-tileset-type="raster">
-          <span class="story-mapbox-scrolly__year">2020</span>
+          data-pitch="0" data-bearing="0" data-tileset="daltonwb.gh8xxd" data-tileset-type="raster"
+          data-map-year="2020">
           <p>Much of the mining takes place in creeks and rivers, or along their banks and in nearby fields. Homalin, in northern Sagaing Region, was already a hotspot before the coup, with the Shanni Nationalities Army, a pro-regime militia, informally taxing the miners.
           </p>
         </article>
         <article class="story-mapbox-scrolly__step" data-center="95.20293190165471,24.82602209749467" data-zoom="13.5"
-          data-pitch="0" data-bearing="0" data-tileset="daltonwb.rxiswa" data-tileset-type="raster">
-          <span class="story-mapbox-scrolly__year">2026</span>
+          data-pitch="0" data-bearing="0" data-tileset="daltonwb.rxiswa" data-tileset-type="raster"
+          data-map-year="2026">
           <p>The alluvial mining operations here employ tens of thousands of people, mostly migrants from elsewhere in Myanmar. But the mining has also reshaped the landscape – destroying farmland, carving up riverbanks and in some places even changing the course of waterways.
           </p>
         </article>
-        <article class="story-mapbox-scrolly__step" data-center="94.652552,23.334543" data-zoom="9" data-pitch="65"
-          data-bearing="-28" data-tileset="daltonwb.n00mxv5h8l8l" data-tileset-layer="c08861d39cb42f3603d1"
-          data-tileset-type="circle" data-tileset-opacity="1" data-tileset-color="#F6A365"
-          data-tileset-stroke-colors="#C56742," data-map-label-tileset="daltonwb.n00mxv5h8l8l"
-          data-mapbox-layers='[{"id":"dredging_label","type":"symbol","source":"mapbox://daltonwb.n00mxv5h8l8l","source-layer":"c08861d39cb42f3603d1","paint":{"text-halo-width":1,"text-halo-color":"#0f151b","text-color":"#f3b485"},"layout":{"text-size":22,"text-font":["Franklin Gothic Demi Regular","Arial Unicode MS Regular"],"text-justify":"left","text-offset":[0,0.5],"icon-size":0.5,"text-anchor":"top-left","text-allow-overlap":true,"text-ignore-placement":true,"text-field":["match",["get","point_id"],["1"],"Dredging boat areas",""]}}]'
-          data-style-layer="mapbox-satellite" data-style-layer-saturation="-0.5">
+        <article class="story-mapbox-scrolly__step" data-center="94.652552,23.334543" data-zoom="8.5" data-pitch="0"
+          data-bearing="0" data-tilesets="daltonwb.k1ovfbwibmd6,daltonwb.n00mxv5h8l8l"
+          data-tileset-layers="a91711f2df3dd30b9026,c08861d39cb42f3603d1" data-tileset-types="line,circle"
+          data-tileset-opacities=".8,1" data-tileset-colors="#80C5B2,#F6A365" data-tileset-line-widths="4,"
+          data-tileset-stroke-colors=",#C56742" data-map-label-tileset="daltonwb.n00mxv5h8l8l"
+          data-tileset-labels="Chindwin River," data-tileset-label-modes="fixed,"
+          data-tileset-label-styles="pt-serif-italic," data-map-label-center="94.7029,23.0461"
+          data-mapbox-layers='[{"id":"dredging_label","type":"symbol","source":"mapbox://daltonwb.n00mxv5h8l8l","source-layer":"c08861d39cb42f3603d1","paint":{"text-halo-width":1,"text-halo-color":"#0f151b","text-color":"#f3b485"},"layout":{"text-size":22,"text-font":["Franklin Gothic Demi Regular","Arial Unicode MS Regular"],"text-justify":"left","text-offset":[0,0.5],"icon-size":0.5,"text-anchor":"top-left","text-allow-overlap":true,"text-ignore-placement":true,"text-field":["match",["get","point_id"],["1"],"Dredging boat locations",""]}}]'
+          data-style-layer="mapbox-satellite" data-style-layer-opacity="0.5" data-style-layer-saturation="-0.5">
           <p>
             Since the military takeover, miners have pushed south from Homalin along the Chindwin River into areas where
             the regime has lost control. In some resistance-dominated areas, local administrators and armed groups
@@ -161,17 +201,6 @@
         livelihoods. The sandbanks that emerge in the Chindwin River during the dry season are prized for their fertile
         soil, but once miners churn them up, they can no longer be cultivated.
       </p>
-    </section>
-
-    <blockquote class="story-pullquote gold-pullquote">
-      <p>
-        Some unlucky rafts will be hit, equipment will be lost and workers will die. But it doesn&rsquo;t take long for
-        the rafts to restart operations &ndash; they take the hits and go back to work&rdquo;, said one resistance
-        source. &ldquo;And for the military commanders, it&rsquo;s all just for show.&rdquo;
-      </p>
-    </blockquote>
-
-    <section class="gold-story__block gold-story__block--text">
       <p>
         Resistance groups in the area say taxing gold mines is one of the few ways they can buy weapons and ammunition.
         But some local leaders are also accused of profiting personally from the industry, including by running dredging
@@ -189,10 +218,18 @@
       </figcaption>
     </figure>
 
+
     <section class="gold-story__block gold-story__block--text">
       <p>
         Local regime officials have also benefited, collecting bribes and informal taxes from miners in exchange for not attacking their operations. But after battlefield losses and a shake-up in Sagaing Region’s military command in November 2025, pro-regime social media accounts began calling for airstrikes on mining sites in resistance areas to prevent these armed groups from getting funds.
       </p>
+      </section>
+      <blockquote class="story-pullquote gold-pullquote">
+      <p>
+        Some unlucky rafts will be hit, equipment will be lost and workers will die. But it doesn’t take long for the rafts to restart operations – they take the hits and go back to work.
+      </p>
+    </blockquote>
+    <section class="gold-story__block gold-story__block--text">
       <p>
          ​​Around Thaphanseik Dam in Kyunhla Township, the mining footprint more than doubled between 2020 and 2025, covering more than 28,000 hectares. Much of this mining has spread from riverbanks into forests and paddy fields – even right up to the edge of houses. Farmers say armed groups pressure them to sell land to miners, leaving communities with polluted water and damaged fields. 
       </p>
@@ -207,9 +244,13 @@
         <div class="story-mapbox__fallback">
           <span>Loading map</span>
         </div>
+        <div class="story-mapbox-scrolly__temporal-label" data-mapbox-temporal-label>
+          <span class="story-mapbox-scrolly__temporal-year" data-mapbox-temporal-year></span>
+          <span class="story-mapbox-scrolly__temporal-place" data-mapbox-temporal-detail></span>
+        </div>
       </div>
       <div class="story-mapbox-scrolly__steps">
-        <article class="story-mapbox-scrolly__step story-mapbox-scrolly__step--map-only"
+        <article class="story-mapbox-scrolly__step"
           data-center="96.089651,24.336211" data-zoom="6.75" data-pitch="0" data-bearing="0"
           data-tilesets="daltonwb.umcgq6muzug5,daltonwb.r7yoka9kcbbu,daltonwb.isgcje3q8chq"
           data-tileset-layers="34fb7fc2e7178e6d37b5,a84e1b51d9875259799c,21aded96924a5bd80744"
@@ -220,32 +261,46 @@
           data-tileset-label-sizes="20,20," data-tileset-label-styles="italic,italic,pt-serif-italic"
           data-tileset-label-allow-overlaps=",,true" data-tileset-label-colors="#F9E3D3,#FFFFFF,"
           data-tileset-label-halo-widths="0,0," data-tileset-label-letter-spacings="0.02,0.02,"
-          data-tileset-label-max-widths="5,5," data-tileset-label-lat-deltas=",0.34," aria-hidden="true"></article>
+          data-tileset-label-max-widths="5,5," data-tileset-label-lat-deltas=",0.34,">
+          <p>Satellite imagery shows that the boom extends well beyond the Chindwin basin, along the Meza River and its
+            tributaries in northern Sagaing.</p>
+        </article>
         <article class="story-mapbox-scrolly__step" data-center="95.97991, 24.33308" data-zoom="9.75" data-pitch="0"
-          data-bearing="0" data-tilesets="daltonwb.x9peb8,daltonwb.uc5e4r" data-tileset-types="raster,raster"
+          data-bearing="0" data-tilesets="daltonwb.x9peb8" data-tileset-types="raster,raster"
           data-tileset-opacities="1,1" data-tileset-raster-colors="#ED924E" data-style-layer="mapbox-satellite"
-          data-style-layer-opacity="0.5">
-          <p>Satellite imagery shows that the boom extends well beyond the Chindwin basin, along the Meza River and its tributaries in northern Sagaing. 
+          data-style-layer-opacity="0.5" data-map-year="2020" data-map-year-detail="Pre-coup mining footprint"
+          data-map-year-background="#ED924E" data-map-year-color="#171717" data-map-year-detail-color="#ED924E">
+          <p>Crisis Group analysis found that alluvial mining covered around 7,350 hectares along the Meza River and its tributaries before the 2021 coup.
           </p>
         </article>
         <article class="story-mapbox-scrolly__step" data-center="95.97991, 24.33308" data-zoom="9.75" data-pitch="0"
           data-bearing="0" data-tilesets="daltonwb.uc5e4r,daltonwb.x9peb8" data-tileset-types="raster,raster"
           data-tileset-opacities="1,1" data-tileset-raster-colors="#ED924E, #FFCCA6" data-style-layer="mapbox-satellite"
-          data-style-layer-opacity="0.5">
-          <p>Crisis Group analysis of satellite imagery found a threefold expansion of alluvial mining since the coup.</p>
+          data-style-layer-opacity="0.5" data-map-year="2025" data-map-year-detail="Expansion since the coup"
+          data-map-year-background="#F8CDAE" data-map-year-color="#171717">
+          <p>Mining has since expanded to 19,210 hectares – an increase of more than 160 per cent over the pre-coup footprint.</p>
         </article>
         <article class="story-mapbox-scrolly__step" data-center="95.333305, 23.693467" data-zoom="9.5" data-pitch="0"
-          data-bearing="0" data-tilesets="daltonwb.04paqr,daltonwb.lml81n" data-tileset-types="raster,raster"
-          data-tileset-opacities="0.85,0.9" data-tileset-raster-colors="#ED924E, #ED924E"
-          data-style-layer="mapbox-satellite" data-style-layer-opacity="0.5">
-          <p>Around Thaphanseik Dam in Kyunhla Township, the mining footprint more than doubled between 2020 and 2025.</p>
+          data-bearing="0" data-tilesets="daltonwb.04paqr,daltonwb.lml81n,daltonwb.ow1y4zb7uf67"
+          data-tileset-layers=",,f81330440b8afebdf50c" data-tileset-types="raster,raster,line"
+          data-tileset-opacities="0.85,0.9,.4" data-tileset-raster-colors="#ED924E, #ED924E"
+          data-tileset-colors=",,#80C5B2" data-tileset-line-widths=",,4"
+          data-style-layer="mapbox-satellite" data-style-layer-opacity="0.5" data-map-year="2020"
+          data-map-year-detail="Pre-coup mining footprint" data-map-year-background="#ED924E"
+          data-map-year-color="#171717" data-map-year-detail-color="#ED924E"
+          data-mapbox-layers='[{"id":"thapanik-dam-label","type":"symbol","source":{"type":"geojson","data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"Thapanik Dam"},"geometry":{"type":"Point","coordinates":[95.355281,23.306617]}}]}},"paint":{"text-halo-width":1,"text-halo-color":"#0f151b","text-color":"#80C5B2"},"layout":{"text-size":22,"text-font":["Franklin Gothic Demi Regular","Arial Unicode MS Regular"],"text-justify":"left","text-offset":[0,0.5],"text-anchor":"top-left","text-allow-overlap":true,"text-ignore-placement":true,"text-field":["get","name"]}}]'>
+          <p>Further west, the area around Thaphanseik, Myanmar’s largest irrigation dam, is another epicentre of alluvial mining. Before the coup, mining already covered 12,890 hectares.</p>
         </article>
         <article class="story-mapbox-scrolly__step" data-center="95.333305, 23.693467" data-zoom="9.5" data-pitch="0"
-          data-bearing="0" data-tilesets="daltonwb.04paqr,daltonwb.lml81n" data-tileset-types="raster,raster"
-          data-tileset-opacities="0.85,0.9" data-tileset-raster-colors="#ED924E,#FFCCA6"
-          data-style-layer="mapbox-satellite" data-style-layer-opacity="0.5">
-          <p>Alluvial mining now covers almost 28,000 hectares around Thaphan, with new sites concentrated in
-            resistance-held areas north of the dam.</p>
+          data-bearing="0" data-tilesets="daltonwb.04paqr,daltonwb.lml81n,daltonwb.ow1y4zb7uf67"
+          data-tileset-layers=",,f81330440b8afebdf50c" data-tileset-types="raster,raster,line"
+          data-tileset-opacities="0.85,0.9,.9" data-tileset-raster-colors="#ED924E,#FFCCA6"
+          data-tileset-colors=",,#80C5B2" data-tileset-line-widths=",,4"
+          data-style-layer="mapbox-satellite" data-style-layer-opacity="0.5" data-map-year="2025"
+          data-map-year-detail="Expansion since the coup" data-map-year-background="#F8CDAE"
+          data-map-year-color="#171717"
+          data-mapbox-layers='[{"id":"thapanik-dam-label","type":"symbol","source":{"type":"geojson","data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"Thapanik Dam"},"geometry":{"type":"Point","coordinates":[95.355281,23.306617]}}]}},"paint":{"text-halo-width":1,"text-halo-color":"#0f151b","text-color":"#"},"layout":{"text-size":22,"text-font":["Franklin Gothic Demi Regular","Arial Unicode MS Regular"],"text-justify":"left","text-offset":[0,0.5],"text-anchor":"top-left","text-allow-overlap":true,"text-ignore-placement":true,"text-field":["get","name"]}}]'>
+          <p>Alluvial mining now covers almost 29,000 hectares around Thaphanseik, with much of the expansion concentrated in resistance-held areas north of the dam along the Mu River.</p>
         </article>
       </div>
     </section>
@@ -327,7 +382,7 @@
         Mapbox<br />
         <span class="credits__label"><strong>GRAPHS</strong></span> Crisis Group analysis; London Metal Exchange; China
         customs data<br />
-        <span class="credits__label"><strong>SATELLITE IMAGERY</strong></span> Google Earth; Planet Labs; Copernicus
+        <span class="credits__label"><strong>SATELLITE IMAGERY</strong></span> Google Earth; Planet Labs PBC; Copernicus
         Sentinel.
       </p>
 
@@ -360,6 +415,7 @@
   </dialog>
 
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.js"></script>
+  <script src="../video_playback.js"></script>
   <script src="../scroll.js"></script>
 </body>
 

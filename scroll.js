@@ -390,12 +390,17 @@
     return layers.flatMap((layer, layerIndex) => {
       if (!layer || typeof layer !== "object" || typeof layer.type !== "string") return [];
 
+      const declaredLayerId = layer.id || String(layerIndex);
       const sourceUrl = typeof layer.source === "string" ? layer.source : null;
+      const sourceSpec = layer.source && typeof layer.source === "object" && !Array.isArray(layer.source)
+        ? layer.source
+        : null;
       const isMapboxSource = sourceUrl?.startsWith("mapbox://");
       const sourceId = isMapboxSource
         ? `story-step-source-${idSafe(sourceUrl.slice("mapbox://".length))}`
-        : sourceUrl;
-      const declaredLayerId = layer.id || String(layerIndex);
+        : sourceSpec
+          ? `story-custom-source-${index}-${idSafe(declaredLayerId)}`
+          : sourceUrl;
       const layerId = `story-custom-layer-${index}-${idSafe(declaredLayerId)}`;
       const paint = { ...(layer.paint || {}) };
       const opacityProperties = [];
@@ -426,6 +431,7 @@
         layerId,
         sourceId,
         sourceUrl,
+        sourceSpec,
         opacityProperties,
         targetOpacities,
       }];
@@ -966,7 +972,9 @@
   function addStepCustomLayers(map, steps) {
     steps.forEach((step, index) => {
       customLayerConfigsForStep(step, index).forEach((config) => {
-        if (
+        if (config.sourceId && config.sourceSpec && !map.getSource(config.sourceId)) {
+          map.addSource(config.sourceId, config.sourceSpec);
+        } else if (
           config.sourceId
           && config.sourceUrl?.startsWith("mapbox://")
           && !map.getSource(config.sourceId)
@@ -977,7 +985,7 @@
           });
         }
 
-        if (!config.sourceId || map.getLayer(config.layerId)) return;
+        if (!config.sourceId || !map.getSource(config.sourceId) || map.getLayer(config.layerId)) return;
 
         map.addLayer(config.layer);
         config.opacityProperties.forEach((property) => {
@@ -1278,6 +1286,9 @@
   scrollys.forEach((scrolly) => {
     const mapContainer = scrolly.querySelector(".story-mapbox");
     const fallback = scrolly.querySelector(".story-mapbox__fallback span");
+    const temporalLabel = scrolly.querySelector("[data-mapbox-temporal-label]");
+    const temporalYear = scrolly.querySelector("[data-mapbox-temporal-year]");
+    const temporalDetail = scrolly.querySelector("[data-mapbox-temporal-detail]");
     const steps = Array.from(scrolly.querySelectorAll(".story-mapbox-scrolly__step"));
     if (!mapContainer || !steps.length) return;
 
@@ -1302,6 +1313,33 @@
       steps.forEach((candidate) => {
         candidate.classList.toggle("is-active", candidate === step);
       });
+
+      if (temporalLabel && temporalYear) {
+        const year = step.dataset.mapYear?.trim() || "";
+        const yearBackground = step.dataset.mapYearBackground?.trim() || "";
+        const yearColor = step.dataset.mapYearColor?.trim() || "";
+        const yearDetailColor = step.dataset.mapYearDetailColor?.trim() || "";
+        temporalYear.textContent = year;
+        if (temporalDetail) {
+          temporalDetail.textContent = step.dataset.mapYearDetail?.trim() || "";
+        }
+        if (yearBackground) {
+          temporalLabel.style.setProperty("--temporal-year-background", yearBackground);
+        } else {
+          temporalLabel.style.removeProperty("--temporal-year-background");
+        }
+        if (yearColor) {
+          temporalLabel.style.setProperty("--temporal-year-color", yearColor);
+        } else {
+          temporalLabel.style.removeProperty("--temporal-year-color");
+        }
+        if (yearDetailColor) {
+          temporalLabel.style.setProperty("--temporal-detail-color", yearDetailColor);
+        } else {
+          temporalLabel.style.removeProperty("--temporal-detail-color");
+        }
+        temporalLabel.classList.toggle("is-visible", Boolean(year));
+      }
 
       if (!map || !mapReady) return;
 
@@ -1399,14 +1437,22 @@
       && rect.top < window.innerHeight;
 
     if (!shouldPlay) {
-      video.pause();
+      if (window.mineralsVideoPlayback) {
+        window.mineralsVideoPlayback.pause(video);
+      } else {
+        video.pause();
+      }
       return;
     }
 
     if (video.paused) {
-      const playRequest = video.play();
-      if (playRequest && typeof playRequest.catch === "function") {
-        playRequest.catch(() => {});
+      if (window.mineralsVideoPlayback) {
+        window.mineralsVideoPlayback.request(video, false);
+      } else {
+        const playRequest = video.play();
+        if (playRequest && typeof playRequest.catch === "function") {
+          playRequest.catch(() => {});
+        }
       }
     }
   }
@@ -1504,17 +1550,27 @@
   }
 
   function pauseVideos() {
-    videos.forEach((video) => video.pause());
+    videos.forEach((video) => {
+      if (window.mineralsVideoPlayback) {
+        window.mineralsVideoPlayback.pause(video);
+      } else {
+        video.pause();
+      }
+    });
   }
 
   function playVideos() {
     if (prefersReducedMotion.matches) return;
 
     videos.filter((video) => video.paused).forEach((video) => {
-      const playRequest = video.play();
+      if (window.mineralsVideoPlayback) {
+        window.mineralsVideoPlayback.request(video, false);
+      } else {
+        const playRequest = video.play();
 
-      if (playRequest && typeof playRequest.catch === "function") {
-        playRequest.catch(() => {});
+        if (playRequest && typeof playRequest.catch === "function") {
+          playRequest.catch(() => {});
+        }
       }
     });
   }
@@ -1528,7 +1584,11 @@
       return;
     }
 
-    videos.forEach((video) => video.setAttribute("autoplay", ""));
+    videos.forEach((video) => {
+      if (!window.mineralsVideoPlayback || !window.mineralsVideoPlayback.isSuppressed(video)) {
+        video.setAttribute("autoplay", "");
+      }
+    });
 
     const isNearHero = mediaIsVisible
       && rect.bottom > -window.innerHeight * 0.4
