@@ -189,7 +189,7 @@ button {
   align-items: center;
   width: min(760px, calc(100vw - (2 * var(--gutter))));
   margin: 0 auto;
-  padding: clamp(4rem, 9vw, 7rem) 0 clamp(2.5rem, 6vw, 4rem);
+  padding: clamp(4rem, 9vw, 5rem) 0 clamp(2.5rem, 6vw, 4rem);
   text-align: center;
 }
 
@@ -206,7 +206,7 @@ button {
 
 .index-hero__subhed {
   max-width: 47rem;
-  margin: 1rem 0 1.45rem;
+  margin: 2rem 0 1.45rem;
   color: var(--ink);
   opacity: 0.9;
   font-family: var(--font-serif);
