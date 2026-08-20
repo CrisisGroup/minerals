@@ -1691,7 +1691,7 @@ button {
 
 .story-mapbox-scrolly__temporal-year {
   min-width: 4rem;
-  padding: 0.6rem 0.8rem;
+  padding: 0.4rem 0.6rem;
   border: 2px solid var(--temporal-year-border, #C56742);
   background: var(--temporal-year-background, rgba(0, 0, 0, 0.5));
   color: var(--temporal-year-color, #FFB984);
