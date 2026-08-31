@@ -178,7 +178,15 @@
         const stickyTop = Number.parseFloat(window.getComputedStyle(stage).top) || 0;
         const scrollDistance = Math.max(track.offsetHeight, 1);
         const progress = clamp((stickyTop - rect.top) / scrollDistance, 0, 1);
-        const transition = smootherstep(0.06, 0.94, progress);
+        const configuredStart = Number.parseFloat(swap.dataset.swapStart);
+        const configuredEnd = Number.parseFloat(swap.dataset.swapEnd);
+        const transitionStart = Number.isFinite(configuredStart)
+          ? clamp(configuredStart, 0, 0.99)
+          : 0.06;
+        const transitionEnd = Number.isFinite(configuredEnd)
+          ? clamp(configuredEnd, transitionStart + 0.01, 1)
+          : 0.94;
+        const transition = smootherstep(transitionStart, transitionEnd, progress);
         swap.style.setProperty("--media-swap-progress", transition.toFixed(3));
 
         if (following) {
