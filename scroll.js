@@ -1514,6 +1514,7 @@
 
   const mosaic = hero.querySelector("[data-index-hero-mosaic]");
   const leadTile = hero.querySelector("[data-index-hero-lead]");
+  const brand = hero.querySelector("[data-index-hero-brand]");
   const videos = Array.from(hero.querySelectorAll("[data-index-hero-video]"));
   const tiles = Array.from(hero.querySelectorAll("[data-index-hero-tile]"));
   const revealTiles = tiles.filter((tile) => tile !== leadTile);
@@ -1622,6 +1623,10 @@
       mosaic.style.removeProperty("--index-mosaic-shift");
     }
 
+    if (brand) {
+      brand.style.removeProperty("opacity");
+    }
+
     tiles.forEach((tile) => {
       tile.style.removeProperty("transform");
     });
@@ -1681,6 +1686,10 @@
     const mosaicShift = -mosaicTravel * trackProgress;
 
     mosaic.style.setProperty("--index-mosaic-shift", `${mosaicShift}px`);
+
+    if (brand) {
+      brand.style.opacity = `${1 - smoothstep(0.02, 0.18, progress)}`;
+    }
 
     const leadRect = {
       left: lerp(initialLeadRect.left, finalLeadRect.left, leadProgress),

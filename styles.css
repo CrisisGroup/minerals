@@ -181,6 +181,19 @@ button {
   background: linear-gradient(180deg, rgba(15, 21, 27, 0), var(--paper));
 }
 
+.index-hero__brand {
+  position: absolute;
+  z-index: 4;
+  top: calc(env(safe-area-inset-top, 0px) + clamp(1.25rem, 3vw, 2.5rem));
+  left: calc(env(safe-area-inset-left, 0px) + var(--gutter));
+  display: block;
+  width: clamp(4.5rem, 7vw, 6.25rem);
+  height: auto;
+  pointer-events: none;
+  opacity: 1;
+  will-change: opacity;
+}
+
 .index-hero__copy {
   position: relative;
   z-index: 3;
@@ -2742,6 +2755,15 @@ figcaption.media-caption {
 
   .index-hero__sticky::after {
     display: none;
+  }
+
+  .index-hero__brand {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: clamp(4.5rem, 10vw, 6.25rem);
+    margin: 0 0 clamp(1rem, 3vw, 1.5rem) var(--gutter);
+    will-change: auto;
   }
 
   .index-hero__copy {
