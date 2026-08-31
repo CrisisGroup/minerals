@@ -276,7 +276,7 @@ button {
   left: 50%;
   width: min(100vw, 175svh);
   height: auto;
-  aspect-ratio: 778 / 844;
+  aspect-ratio: 558 / 626;
   pointer-events: none;
   transform: translate(-50%, var(--index-mosaic-shift, 0px));
   will-change: transform;
@@ -291,100 +291,108 @@ button {
 }
 
 .index-hero__tile--lead {
-  top: -14%;
-  left: 22.6%;
-  width: 21.7%;
-  height: 24%;
+  top: 25.7%;
+  left: 66.3%;
+  width: 31.4%;
+  height: 18.7%;
   opacity: 1;
   will-change: top, left, width, height;
 }
 
-.index-hero__tile--factory {
-  top: 9.7%;
-  left: 14%;
-  width: 29.3%;
-  height: 15.2%;
+.index-hero__tile--12 {
+  top: 7.5%;
+  left: 7.9%;
+  width: 38.7%;
+  height: 16.6%;
 }
 
-.index-hero__tile--gold-2025 {
-  top: 0.8%;
-  left: 44.6%;
-  width: 34.3%;
-  height: 21%;
+.index-hero__tile--08 {
+  top: 2.1%;
+  left: 43%;
+  width: 27.2%;
+  height: 16.6%;
 }
 
-.index-hero__tile--cranes {
-  top: 27.3%;
-  left: 9%;
-  width: 34.4%;
-  height: 20.9%;
+.index-hero__tile--05 {
+  top: 7.4%;
+  left: 71.7%;
+  width: 26.9%;
+  height: 15.7%;
 }
 
-.index-hero__tile--gold-detail {
-  top: 23.8%;
-  left: 44.6%;
-  width: 13.9%;
-  height: 23.5%;
+.index-hero__tile--07 {
+  top: 25.7%;
+  left: 12.4%;
+  width: 35.1%;
+  height: 19.5%;
 }
 
-.index-hero__tile--gold-2018 {
-  top: 23.8%;
-  left: 59.6%;
-  width: 40.4%;
-  height: 21%;
-}
-
-.index-hero__tile--military {
-  top: 50.1%;
-  left: 6%;
-  width: 33%;
+.index-hero__tile--03 {
+  top: 20.8%;
+  left: 49.5%;
+  width: 14.7%;
   height: 21.2%;
 }
 
-.index-hero__tile--factory-detail {
-  top: 50%;
-  left: 41.6%;
-  width: 26.6%;
-  height: 21.3%;
+.index-hero__tile--02 {
+  top: 47.5%;
+  left: 7.9%;
+  width: 10.4%;
+  height: 22.5%;
 }
 
-.index-hero__tile--gold-2023 {
-  top: 46.7%;
-  left: 70.7%;
-  width: 20.3%;
-  height: 24.6%;
+.index-hero__tile--11 {
+  top: 49.9%;
+  left: 21.9%;
+  width: 30.5%;
+  height: 20.3%;
 }
 
-.index-hero__tile--tin-still {
-  top: 73.3%;
-  left: 22.6%;
-  width: 38.2%;
-  height: 23.8%;
+.index-hero__tile--09 {
+  top: 51.6%;
+  left: 54.8%;
+  width: 18.3%;
+  height: 16.3%;
 }
 
-.index-hero__tile--jade-detail {
-  top: 73.3%;
-  left: 63.8%;
-  width: 11.1%;
-  height: 24.8%;
+.index-hero__tile--06 {
+  top: 49.4%;
+  left: 75.6%;
+  width: 22.9%;
+  height: 13.4%;
 }
 
-.index-hero__tile--gold-2018 .index-hero__media,
-.index-hero__tile--gold-2023 .index-hero__media,
-.index-hero__tile--gold-detail .index-hero__media {
-  object-position: center;
+.index-hero__tile--01 {
+  top: 74.8%;
+  left: 12.5%;
+  width: 20.4%;
+  height: 24.5%;
 }
 
-.index-hero__tile--factory-detail .index-hero__media {
-  object-position: 72% center;
+.index-hero__tile--10 {
+  top: 72.9%;
+  left: 36%;
+  width: 30.1%;
+  height: 18.7%;
 }
 
-.index-hero__tile--jade-detail .index-hero__media {
+.index-hero__tile--04 {
+  top: 68.2%;
+  left: 67.6%;
+  width: 30.9%;
+  height: 18.7%;
+}
+
+.index-hero__tile--03 .index-hero__media {
+  object-position: 56% center;
+}
+
+.index-hero__tile--02 .index-hero__media {
   object-position: 48% center;
 }
 
-.index-hero__tile--tin-still .index-hero__media {
-  object-position: 50% 35%;
+.index-hero__tile--01 .index-hero__media {
+  object-position: 60% center;
 }
 
 .index-hero__media {
@@ -2459,80 +2467,94 @@ figcaption.media-caption {
   }
 
   .index-hero__tile--lead {
-    top: -7%;
-    left: 23%;
-    width: 28%;
+    top: 27%;
+    left: 31%;
+    width: 66%;
+    height: 10%;
+  }
+
+  .index-hero__tile--12 {
+    top: 5%;
+    left: 3%;
+    width: 52%;
+    height: 9%;
+  }
+
+  .index-hero__tile--08 {
+    top: 1%;
+    left: 58%;
+    width: 39%;
+    height: 9%;
+  }
+
+  .index-hero__tile--05 {
+    top: 16%;
+    left: 3%;
+    width: 42%;
+    height: 9%;
+  }
+
+  .index-hero__tile--07 {
+    top: 14%;
+    left: 48%;
+    width: 49%;
+    height: 11%;
+  }
+
+  .index-hero__tile--03 {
+    top: 28%;
+    left: 3%;
+    width: 25%;
     height: 13%;
   }
 
-  .index-hero__tile--factory {
-    top: 2%;
-    left: 2%;
-    width: 46%;
-    height: 10.5%;
-  }
-
-  .index-hero__tile--gold-2025 {
-    top: 2%;
-    left: 51%;
-    width: 47%;
-    height: 10.5%;
-  }
-
-  .index-hero__tile--cranes {
-    top: 15%;
+  .index-hero__tile--02 {
+    top: 44%;
     left: 3%;
-    width: 45%;
-    height: 10.5%;
+    width: 22%;
+    height: 13%;
   }
 
-  .index-hero__tile--gold-detail {
-    top: 15%;
-    left: 50%;
-    width: 46%;
-    height: 10.5%;
-  }
-
-  .index-hero__tile--gold-2018 {
-    top: 28%;
-    left: 2%;
-    width: 46%;
-    height: 10.5%;
-  }
-
-  .index-hero__tile--military {
-    top: 28%;
-    left: 50%;
-    width: 47%;
-    height: 10.5%;
-  }
-
-  .index-hero__tile--factory-detail {
+  .index-hero__tile--11 {
     top: 41%;
-    left: 4%;
-    width: 45%;
-    height: 10.5%;
+    left: 28%;
+    width: 69%;
+    height: 11%;
   }
 
-  .index-hero__tile--gold-2023 {
-    top: 41%;
-    left: 51%;
-    width: 46%;
-    height: 10.5%;
+  .index-hero__tile--09 {
+    top: 59%;
+    left: 3%;
+    width: 42%;
+    height: 9%;
   }
 
-  .index-hero__tile--tin-still {
-    top: 54%;
-    left: 13%;
-    width: 55%;
-    height: 12%;
+  .index-hero__tile--06 {
+    top: 56%;
+    left: 48%;
+    width: 49%;
+    height: 9%;
   }
 
-  .index-hero__tile--jade-detail {
-    top: 54%;
-    left: 71%;
-    width: 20%;
-    height: 12%;
+  .index-hero__tile--01 {
+    top: 70%;
+    left: 3%;
+    width: 27%;
+    height: 14%;
+  }
+
+  .index-hero__tile--10 {
+    top: 69%;
+    left: 33%;
+    width: 64%;
+    height: 10%;
+  }
+
+  .index-hero__tile--04 {
+    top: 85%;
+    left: 19%;
+    width: 78%;
+    height: 9.5%;
   }
 
   .commodity-hero {
@@ -2755,59 +2777,69 @@ figcaption.media-caption {
     transform: none !important;
   }
 
-  .index-hero__tile--lead {
-    grid-column: 1 / 5;
-    aspect-ratio: 16 / 9;
-  }
-
-  .index-hero__tile--factory {
-    grid-column: 5 / 7;
-    aspect-ratio: 4 / 3;
-  }
-
-  .index-hero__tile--gold-2025 {
-    grid-column: 1 / 3;
-    aspect-ratio: 3 / 4;
-  }
-
-  .index-hero__tile--cranes {
-    grid-column: 3 / 5;
-    aspect-ratio: 4 / 3;
-  }
-
-  .index-hero__tile--gold-detail {
-    grid-column: 5 / 7;
-    aspect-ratio: 4 / 3;
-  }
-
-  .index-hero__tile--gold-2018 {
-    grid-column: 5 / 7;
-    aspect-ratio: 3 / 4;
-  }
-
-  .index-hero__tile--military {
-    grid-column: 2 / 6;
-    aspect-ratio: 16 / 9;
-  }
-
-  .index-hero__tile--factory-detail {
-    grid-column: 2 / 6;
-    aspect-ratio: 16 / 9;
-  }
-
-  .index-hero__tile--gold-2023 {
+  .index-hero__tile--12 {
     grid-column: 1 / 4;
-    aspect-ratio: 4 / 3;
-  }
-
-  .index-hero__tile--tin-still {
-    grid-column: 4 / 7;
     aspect-ratio: 16 / 9;
   }
 
-  .index-hero__tile--jade-detail {
-    grid-column: 3 / 5;
+  .index-hero__tile--08 {
+    grid-column: 4 / 7;
+    aspect-ratio: 3 / 2;
+  }
+
+  .index-hero__tile--05 {
+    grid-column: 1 / 4;
+    aspect-ratio: 3 / 2;
+  }
+
+  .index-hero__tile--07 {
+    grid-column: 4 / 7;
+    aspect-ratio: 3 / 2;
+  }
+
+  .index-hero__tile--03 {
+    grid-column: 1 / 3;
+    aspect-ratio: 4 / 5;
+  }
+
+  .index-hero__tile--lead {
+    grid-column: 3 / 7;
+    aspect-ratio: 16 / 9;
+  }
+
+  .index-hero__tile--02 {
+    grid-column: 1 / 2;
     aspect-ratio: 3 / 4;
+  }
+
+  .index-hero__tile--11 {
+    grid-column: 2 / 5;
+    aspect-ratio: 4 / 3;
+  }
+
+  .index-hero__tile--09 {
+    grid-column: 5 / 7;
+    aspect-ratio: 1;
+  }
+
+  .index-hero__tile--06 {
+    grid-column: 1 / 4;
+    aspect-ratio: 16 / 10;
+  }
+
+  .index-hero__tile--01 {
+    grid-column: 4 / 5;
+    aspect-ratio: 3 / 4;
+  }
+
+  .index-hero__tile--10 {
+    grid-column: 5 / 7;
+    aspect-ratio: 16 / 9;
+  }
+
+  .index-hero__tile--04 {
+    grid-column: 2 / 6;
+    aspect-ratio: 3 / 2;
   }
 
   .scroll-swap__frame,

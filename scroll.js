@@ -1529,6 +1529,8 @@
     { x: -34, y: 38 },
     { x: 40, y: -28 },
     { x: -26, y: 44 },
+    { x: 32, y: 38 },
+    { x: -36, y: 30 },
   ];
 
   let ticking = false;
@@ -1692,8 +1694,8 @@
     }
 
     revealTiles.forEach((tile, index) => {
-      const start = 0.18 + index * 0.065;
-      const tileProgress = smoothstep(start, Math.min(start + 0.18, 0.92), progress);
+      const start = 0.16 + index * 0.05;
+      const tileProgress = smoothstep(start, Math.min(start + 0.18, 0.9), progress);
       const offset = entranceOffsets[index] || { x: 36, y: 36 };
       const scale = lerp(0.94, 1, tileProgress);
 
