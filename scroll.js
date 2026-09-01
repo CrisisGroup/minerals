@@ -1633,6 +1633,8 @@
 
     if (brand) {
       brand.style.removeProperty("opacity");
+      brand.style.removeProperty("pointer-events");
+      brand.style.removeProperty("visibility");
     }
 
     tiles.forEach((tile) => {
@@ -1696,7 +1698,10 @@
     mosaic.style.setProperty("--index-mosaic-shift", `${mosaicShift}px`);
 
     if (brand) {
-      brand.style.opacity = `${1 - smoothstep(0.02, 0.18, progress)}`;
+      const brandOpacity = 1 - smoothstep(0.02, 0.18, progress);
+      brand.style.opacity = `${brandOpacity}`;
+      brand.style.pointerEvents = brandOpacity > 0.05 ? "auto" : "none";
+      brand.style.visibility = brandOpacity > 0.01 ? "visible" : "hidden";
     }
 
     const leadRect = {
