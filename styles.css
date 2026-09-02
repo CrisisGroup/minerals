@@ -861,7 +861,7 @@ p {
 
 .jade-story .commodity-intro h1 {
   color: var(--jade-text);
-  max-width: 18ch;
+  max-width: 17ch;
 }
 
 .jade-pullquote {
@@ -1055,7 +1055,7 @@ p {
 /* Rare earths */
 .rare-earths-story .commodity-intro h1 {
   color: #54bbb7;
-  max-width: 19ch;
+  max-width: 15ch;
 }
 
 /* Full-viewport Mapbox scroll stories */
