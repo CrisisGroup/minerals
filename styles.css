@@ -2439,6 +2439,10 @@ figcaption.media-caption {
 }
 
 @media (max-width: 700px) {
+  .commodity-links {
+    justify-content: center;
+  }
+
   .tin-visual__comparison {
     grid-template-columns: 1fr;
   }
