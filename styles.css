@@ -10,6 +10,7 @@
   --gold: #c7a247;
   --copy-width: 720px;
   --wide-width: 1180px;
+  --map-width: 1024px;
   --gutter: clamp(1rem, 4vw, 2rem);
   --section-space: clamp(4rem, 9vw, 8rem);
   --story-gap: clamp(3.25rem, 8vw, 6rem);
@@ -999,7 +1000,7 @@ button {
 
 .gold-story .commodity-intro h1 {
   color: #c77836;
-  max-width: 15ch;
+  max-width: 17ch;
 }
 
 .gold-story__block {
@@ -1108,7 +1109,7 @@ button {
 }
 
 .gold-visual--protest-map {
-  width: min(var(--copy-width), 100%);
+  width: min(var(--map-width), 100%);
   padding: 0 var(--gutter);
 }
 
@@ -1213,7 +1214,7 @@ button {
 
 .jade-story .commodity-intro h1 {
   color: var(--jade-text);
-  max-width: 16ch;
+  max-width: 18ch;
 }
 
 .jade-story__block {
@@ -1333,6 +1334,10 @@ button {
   width: min(var(--wide-width), 100%);
 }
 
+.jade-visual.jade-visual--wide {
+  width: min(var(--map-width), 100%);
+}
+
 .jade-visual--split .media-caption {
   width: min(calc(var(--copy-width) - (2 * var(--gutter))), 100%);
   margin-right: auto;
@@ -1396,7 +1401,7 @@ button {
 }
 
 .media-scroll-swap__figure {
-  width: min(1024px, 100%);
+  width: min(var(--map-width), 100%);
   margin: 0 auto;
 }
 
@@ -1577,7 +1582,7 @@ button {
 
 .rare-earths-story .commodity-intro h1 {
   color: #54bbb7;
-  max-width: 16ch;
+  max-width: 19ch;
 }
 
 .rare-earths-story__block {
@@ -1825,7 +1830,7 @@ button {
 }
 
 .rare-earths-visual--wide {
-  width: min(var(--wide-width), 100%);
+  width: min(var(--map-width), 100%);
 }
 
 .rare-earths-visual--image img {
