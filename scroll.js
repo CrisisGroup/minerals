@@ -418,6 +418,7 @@
         if (layer.layout?.["icon-image"] !== undefined) opacityProperties.push("icon-opacity");
       } else {
         opacityProperties.push(opacityProperty(layer.type));
+        if (layer.type === "circle") opacityProperties.push("circle-stroke-opacity");
       }
 
       const targetOpacities = new Map(opacityProperties.map((property) => [
@@ -1088,7 +1089,9 @@
           const letterSpacing = Number.parseFloat(label.letterSpacing);
           const maxWidth = Number.parseFloat(label.maxWidth);
           const haloWidth = Number.parseFloat(label.haloWidth);
+          const symbolZOffset = Number.parseFloat(label.symbolZOffset ?? label.zOffset);
           const resolvedHaloWidth = Number.isFinite(haloWidth) ? haloWidth : config.labelHaloWidth;
+          const resolvedSymbolZOffset = Number.isFinite(symbolZOffset) ? symbolZOffset : config.symbolZOffset;
           const labelLayer = {
             id: definition.id,
             type: "symbol",
@@ -1123,8 +1126,8 @@
             labelLayer.paint["text-occlusion-opacity"] = config.labelOcclusionOpacity;
           }
 
-          if (config.symbolZOffset !== null) {
-            labelLayer.paint["symbol-z-offset"] = config.symbolZOffset;
+          if (resolvedSymbolZOffset !== null) {
+            labelLayer.paint["symbol-z-offset"] = resolvedSymbolZOffset;
           }
 
           if (config.labelMode === "fixed") {
@@ -1234,7 +1237,20 @@
     });
   }
 
-  function updateStepTilesets(map, steps, activeStep) {
+  function setStepLabelOpacity(map, step, index, opacity) {
+    tilesetConfigsForStep(step, index).forEach((config) => {
+      if (!config.labelText) return;
+
+      labelDefinitionsForConfig(config).forEach((definition) => {
+        if (!map.getLayer(definition.id)) return;
+        map.setPaintProperty(definition.id, "text-opacity", opacity);
+      });
+    });
+  }
+
+  function updateStepTilesets(map, steps, activeStep, options = {}) {
+    const showActiveLabels = options.showActiveLabels !== false;
+
     steps.forEach((step, index) => {
       const placeholderConfig = placeholderConfigForStep(step, index);
       const configs = [
@@ -1260,18 +1276,14 @@
           );
         }
 
-        if (config.labelText) {
-          labelDefinitionsForConfig(config).forEach((definition) => {
-            if (!map.getLayer(definition.id)) return;
-
-            map.setPaintProperty(
-              definition.id,
-              "text-opacity",
-              step === activeStep ? 1 : 0,
-            );
-          });
-        }
       });
+
+      setStepLabelOpacity(
+        map,
+        step,
+        index,
+        step === activeStep && showActiveLabels ? 1 : 0,
+      );
     });
   }
 
@@ -1308,6 +1320,7 @@
     let mapReady = false;
     let ticking = false;
     let activeStep = null;
+    let cameraTransitionToken = 0;
     const positionedLabels = new Set();
     let styleLayerOpacityDefaults = new Map();
     let styleLayerSaturationDefaults = new Map();
@@ -1357,12 +1370,36 @@
 
       if (!map || !mapReady) return;
 
-      if (!alreadyActive || options.forceCamera) {
+      if (alreadyActive && !options.forceCamera) return;
+
+      const shouldMoveCamera = !alreadyActive || options.forceCamera;
+      const deferLabelsUntilMoveEnd = shouldMoveCamera
+        && !options.jump
+        && step.dataset.mapLabelReveal === "moveend";
+      const transitionToken = shouldMoveCamera
+        ? ++cameraTransitionToken
+        : cameraTransitionToken;
+
+      updateStepTilesets(map, steps, step, {
+        showActiveLabels: !deferLabelsUntilMoveEnd,
+      });
+      updateStepCustomLayers(map, steps, step);
+      updateStyleLayerOpacities(map, step, styleLayerOpacityDefaults);
+      updateStyleLayerSaturations(map, step, styleLayerSaturationDefaults);
+
+      if (shouldMoveCamera) {
         const camera = cameraForStep(step);
 
         if (options.jump) {
           map.jumpTo(camera);
         } else {
+          if (deferLabelsUntilMoveEnd) {
+            map.once("moveend", () => {
+              if (transitionToken !== cameraTransitionToken || activeStep !== step) return;
+              setStepLabelOpacity(map, step, steps.indexOf(step), 1);
+            });
+          }
+
           map.flyTo({
             ...camera,
             duration: 6400,
@@ -1371,11 +1408,6 @@
           });
         }
       }
-
-      updateStepTilesets(map, steps, step);
-      updateStepCustomLayers(map, steps, step);
-      updateStyleLayerOpacities(map, step, styleLayerOpacityDefaults);
-      updateStyleLayerSaturations(map, step, styleLayerSaturationDefaults);
     }
 
     function updateActiveStepFromViewport(options = {}) {
