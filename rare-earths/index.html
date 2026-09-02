@@ -161,7 +161,17 @@
           <p>
             This mountainous region bordering China hosts the most commercially important deposits. Mining is conducted through in situ leaching, an environmentally destructive method whereby chemicals are injected into clay-rich slopes. 
           </p>
-          <br />
+        </article>
+        <article class="story-mapbox-scrolly__step" data-center="98.334523, 25.689409" data-zoom="16.8" data-pitch="77"
+          data-bearing="154.4" data-tilesets="daltonwb.caxafc,daltonwb.e55yd8gpnewv"
+          data-tileset-layers=",34b3877356671286357f" data-tileset-types="raster,symbol" data-tileset-opacities="1,0"
+          data-tileset-colors=",#85DED7" data-tileset-symbol-fields=",name" data-tileset-symbol-z-elevates=",true"
+          data-tileset-symbol-z-offsets=",50" data-map-label="Leaching pools"
+          data-map-label-tileset="daltonwb.e55yd8gpnewv" data-map-label-mode="fixed"
+          data-map-label-center="98.33363,25.69096"
+          data-map-label-additions='[{"text":"Clay-rich slopes","center":[98.33431,25.69049]}]'
+          data-tileset-label-sizes=",16" data-tileset-label-styles=",regular" data-tileset-label-allow-overlaps=",true"
+          data-tileset-label-occlusion-opacities=",1">
           <p>
             The mineral-bearing solution drains into collection ponds, and rare earth compounds are precipitated and concentrated before the mixture is trucked across the border to China for processing.
           </p>
@@ -172,7 +182,8 @@
           data-tileset-raster-colors=",#0A9F93" data-tileset-line-widths="4,,"
           data-tileset-filters='[["all",["==",["get","admin_level"],0],["match",["get","iso_3166_1"],["CN-MM","IN-MM","MM-TH","LA-MM","BD-MM"],true,false]],null,null]'
           data-map-label="Myanmar" data-map-label-tileset="mapbox.mapbox-streets-v8" data-map-label-mode="fixed"
-          data-map-label-center="98.26,25.7379" data-map-label-additions='[{"text":"China","center":[98.61,25.7379]}]'
+          data-map-label-center="98.26,25.7379"
+          data-map-label-additions='[{"text":"China","center":[98.61,25.7379]},{"text":"Hpimaw","center":[98.616667,26.016667],"font":"book","size":16,"letterSpacing":0,"transform":"none","color":"#E3E686","haloWidth":0},{"text":"Pangwa","center":[98.3783,25.59826],"font":"book","size":16,"letterSpacing":0,"transform":"none","color":"#E3E686","haloWidth":0}]'
           data-tileset-label-styles="book,," data-tileset-label-sizes="20,," data-tileset-label-colors="#E3E686,,"
           data-tileset-label-letter-spacings="1,," data-tileset-label-transforms="uppercase,,"
           data-style-layer="mapbox-satellite" data-style-layer-opacity="0.5" data-map-year="2018"
@@ -332,23 +343,23 @@
 
   <footer class="credits">
     <div class="credits__inner">
-      <p class="credits__label"><strong>Sources</strong></p>
       <p class="credits__text">
         <span class="credits__label"><strong>MAPS</strong></span> Crisis Group research; OpenStreetMap; Natural Earth;
-        Mapbox<br />
-        <span class="credits__label"><strong>GRAPHS</strong></span> Crisis Group analysis; London Metal Exchange; China
-        customs data<br />
-        <span class="credits__label"><strong>SATELLITE IMAGERY</strong></span> Google Earth; Planet Labs PBC; Copernicus
-        Sentinel.<br />
-        <span class="credits__label"><strong>PHOTOGRAPHY</strong></span> Hkun Lat; Global Witness; Frontier Myanmar;
-        Citizen Action for Transparency (CAfT); AFP; REUTERS; Envato
+        Mapbox;<br />
+        <span class="credits__label"><strong>GRAPHS</strong></span> Crisis Group analysis; Armed Conflict and Location
+        Event Data (<a href="https://acleddata.com/" target="_blank" rel="noopener noreferrer">ACLED</a>); London Metal
+        Exchange; China customs data; US Geological Survey<br />
+        <span class="credits__label"><strong>SATELLITE IMAGERY</strong></span> Google Earth; Copernicus Sentinel; Planet
+        Labs.<br />
+        <span class="credits__label"><strong>PHOTOGRAPHY</strong></span> AFP; Citizen Action for Transparency (CAfT);
+        Envato; Frontier Myanmar; Global Witness; Hkun Lat; REUTERS
       </p>
 
       <p class="credits__text credits__spaced">
         Research and analysis by <strong class="credits__text__author">Richard Horsey</strong>, <strong>Thomas
           Kean</strong>, <strong>Carolin Graf</strong> and <strong>David Muchiri Kimotho</strong><br />
         Visualisations and imagery by <strong class="credits__text__author">Claire Boccon-Gibod</strong>, <strong>Paul
-          Franz</strong> and <strong>Ysé Angerer</strong>
+          Franz</strong>, <strong>Ysé Angerer</strong> and <strong>Jorge Gutiérrez Lucena</strong>.
       </p>
 
       <p class="credits__methodology">
@@ -368,9 +379,9 @@
     <div class="methodology-modal__content">
       <button class="methodology-modal__close" type="button" data-methodology-close aria-label="Close methodology notes"
         title="Close">&times;</button>
-      <h2 class="methodology-modal__title" id="rare-earths-methodology-title">Rare Earths Methodology Notes</h2>
+      <h2 class="methodology-modal__title" id="rare-earths-methodology-title">Rare Earths</h2>
       <div class="methodology-modal__body">
-        <p><em>Sources and methodology:</em></p>
+        <p><em>Sources and Methodology</em></p>
 
         <p>Mining areas were detected by applying deep convolutional neural networks to open-source Sentinel-2
           multispectral imagery, following the methodology described in <a

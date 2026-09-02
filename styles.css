@@ -2390,10 +2390,30 @@ figcaption.media-caption {
   margin-top: 1.5rem;
 }
 
+#tin-methodology {
+  --methodology-link: #ce82b2;
+}
+
+#gold-methodology {
+  --methodology-link: #ed924e;
+}
+
+#jade-methodology {
+  --methodology-link: #80c5a4;
+}
+
+#rare-earths-methodology {
+  --methodology-link: #6ecfc7;
+}
+
 .methodology-modal__body p,
 .methodology-modal__body li {
   font-size: 1.1rem;
   line-height: 1.65;
+}
+
+.methodology-modal__body em {
+  font-size: 1.25rem;
 }
 
 .methodology-modal__body p:last-child,
@@ -2403,8 +2423,18 @@ figcaption.media-caption {
 }
 
 .methodology-modal__body a {
-  color: inherit;
+  color: var(--methodology-link, inherit);
   text-underline-offset: 0.2em;
+  transition: opacity 160ms ease;
+}
+
+.methodology-modal__body a:hover {
+  opacity: 0.8;
+}
+
+.methodology-modal__body a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 
 .methodology-modal__close {
