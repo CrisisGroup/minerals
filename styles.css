@@ -1323,6 +1323,7 @@ button {
     #303030;
 }
 
+.jade-visual.jade-visual--wide,
 .jade-visual--split {
   width: min(var(--wide-width), 100%);
 }
