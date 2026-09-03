@@ -756,6 +756,15 @@ p {
   text-wrap: balance;
 }
 
+.story-pullquote__media {
+  display: block;
+  width: min(100%, 20rem);
+  height: auto;
+  margin: 0 auto;
+  padding: 2rem 1rem 0;
+  box-sizing: border-box;
+}
+
 .gold-pullquote + .gold-story__block--text,
 .jade-pullquote + .jade-story__block--text {
   margin-top: var(--media-gap);
