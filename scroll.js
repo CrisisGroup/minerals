@@ -1555,6 +1555,7 @@
   const mosaic = hero.querySelector("[data-index-hero-mosaic]");
   const leadTile = hero.querySelector("[data-index-hero-lead]");
   const brand = hero.querySelector("[data-index-hero-brand]");
+  const scrollCue = hero.querySelector("[data-index-hero-scroll-cue]");
   const videos = Array.from(hero.querySelectorAll("[data-index-hero-video]"));
   const tiles = Array.from(hero.querySelectorAll("[data-index-hero-tile]"));
   const revealTiles = tiles.filter((tile) => tile !== leadTile);
@@ -1669,6 +1670,11 @@
       brand.style.removeProperty("visibility");
     }
 
+    if (scrollCue) {
+      scrollCue.style.removeProperty("opacity");
+      scrollCue.style.removeProperty("visibility");
+    }
+
     tiles.forEach((tile) => {
       tile.style.removeProperty("transform");
     });
@@ -1713,7 +1719,13 @@
 
     if (prefersReducedMotion.matches) {
       clearMeasuredStyles();
-      updateVideoPlayback(hero.getBoundingClientRect());
+      const heroRect = hero.getBoundingClientRect();
+      const progress = heroProgress(heroRect);
+      if (scrollCue) {
+        scrollCue.style.opacity = progress < 0.02 ? "0.72" : "0";
+        scrollCue.style.visibility = progress < 0.02 ? "visible" : "hidden";
+      }
+      updateVideoPlayback(heroRect);
       return;
     }
 
@@ -1728,6 +1740,12 @@
     const mosaicShift = -mosaicTravel * trackProgress;
 
     mosaic.style.setProperty("--index-mosaic-shift", `${mosaicShift}px`);
+
+    if (scrollCue) {
+      const cueOpacity = 0.72 * (1 - smoothstep(0, 0.08, progress));
+      scrollCue.style.opacity = `${cueOpacity}`;
+      scrollCue.style.visibility = cueOpacity > 0.01 ? "visible" : "hidden";
+    }
 
     if (brand) {
       const brandOpacity = 1 - smoothstep(0.02, 0.18, progress);
@@ -1838,4 +1856,425 @@
   if (hashDialog instanceof HTMLDialogElement && hashDialog.matches("[data-methodology-dialog]")) {
     hashDialog.showModal();
   }
+})();
+
+(function () {
+  const figures = Array.from(document.querySelectorAll([
+    ".introduction-inset-map",
+    ".tin-visual",
+    ".gold-visual",
+    ".jade-visual",
+    ".rare-earths-visual",
+  ].join(", ")));
+
+  if (!figures.length) return;
+
+  const expandIcon = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 3h6v6"></path>
+      <path d="m21 3-7 7"></path>
+      <path d="M9 21H3v-6"></path>
+      <path d="m3 21 7-7"></path>
+    </svg>`;
+  const closeIcon = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18 6 6 18"></path>
+      <path d="m6 6 12 12"></path>
+    </svg>`;
+
+  const dialog = document.createElement("dialog");
+  dialog.className = "media-viewer";
+  dialog.setAttribute("role", "dialog");
+  dialog.setAttribute("aria-modal", "true");
+  dialog.setAttribute("aria-label", "Expanded media viewer");
+  dialog.innerHTML = `
+    <div class="media-viewer__toolbar">
+      <span class="media-viewer__status" data-media-viewer-status aria-live="polite">Image</span>
+      <div class="media-viewer__zoom-controls" aria-label="Image zoom controls">
+        <button class="media-viewer__control" type="button" data-media-viewer-zoom-out
+          aria-label="Zoom out" title="Zoom out">&minus;</button>
+        <button class="media-viewer__control" type="button" data-media-viewer-reset
+          aria-label="Reset zoom" title="Reset zoom">1&times;</button>
+        <button class="media-viewer__control" type="button" data-media-viewer-zoom-in
+          aria-label="Zoom in" title="Zoom in">+</button>
+      </div>
+      <button class="media-viewer__control" type="button" data-media-viewer-close
+        aria-label="Close expanded image" title="Close">${closeIcon}</button>
+    </div>
+    <div class="media-viewer__viewport" data-media-viewer-viewport>
+      <img class="media-viewer__image" data-media-viewer-image alt="" draggable="false" />
+    </div>
+    <div class="media-viewer__footer" data-media-viewer-footer hidden>
+      <div class="media-viewer__comparison" data-media-viewer-comparison hidden
+        role="group" aria-label="Choose comparison frame">
+        <button class="media-viewer__comparison-button" type="button" data-media-viewer-frame="0"
+          aria-pressed="false">Before</button>
+        <button class="media-viewer__comparison-button" type="button" data-media-viewer-frame="1"
+          aria-pressed="false">After</button>
+      </div>
+      <p class="media-viewer__caption" data-media-viewer-caption hidden></p>
+    </div>`;
+  document.body.appendChild(dialog);
+
+  const viewport = dialog.querySelector("[data-media-viewer-viewport]");
+  const viewerImage = dialog.querySelector("[data-media-viewer-image]");
+  const status = dialog.querySelector("[data-media-viewer-status]");
+  const footer = dialog.querySelector("[data-media-viewer-footer]");
+  const caption = dialog.querySelector("[data-media-viewer-caption]");
+  const comparison = dialog.querySelector("[data-media-viewer-comparison]");
+  const comparisonButtons = Array.from(dialog.querySelectorAll("[data-media-viewer-frame]"));
+  const zoomOutButton = dialog.querySelector("[data-media-viewer-zoom-out]");
+  const resetButton = dialog.querySelector("[data-media-viewer-reset]");
+  const zoomInButton = dialog.querySelector("[data-media-viewer-zoom-in]");
+  const closeButton = dialog.querySelector("[data-media-viewer-close]");
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const supportsModal = typeof dialog.showModal === "function";
+
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 5;
+  const SCALE_STEP = 0.5;
+  const pointers = new Map();
+  let view = { scale: MIN_SCALE, x: 0, y: 0 };
+  let gesture = null;
+  let currentItems = [];
+  let returnFocusTarget = null;
+  let imageRequest = 0;
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function getPanBounds(scale = view.scale) {
+    const imageWidth = viewerImage.clientWidth * scale;
+    const imageHeight = viewerImage.clientHeight * scale;
+
+    return {
+      x: Math.max(0, (imageWidth - viewport.clientWidth) / 2),
+      y: Math.max(0, (imageHeight - viewport.clientHeight) / 2),
+    };
+  }
+
+  function constrainView() {
+    const bounds = getPanBounds();
+    view.x = clamp(view.x, -bounds.x, bounds.x);
+    view.y = clamp(view.y, -bounds.y, bounds.y);
+
+    if (view.scale <= MIN_SCALE) {
+      view.x = 0;
+      view.y = 0;
+    }
+  }
+
+  function renderView() {
+    constrainView();
+    viewerImage.style.setProperty("--media-viewer-scale", view.scale.toFixed(3));
+    viewerImage.style.setProperty("--media-viewer-x", `${view.x.toFixed(1)}px`);
+    viewerImage.style.setProperty("--media-viewer-y", `${view.y.toFixed(1)}px`);
+    viewport.classList.toggle("is-zoomed", view.scale > MIN_SCALE);
+    zoomOutButton.disabled = view.scale <= MIN_SCALE;
+    zoomInButton.disabled = view.scale >= MAX_SCALE;
+  }
+
+  function resetView() {
+    pointers.clear();
+    gesture = null;
+    view = { scale: MIN_SCALE, x: 0, y: 0 };
+    viewport.classList.remove("is-manipulating");
+    renderView();
+  }
+
+  function zoomAt(nextScale, clientX, clientY) {
+    const scale = clamp(nextScale, MIN_SCALE, MAX_SCALE);
+    const oldScale = view.scale;
+    if (Math.abs(scale - oldScale) < 0.001) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const pointX = clientX - rect.left - (rect.width / 2);
+    const pointY = clientY - rect.top - (rect.height / 2);
+    const ratio = scale / oldScale;
+
+    view.x = pointX - ((pointX - view.x) * ratio);
+    view.y = pointY - ((pointY - view.y) * ratio);
+    view.scale = scale;
+    renderView();
+  }
+
+  function zoomFromCenter(nextScale) {
+    const rect = viewport.getBoundingClientRect();
+    zoomAt(nextScale, rect.left + (rect.width / 2), rect.top + (rect.height / 2));
+  }
+
+  function itemFromImage(image) {
+    return {
+      src: image.currentSrc || image.src,
+      alt: image.alt || "Expanded image",
+    };
+  }
+
+  function figureCaption(figure) {
+    const source = figure.querySelector("figcaption.media-caption");
+    return source ? source.textContent.replace(/\s+/g, " ").trim() : "";
+  }
+
+  function activeSwapIndex(swap) {
+    const progress = Number.parseFloat(window.getComputedStyle(swap).getPropertyValue("--media-swap-progress"));
+    return Number.isFinite(progress) && progress >= 0.5 ? 1 : 0;
+  }
+
+  function setViewerItem(index, immediate = false) {
+    if (!currentItems[index]) return;
+
+    const item = currentItems[index];
+    const request = ++imageRequest;
+    let sourceApplied = false;
+    status.textContent = currentItems.length > 1
+      ? `${index === 0 ? "Before" : "After"}: ${item.alt}`
+      : item.alt;
+
+    comparisonButtons.forEach((button) => {
+      button.setAttribute("aria-pressed", String(Number(button.dataset.mediaViewerFrame) === index));
+    });
+
+    resetView();
+
+    const applySource = () => {
+      if (request !== imageRequest || sourceApplied) return;
+      sourceApplied = true;
+      viewerImage.src = item.src;
+      viewerImage.alt = item.alt;
+
+      const reveal = () => {
+        if (request !== imageRequest) return;
+        window.requestAnimationFrame(() => viewerImage.classList.remove("is-switching"));
+      };
+
+      if (typeof viewerImage.decode === "function") {
+        viewerImage.decode().catch(() => {}).then(reveal);
+      } else {
+        reveal();
+      }
+    };
+
+    if (immediate || prefersReducedMotion.matches || !viewerImage.src) {
+      viewerImage.classList.remove("is-switching");
+      applySource();
+      return;
+    }
+
+    viewerImage.classList.add("is-switching");
+    const preload = new Image();
+    preload.onload = applySource;
+    preload.onerror = applySource;
+    preload.src = item.src;
+    if (preload.complete) applySource();
+  }
+
+  function showViewer(items, selectedIndex, figure, opener) {
+    currentItems = items;
+    const currentCaption = figureCaption(figure);
+    returnFocusTarget = opener;
+
+    const isComparison = items.length === 2 && Boolean(figure.closest("[data-media-scroll-swap]"));
+    comparison.hidden = !isComparison;
+    caption.hidden = !currentCaption;
+    caption.textContent = currentCaption;
+    footer.hidden = !isComparison && !currentCaption;
+    setViewerItem(selectedIndex, true);
+
+    document.documentElement.classList.add("media-viewer-open");
+    if (supportsModal) {
+      if (!dialog.open) dialog.showModal();
+    } else {
+      dialog.setAttribute("open", "");
+      dialog.classList.add("is-fallback-open");
+    }
+    closeButton.focus({ preventScroll: true });
+  }
+
+  function finishClose() {
+    imageRequest += 1;
+    document.documentElement.classList.remove("media-viewer-open");
+    dialog.classList.remove("is-fallback-open");
+    viewerImage.removeAttribute("src");
+    currentItems = [];
+    resetView();
+
+    if (returnFocusTarget?.isConnected) returnFocusTarget.focus({ preventScroll: true });
+    returnFocusTarget = null;
+  }
+
+  function closeViewer() {
+    if (supportsModal && dialog.open) {
+      dialog.close();
+      return;
+    }
+
+    dialog.removeAttribute("open");
+    finishClose();
+  }
+
+  function createExpandButton(label, onOpen) {
+    const button = document.createElement("button");
+    button.className = "media-expand-button";
+    button.type = "button";
+    button.title = "Expand image";
+    button.setAttribute("aria-label", label);
+    button.innerHTML = expandIcon;
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      onOpen(button);
+    });
+    return button;
+  }
+
+  figures.forEach((figure) => {
+    const swap = figure.closest("[data-media-scroll-swap]");
+    if (swap) {
+      const frames = figure.querySelector(".media-scroll-swap__frames");
+      const images = frames ? Array.from(frames.querySelectorAll("img")) : [];
+      if (!frames || images.length < 2 || frames.dataset.mediaViewerReady) return;
+
+      frames.dataset.mediaViewerReady = "true";
+      frames.classList.add("media-expand-target");
+      const openSwap = (opener) => showViewer(images.map(itemFromImage), activeSwapIndex(swap), figure, opener);
+      const button = createExpandButton("Expand this before-and-after graphic", openSwap);
+      frames.appendChild(button);
+      images.forEach((image) => image.addEventListener("click", () => openSwap(button)));
+      return;
+    }
+
+    Array.from(figure.querySelectorAll("img")).forEach((image) => {
+      if (image.closest(".media-expand-target") || image.dataset.mediaViewerReady) return;
+
+      image.dataset.mediaViewerReady = "true";
+      const target = document.createElement("span");
+      target.className = "media-expand-target";
+      image.parentNode.insertBefore(target, image);
+      target.appendChild(image);
+
+      const openImage = (opener) => showViewer([itemFromImage(image)], 0, figure, opener);
+      const button = createExpandButton(`Expand image${image.alt ? `: ${image.alt}` : ""}`, openImage);
+      target.appendChild(button);
+      image.addEventListener("click", () => openImage(button));
+    });
+  });
+
+  comparisonButtons.forEach((button) => {
+    button.addEventListener("click", () => setViewerItem(Number(button.dataset.mediaViewerFrame)));
+  });
+
+  zoomOutButton.addEventListener("click", () => zoomFromCenter(view.scale - SCALE_STEP));
+  zoomInButton.addEventListener("click", () => zoomFromCenter(view.scale + SCALE_STEP));
+  resetButton.addEventListener("click", resetView);
+  closeButton.addEventListener("click", closeViewer);
+  viewerImage.addEventListener("load", renderView);
+  dialog.addEventListener("close", finishClose);
+
+  viewport.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const factor = Math.exp(-event.deltaY * 0.0015);
+    zoomAt(view.scale * factor, event.clientX, event.clientY);
+  }, { passive: false });
+
+  viewport.addEventListener("dblclick", (event) => {
+    event.preventDefault();
+    zoomAt(view.scale > MIN_SCALE ? MIN_SCALE : 2, event.clientX, event.clientY);
+  });
+
+  function startGesture() {
+    const activePointers = Array.from(pointers.values());
+    viewport.classList.add("is-manipulating");
+
+    if (activePointers.length >= 2) {
+      const [first, second] = activePointers;
+      const rect = viewport.getBoundingClientRect();
+      const midpoint = {
+        x: (first.x + second.x) / 2,
+        y: (first.y + second.y) / 2,
+      };
+      gesture = {
+        type: "pinch",
+        distance: Math.hypot(second.x - first.x, second.y - first.y) || 1,
+        midpointX: midpoint.x - rect.left - (rect.width / 2),
+        midpointY: midpoint.y - rect.top - (rect.height / 2),
+        x: view.x,
+        y: view.y,
+        scale: view.scale,
+      };
+      return;
+    }
+
+    const [pointer] = activePointers;
+    gesture = pointer ? {
+      type: "pan",
+      pointerX: pointer.x,
+      pointerY: pointer.y,
+      x: view.x,
+      y: view.y,
+    } : null;
+  }
+
+  viewport.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    event.preventDefault();
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    viewport.setPointerCapture?.(event.pointerId);
+    startGesture();
+  });
+
+  viewport.addEventListener("pointermove", (event) => {
+    if (!pointers.has(event.pointerId)) return;
+    event.preventDefault();
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    const activePointers = Array.from(pointers.values());
+    if (activePointers.length >= 2 && gesture?.type === "pinch") {
+      const [first, second] = activePointers;
+      const rect = viewport.getBoundingClientRect();
+      const midpointX = ((first.x + second.x) / 2) - rect.left - (rect.width / 2);
+      const midpointY = ((first.y + second.y) / 2) - rect.top - (rect.height / 2);
+      const distance = Math.hypot(second.x - first.x, second.y - first.y) || 1;
+      const scale = clamp(gesture.scale * (distance / gesture.distance), MIN_SCALE, MAX_SCALE);
+      const ratio = scale / gesture.scale;
+
+      view.scale = scale;
+      view.x = midpointX - ((gesture.midpointX - gesture.x) * ratio);
+      view.y = midpointY - ((gesture.midpointY - gesture.y) * ratio);
+      renderView();
+      return;
+    }
+
+    if (activePointers.length === 1 && gesture?.type === "pan") {
+      const [pointer] = activePointers;
+      view.x = gesture.x + (pointer.x - gesture.pointerX);
+      view.y = gesture.y + (pointer.y - gesture.pointerY);
+      renderView();
+    }
+  });
+
+  function endPointer(event) {
+    if (!pointers.has(event.pointerId)) return;
+    pointers.delete(event.pointerId);
+    if (viewport.hasPointerCapture?.(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
+
+    if (pointers.size) {
+      startGesture();
+      return;
+    }
+
+    gesture = null;
+    viewport.classList.remove("is-manipulating");
+    renderView();
+  }
+
+  viewport.addEventListener("pointerup", endPointer);
+  viewport.addEventListener("pointercancel", endPointer);
+  viewport.addEventListener("lostpointercapture", endPointer);
+
+  window.addEventListener("resize", renderView);
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && dialog.hasAttribute("open") && !supportsModal) {
+      closeViewer();
+    }
+  });
 })();
