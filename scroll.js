@@ -143,6 +143,7 @@
   if (!swaps.length) return;
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const compactViewport = window.matchMedia("(max-width: 800px)");
   let ticking = false;
 
   function clamp(value, min, max) {
@@ -180,12 +181,16 @@
         const progress = clamp((stickyTop - rect.top) / scrollDistance, 0, 1);
         const configuredStart = Number.parseFloat(swap.dataset.swapStart);
         const configuredEnd = Number.parseFloat(swap.dataset.swapEnd);
-        const transitionStart = Number.isFinite(configuredStart)
-          ? clamp(configuredStart, 0, 0.99)
-          : 0.06;
-        const transitionEnd = Number.isFinite(configuredEnd)
-          ? clamp(configuredEnd, transitionStart + 0.01, 1)
-          : 0.94;
+        const transitionStart = compactViewport.matches
+          ? 0.3
+          : Number.isFinite(configuredStart)
+            ? clamp(configuredStart, 0, 0.99)
+            : 0.06;
+        const transitionEnd = compactViewport.matches
+          ? 0.7
+          : Number.isFinite(configuredEnd)
+            ? clamp(configuredEnd, transitionStart + 0.01, 1)
+            : 0.94;
         const transition = smootherstep(transitionStart, transitionEnd, progress);
         swap.style.setProperty("--media-swap-progress", transition.toFixed(3));
 
@@ -206,8 +211,10 @@
 
       const rect = frames.getBoundingClientRect();
       const visualCenter = rect.top + (rect.height / 2);
-      const transitionStart = window.innerHeight * 0.78;
-      const transitionEnd = window.innerHeight * 0.46;
+      // Phones map more viewport travel to the crossfade, slowing the swap
+      // without introducing an additional spacer or scroll lock.
+      const transitionStart = window.innerHeight * 0.72;
+      const transitionEnd = window.innerHeight * 0.22;
       const progress = clamp(
         (transitionStart - visualCenter) / (transitionStart - transitionEnd),
         0,
@@ -1967,9 +1974,14 @@
 
   function renderView() {
     constrainView();
+    const roundedScale = Math.round(view.scale * 10) / 10;
+    const scaleText = roundedScale.toFixed(Number.isInteger(roundedScale) ? 0 : 1);
     viewerImage.style.setProperty("--media-viewer-scale", view.scale.toFixed(3));
     viewerImage.style.setProperty("--media-viewer-x", `${view.x.toFixed(1)}px`);
     viewerImage.style.setProperty("--media-viewer-y", `${view.y.toFixed(1)}px`);
+    resetButton.textContent = `${scaleText}\u00d7`;
+    resetButton.setAttribute("aria-label", `Reset zoom, currently ${scaleText} times`);
+    resetButton.title = `Reset zoom (${scaleText}\u00d7)`;
     viewport.classList.toggle("is-zoomed", view.scale > MIN_SCALE);
     zoomOutButton.disabled = view.scale <= MIN_SCALE;
     zoomInButton.disabled = view.scale >= MAX_SCALE;

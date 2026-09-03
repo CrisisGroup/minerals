@@ -1516,6 +1516,12 @@ html.media-viewer-open body {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.media-viewer__control[data-media-viewer-reset] {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .media-viewer__control:disabled {
   cursor: default;
   opacity: 0.38;
@@ -1808,6 +1814,14 @@ html.media-viewer-open body {
   outline-offset: 3px;
 }
 
+/* Keep Jade's labeled comparisons readable on wider phone viewports. */
+@media (max-width: 800px) {
+  .jade-visual__pair,
+  .jade-visual__night-light-pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Small screens */
 @media (max-width: 700px) {
   /* Keep the five-item navigation readable when it wraps. */
@@ -1882,8 +1896,6 @@ html.media-viewer-open body {
 
   /* Multi-panel graphics become one readable vertical sequence. */
   .tin-visual__comparison,
-  .jade-visual__pair,
-  .jade-visual__night-light-pair,
   .rare-earths-visual__chart-grid,
   .gold-visual__transform-grid {
     grid-template-columns: 1fr;
