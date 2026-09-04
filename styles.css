@@ -765,6 +765,22 @@ p {
   box-sizing: border-box;
 }
 
+.gold-pullquote .story-pullquote__media {
+  width: min(100%, 24rem);
+}
+
+.jade-pullquote .story-pullquote__media {
+  width: min(100%, 15rem);
+}
+
+.tin-pullquote .story-pullquote__media {
+  width: min(100%, 16rem);
+}
+
+.rare-earths-pullquote .story-pullquote__media {
+  width: min(100%, 18rem);
+}
+
 .gold-pullquote + .gold-story__block--text,
 .jade-pullquote + .jade-story__block--text {
   margin-top: var(--media-gap);
