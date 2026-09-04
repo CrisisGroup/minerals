@@ -260,7 +260,7 @@ p {
   color: var(--ink);
   opacity: 0.9;
   font-family: var(--font-serif);
-  font-size: clamp(1.06rem, 2.4vw, 1.42rem);
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem); 
   font-style: italic;
   line-height: 1.4;
   text-align: center;
@@ -1276,7 +1276,6 @@ p {
 .story-mapbox-scrolly__temporal-year {
   min-width: 4rem;
   padding: 0.4rem 0.6rem;
-  border: 2px solid var(--temporal-year-border, #C56742);
   background: var(--temporal-year-background, rgba(0, 0, 0, 1));
   color: var(--temporal-year-color, #FFB984);
   font-size: 1.25rem;
@@ -1784,6 +1783,10 @@ html.media-viewer-open body {
 }
 
 .methodology-modal__body em {
+  font-size: inherit;
+}
+
+.methodology-modal__body p.methodology-modal__subhead {
   font-size: 1.25rem;
 }
 

@@ -303,6 +303,12 @@
   const MAP_LABEL_BOOK_FONT_STACK = ["Franklin Gothic Book Regular", "Arial Unicode MS Regular"];
   const MAP_LABEL_ITALIC_FONT_STACK = ["Franklin Gothic Medium Italic", "Arial Unicode MS Regular"];
   const MAP_LABEL_PT_SERIF_ITALIC_FONT_STACK = ["PT Serif Italic", "PT Serif Regular", "Arial Unicode MS Regular"];
+  const MAP_LAYER_FADE_DURATION = 700;
+  const MAP_LABEL_FADE_DURATION = 1100;
+
+  function labelFadeTransition(duration = MAP_LABEL_FADE_DURATION) {
+    return { duration, delay: 0 };
+  }
 
   function fontStackForLabel(style) {
     if (style === "italic") return MAP_LABEL_ITALIC_FONT_STACK;
@@ -344,6 +350,19 @@
       pitch: Number.parseFloat(step.dataset.pitch) || 0,
       bearing: Number.parseFloat(step.dataset.bearing) || 0,
     };
+  }
+
+  function stepsShareCamera(firstStep, secondStep) {
+    if (!firstStep || !secondStep || firstStep === secondStep) return false;
+
+    const firstCamera = cameraForStep(firstStep);
+    const secondCamera = cameraForStep(secondStep);
+
+    return firstCamera.center[0] === secondCamera.center[0]
+      && firstCamera.center[1] === secondCamera.center[1]
+      && firstCamera.zoom === secondCamera.zoom
+      && firstCamera.pitch === secondCamera.pitch
+      && firstCamera.bearing === secondCamera.bearing;
   }
 
   function stepForViewport(scrolly, steps) {
@@ -594,6 +613,140 @@
     });
   }
 
+  // Same-camera steps hand identical visuals off atomically instead of crossfading duplicates.
+  function tilesetLayerContinuityKey(config) {
+    return JSON.stringify([
+      config.tileset,
+      config.sourceLayer,
+      config.layerType,
+      config.color,
+      config.strokeColor,
+      config.opacity,
+      config.rasterColor,
+      config.hueRotate,
+      config.saturation,
+      config.contrast,
+      config.brightnessMin,
+      config.brightnessMax,
+      config.lineWidth,
+      config.filter,
+      config.adminLevel,
+      config.adminCountry,
+      config.adminWorldview,
+      config.adminDisputed,
+      config.adminMaritime,
+      config.layerType === "symbol" ? [
+        config.symbolField,
+        config.symbolZElevate,
+        config.symbolZOffset,
+        config.labelSize,
+        config.labelStyle,
+        config.labelColor,
+        config.labelHaloColor,
+        config.labelHaloWidth,
+        config.labelOcclusionOpacity,
+        config.labelLetterSpacing,
+        config.labelTransform,
+        config.labelMaxWidth,
+        config.labelAllowOverlap,
+      ] : null,
+    ]);
+  }
+
+  function tilesetLabelContinuityKey(config) {
+    if (!config.labelText) return null;
+
+    return JSON.stringify([
+      config.tileset,
+      config.sourceLayer,
+      config.filter,
+      config.adminLevel,
+      config.adminCountry,
+      config.adminWorldview,
+      config.adminDisputed,
+      config.adminMaritime,
+      config.labelText,
+      config.labelMode,
+      config.labelCenter,
+      config.fixedLabels,
+      config.labelSize,
+      config.labelStyle,
+      config.labelColor,
+      config.labelHaloColor,
+      config.labelHaloWidth,
+      config.labelOcclusionOpacity,
+      config.labelLetterSpacing,
+      config.labelTransform,
+      config.labelMaxWidth,
+      config.labelAllowOverlap,
+      config.labelLatDelta,
+      config.symbolZElevate,
+      config.symbolZOffset,
+    ]);
+  }
+
+  function customLayerContinuityKey(config) {
+    const layer = { ...config.layer };
+    const paint = { ...(layer.paint || {}) };
+
+    delete layer.id;
+    delete layer.source;
+    config.targetOpacities.forEach((opacity, property) => {
+      paint[property] = opacity;
+    });
+    layer.paint = paint;
+
+    return JSON.stringify([config.sourceUrl, config.sourceSpec, layer]);
+  }
+
+  function matchingConfigIds(previousConfigs, activeConfigs, keyForConfig, idForConfig) {
+    const previousByKey = new Map();
+    const matchingIds = new Set();
+
+    previousConfigs.forEach((config) => {
+      const key = keyForConfig(config);
+      if (!key) return;
+
+      const matches = previousByKey.get(key) || [];
+      matches.push(config);
+      previousByKey.set(key, matches);
+    });
+
+    activeConfigs.forEach((config) => {
+      const key = keyForConfig(config);
+      const matches = key ? previousByKey.get(key) : null;
+      if (!matches?.length) return;
+
+      const previousConfig = matches.shift();
+      matchingIds.add(idForConfig(previousConfig));
+      matchingIds.add(idForConfig(config));
+    });
+
+    return matchingIds;
+  }
+
+  function continuingConfigIds(
+    steps,
+    previousStep,
+    activeStep,
+    configsForStep,
+    keyForConfig,
+    idForConfig,
+  ) {
+    if (!stepsShareCamera(previousStep, activeStep)) return new Set();
+
+    const previousIndex = steps.indexOf(previousStep);
+    const activeIndex = steps.indexOf(activeStep);
+    if (previousIndex < 0 || activeIndex < 0) return new Set();
+
+    return matchingConfigIds(
+      configsForStep(previousStep, previousIndex),
+      configsForStep(activeStep, activeIndex),
+      keyForConfig,
+      idForConfig,
+    );
+  }
+
   function placeholderConfigForStep(step, index) {
     const placeholder = step.dataset.placeholderLayer;
     if (!placeholder) return null;
@@ -619,6 +772,33 @@
     if (layerType === "circle") return "circle-opacity";
     if (layerType === "symbol") return "text-opacity";
     return "fill-opacity";
+  }
+
+  function opacityTransitionDuration(property) {
+    return property === "text-opacity" || property === "icon-opacity"
+      ? MAP_LABEL_FADE_DURATION
+      : MAP_LAYER_FADE_DURATION;
+  }
+
+  function setLayerOpacity(map, layerId, property, opacity, immediate = false) {
+    if (immediate) {
+      map.setPaintProperty(layerId, `${property}-transition`, {
+        duration: 0,
+        delay: 0,
+      });
+    }
+
+    map.setPaintProperty(layerId, property, opacity);
+
+    if (immediate) {
+      map.once("render", () => {
+        if (!map.getLayer(layerId)) return;
+        map.setPaintProperty(layerId, `${property}-transition`, {
+          duration: opacityTransitionDuration(property),
+          delay: 0,
+        });
+      });
+    }
   }
 
   function styleLayerOpacityProperty(layerType) {
@@ -658,7 +838,7 @@
           value: map.getPaintProperty(config.layerId, property) ?? null,
         });
         map.setPaintProperty(config.layerId, `${property}-transition`, {
-          duration: 700,
+          duration: MAP_LAYER_FADE_DURATION,
           delay: 0,
         });
       });
@@ -704,7 +884,7 @@
 
         defaults.set(config.layerId, map.getPaintProperty(config.layerId, "raster-saturation") ?? null);
         map.setPaintProperty(config.layerId, "raster-saturation-transition", {
-          duration: 700,
+          duration: MAP_LAYER_FADE_DURATION,
           delay: 0,
         });
       });
@@ -978,7 +1158,7 @@
         map.addLayer(layer);
 
         map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
-          duration: 700,
+          duration: config.layerType === "symbol" ? MAP_LABEL_FADE_DURATION : MAP_LAYER_FADE_DURATION,
           delay: 0,
         });
       });
@@ -1006,7 +1186,9 @@
         map.addLayer(config.layer);
         config.opacityProperties.forEach((property) => {
           map.setPaintProperty(config.layerId, `${property}-transition`, {
-            duration: 700,
+            duration: property === "text-opacity" || property === "icon-opacity"
+              ? MAP_LABEL_FADE_DURATION
+              : MAP_LAYER_FADE_DURATION,
             delay: 0,
           });
         });
@@ -1036,7 +1218,7 @@
       });
 
       map.setPaintProperty(config.layerId, `${opacityProperty(config.layerType)}-transition`, {
-        duration: 700,
+        duration: MAP_LAYER_FADE_DURATION,
         delay: 0,
       });
     });
@@ -1162,10 +1344,11 @@
 
           map.addLayer(labelLayer);
 
-          map.setPaintProperty(definition.id, "text-opacity-transition", {
-            duration: 700,
-            delay: 0,
-          });
+          map.setPaintProperty(
+            definition.id,
+            "text-opacity-transition",
+            labelFadeTransition(),
+          );
         });
       });
     });
@@ -1217,7 +1400,9 @@
     return [weightedLng / totalWeight, weightedLat / totalWeight];
   }
 
-  function positionStepLabels(map, steps, positionedLabels) {
+  function positionStepLabels(map, steps, positionedLabels, activeStep) {
+    const labelsToReveal = [];
+
     steps.forEach((step, index) => {
       tilesetConfigsForStep(step, index).forEach((config) => {
         if (config.labelMode !== "centroid" || positionedLabels.has(config.labelSourceId)) return;
@@ -1231,6 +1416,7 @@
         const center = polygonCentroid(features);
         if (!center) return;
 
+        setConfigLabelOpacity(map, config, 0, true);
         labelSource.setData({
           type: "Feature",
           properties: {},
@@ -1240,23 +1426,50 @@
           },
         });
         positionedLabels.add(config.labelSourceId);
+        if (step === activeStep) labelsToReveal.push({ step, config });
       });
+    });
+
+    return labelsToReveal;
+  }
+
+  function setConfigLabelOpacity(map, config, opacity, immediate = false) {
+    labelDefinitionsForConfig(config).forEach((definition) => {
+      if (!map.getLayer(definition.id)) return;
+      setLayerOpacity(map, definition.id, "text-opacity", opacity, immediate);
     });
   }
 
-  function setStepLabelOpacity(map, step, index, opacity) {
+  function setStepLabelOpacity(map, step, index, opacity, immediateConfigIds = new Set()) {
     tilesetConfigsForStep(step, index).forEach((config) => {
       if (!config.labelText) return;
-
-      labelDefinitionsForConfig(config).forEach((definition) => {
-        if (!map.getLayer(definition.id)) return;
-        map.setPaintProperty(definition.id, "text-opacity", opacity);
-      });
+      setConfigLabelOpacity(
+        map,
+        config,
+        opacity,
+        immediateConfigIds.has(config.labelLayerId),
+      );
     });
   }
 
   function updateStepTilesets(map, steps, activeStep, options = {}) {
     const showActiveLabels = options.showActiveLabels !== false;
+    const continuingLayerIds = continuingConfigIds(
+      steps,
+      options.previousStep,
+      activeStep,
+      tilesetConfigsForStep,
+      tilesetLayerContinuityKey,
+      (config) => config.layerId,
+    );
+    const continuingLabelIds = continuingConfigIds(
+      steps,
+      options.previousStep,
+      activeStep,
+      tilesetConfigsForStep,
+      tilesetLabelContinuityKey,
+      (config) => config.labelLayerId,
+    );
 
     steps.forEach((step, index) => {
       const placeholderConfig = placeholderConfigForStep(step, index);
@@ -1269,17 +1482,21 @@
         if (!map.getLayer(config.layerId)) return;
 
         const activeOpacity = config.opacity ?? (config.layerType === "raster" || config.layerType === "line" ? 0.85 : 0.55);
-        map.setPaintProperty(
+        setLayerOpacity(
+          map,
           config.layerId,
           opacityProperty(config.layerType),
           step === activeStep ? activeOpacity : 0,
+          continuingLayerIds.has(config.layerId),
         );
 
         if (config.layerType === "circle") {
-          map.setPaintProperty(
+          setLayerOpacity(
+            map,
             config.layerId,
             "circle-stroke-opacity",
             step === activeStep ? activeOpacity : 0,
+            continuingLayerIds.has(config.layerId),
           );
         }
 
@@ -1290,20 +1507,32 @@
         step,
         index,
         step === activeStep && showActiveLabels ? 1 : 0,
+        continuingLabelIds,
       );
     });
   }
 
-  function updateStepCustomLayers(map, steps, activeStep) {
+  function updateStepCustomLayers(map, steps, activeStep, options = {}) {
+    const continuingLayerIds = continuingConfigIds(
+      steps,
+      options.previousStep,
+      activeStep,
+      customLayerConfigsForStep,
+      customLayerContinuityKey,
+      (config) => config.layerId,
+    );
+
     steps.forEach((step, index) => {
       customLayerConfigsForStep(step, index).forEach((config) => {
         if (!map.getLayer(config.layerId)) return;
 
         config.opacityProperties.forEach((property) => {
-          map.setPaintProperty(
+          setLayerOpacity(
+            map,
             config.layerId,
             property,
             step === activeStep ? config.targetOpacities.get(property) : 0,
+            continuingLayerIds.has(config.layerId),
           );
         });
       });
@@ -1335,6 +1564,7 @@
     function setActiveStep(step, options = {}) {
       if (!step) return;
 
+      const previousStep = activeStep;
       const alreadyActive = activeStep === step;
       activeStep = step;
 
@@ -1379,7 +1609,8 @@
 
       if (alreadyActive && !options.forceCamera) return;
 
-      const shouldMoveCamera = !alreadyActive || options.forceCamera;
+      const shouldMoveCamera = options.forceCamera
+        || (!alreadyActive && !stepsShareCamera(previousStep, step));
       const deferLabelsUntilMoveEnd = shouldMoveCamera
         && !options.jump
         && step.dataset.mapLabelReveal === "moveend";
@@ -1389,8 +1620,9 @@
 
       updateStepTilesets(map, steps, step, {
         showActiveLabels: !deferLabelsUntilMoveEnd,
+        previousStep,
       });
-      updateStepCustomLayers(map, steps, step);
+      updateStepCustomLayers(map, steps, step, { previousStep });
       updateStyleLayerOpacities(map, step, styleLayerOpacityDefaults);
       updateStyleLayerSaturations(map, step, styleLayerSaturationDefaults);
 
@@ -1442,6 +1674,7 @@
         ...cameraForStep(activeStep || steps[0]),
         interactive: false,
         attributionControl: true,
+        fadeDuration: 600,
       });
 
       map.on("load", () => {
@@ -1457,7 +1690,16 @@
       });
 
       map.on("idle", () => {
-        positionStepLabels(map, steps, positionedLabels);
+        const labelsToReveal = positionStepLabels(map, steps, positionedLabels, activeStep);
+        if (!labelsToReveal.length) return;
+
+        map.once("render", () => {
+          window.requestAnimationFrame(() => {
+            labelsToReveal.forEach(({ step, config }) => {
+              if (activeStep === step) setConfigLabelOpacity(map, config, 1);
+            });
+          });
+        });
       });
     }
 
