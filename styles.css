@@ -460,7 +460,7 @@ p {
 }
 
 .introduction-inset-map {
-  width: min(300px, 100%);
+  width: min(210px, 100%);
   margin: 0 auto var(--media-gap);
 }
 
