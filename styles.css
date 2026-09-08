@@ -1887,7 +1887,7 @@ html.media-viewer-open body {
     opacity: 1;
   }
 
-  /* Give every editorial still the full phone canvas; copy and captions stay aligned. */
+  /* Let editorial stills use the full phone canvas; copy and captions stay aligned. */
   .introduction-inset-map,
   .tin-visual,
   .gold-visual,
@@ -1900,6 +1900,14 @@ html.media-viewer-open body {
     margin-left: calc(50% - 50vw);
     padding-right: 0;
     padding-left: 0;
+  }
+
+  /* Baked-in labels benefit from a narrow edge buffer without constraining photos. */
+  .media-visual--data {
+    --mobile-data-visual-gutter: 0.5rem;
+    width: calc(100vw - (2 * var(--mobile-data-visual-gutter)));
+    margin-right: calc(50% - 50vw + var(--mobile-data-visual-gutter));
+    margin-left: calc(50% - 50vw + var(--mobile-data-visual-gutter));
   }
 
   :is(.tin-visual, .gold-visual, .jade-visual, .rare-earths-visual) > .media-caption,
@@ -1920,6 +1928,15 @@ html.media-viewer-open body {
     margin-left: auto;
     padding-right: var(--gutter);
     padding-left: var(--gutter);
+  }
+
+  .media-visual--data > .media-caption,
+  .media-visual--data > .graph-hed,
+  .media-visual--data > .graph-subhed,
+  .media-visual--data .jade-visual__stack > .graph-subhed,
+  .media-visual--data .rare-earths-visual__chart-title {
+    padding-right: calc(var(--gutter) - var(--mobile-data-visual-gutter));
+    padding-left: calc(var(--gutter) - var(--mobile-data-visual-gutter));
   }
 
   /* Multi-panel graphics become one readable vertical sequence. */
