@@ -460,8 +460,14 @@ p {
 }
 
 .introduction-inset-map {
-  width: min(210px, 100%);
+  width: clamp(8.5rem, 30vw, 210px);
+  aspect-ratio: 209 / 320;
   margin: 0 auto var(--media-gap);
+}
+
+.introduction-inset-map .media-expand-target {
+  display: block;
+  width: 100%;
 }
 
 .introduction-inset-map img {
@@ -1894,7 +1900,6 @@ html.media-viewer-open body {
   }
 
   /* Let editorial stills use the full phone canvas; copy and captions stay aligned. */
-  .introduction-inset-map,
   .tin-visual,
   .gold-visual,
   .jade-visual,
