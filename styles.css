@@ -359,9 +359,9 @@ p {
 
 .index-hero__tile--08 {
   top: 2.1%;
-  left: 43%;
-  width: 27.2%;
-  height: 16.6%;
+  left: 47.8%;
+  width: 22.5%;
+  height: 15%;
 }
 
 .index-hero__tile--05 {
@@ -428,7 +428,7 @@ p {
 }
 
 .index-hero__tile--04 {
-  top: 68.2%;
+  top: 70.5%;
   left: 67.6%;
   width: 30.9%;
   height: 18.7%;
@@ -1859,6 +1859,12 @@ html.media-viewer-open body {
 
   .commodity-links .commodity-link {
     white-space: nowrap;
+  }
+
+  /* Give the bottom navigation a reliable touch target on phones. */
+  .commodity-links--story-end .commodity-link {
+    min-height: 2.75rem;
+    padding: 0.5rem 0.7rem;
   }
 
   .commodity-scroll-video-hero {
