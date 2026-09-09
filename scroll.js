@@ -305,6 +305,7 @@
   const MAP_LABEL_PT_SERIF_ITALIC_FONT_STACK = ["PT Serif Italic", "PT Serif Regular", "Arial Unicode MS Regular"];
   const MAP_LAYER_FADE_DURATION = 700;
   const MAP_LABEL_FADE_DURATION = 1100;
+  const mobileMapViewport = window.matchMedia("(max-width: 700px)");
 
   function labelFadeTransition(duration = MAP_LABEL_FADE_DURATION) {
     return { duration, delay: 0 };
@@ -344,9 +345,15 @@
   }
 
   function cameraForStep(step) {
+    const desktopZoom = Number.parseFloat(step.dataset.zoom);
+    const mobileZoom = Number.parseFloat(step.dataset.mobileZoom);
+    const zoom = mobileMapViewport.matches && Number.isFinite(mobileZoom)
+      ? mobileZoom
+      : desktopZoom;
+
     return {
       center: parseCenter(step.dataset.center),
-      zoom: Number.parseFloat(step.dataset.zoom) || 5.4,
+      zoom: Number.isFinite(zoom) ? zoom : 5.4,
       pitch: Number.parseFloat(step.dataset.pitch) || 0,
       bearing: Number.parseFloat(step.dataset.bearing) || 0,
     };
@@ -1556,6 +1563,7 @@
     let mapReady = false;
     let ticking = false;
     let activeStep = null;
+    let isMobileCamera = mobileMapViewport.matches;
     let cameraTransitionToken = 0;
     const positionedLabels = new Set();
     let styleLayerOpacityDefaults = new Map();
@@ -1703,8 +1711,20 @@
       });
     }
 
+    function handleViewportResize() {
+      const nextIsMobileCamera = mobileMapViewport.matches;
+      const cameraModeChanged = nextIsMobileCamera !== isMobileCamera;
+      isMobileCamera = nextIsMobileCamera;
+
+      if (cameraModeChanged) {
+        updateActiveStepFromViewport({ forceCamera: true, jump: true });
+      } else {
+        requestViewportUpdate();
+      }
+    }
+
     window.addEventListener("scroll", requestViewportUpdate, { passive: true });
-    window.addEventListener("resize", requestViewportUpdate);
+    window.addEventListener("resize", handleViewportResize);
   });
 })();
 
